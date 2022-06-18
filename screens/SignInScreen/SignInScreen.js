@@ -16,16 +16,14 @@ import SocialSignInButton from "../../components/SocialSignInButton";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
-import { useDispatch,useSelect, useSelector } from 'react-redux';
+import { useDispatch, useSelect, useSelector } from "react-redux";
 import allAction from "../../components/redux/action/allAction";
-
 
 const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const [dataResponse, setdataResponse] = useState({})
-
+  const [dataResponse, setdataResponse] = useState({});
 
   var url = "https://api-truongcongtoan-login.herokuapp.com/api/user/login";
   var url_email = "https://api-truongcongtoan-login.herokuapp.com/api/user/";
@@ -39,30 +37,25 @@ const SignInScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-
   //sign in press
   const onSignInPressed = () => {
     if (validateBlank()) {
-      if (validateEmail(email)) {
-        let errorsCheck = {};
-        errorsCheck["email"] = "";
-        seterror(errorsCheck);
-
-
-        try {
-         handleLogin(url,loginData)
-          
-        } catch (error) {
-          Toast.show({
-            type: "error",
-            text1: "Thông báo",
-            text2: "Đăng nhập không thành công,vui lòng thử lại sau!",
-          });
-        }
+      let errorsCheck = {};
+      errorsCheck["email"] = "";
+      seterror(errorsCheck);
+      try {
+        handleLogin(url, loginData);
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Thông báo",
+          text2: "Đăng nhập không thành công,vui lòng thử lại sau!",
+        });
       }
     }
-  };
 
+    console.log(validateBlank());
+  };
 
   //add new data
 
@@ -73,31 +66,26 @@ const SignInScreen = () => {
     });
   }, [email, password]);
 
-
-
   const handleLogin = async (url, data = {}) => {
     console.log("calling data ...");
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify(
-      data
-    );
+    var raw = JSON.stringify(data);
 
     var requestOptions = {
-      method: 'POST',
+      method: "POST",
       headers: myHeaders,
       body: raw,
-      redirect: 'follow'
+      redirect: "follow",
     };
 
     return fetch(url, requestOptions)
-      .then(response => response.text())
-      .then(result => {
+      .then((response) => response.text())
+      .then((result) => {
         if (JSON.parse(result).access_token) {
           getLogInedPersonInfo(email);
           // console.log(JSON.parse(result).access_token);
-
         } else {
           Toast.show({
             type: "error",
@@ -106,33 +94,36 @@ const SignInScreen = () => {
           });
         }
       })
-      .catch(error => console.log('error', error));
-  }
+      .catch((error) => console.log("error", error));
+  };
 
-  const getLogInedPersonInfo = async (url,email) =>{
+  const getLogInedPersonInfo = async (url, email) => {
     await getDataByEmail(url, email);
-      navigation.navigate("HomeTab");
-  }
+    navigation.navigate("HomeTab");
+  };
   useEffect(() => {
     console.log("gia tri res ", dataResponse);
-    dispatch(allAction.userAction.addSignIn(dataResponse))
+    dispatch(allAction.userAction.addSignIn(dataResponse));
+  }, [dataResponse]);
 
-  }, [dataResponse])
-  
-console.log("gia tri cua redux ",useSelector(state => state.user));
-  
-  const getDataByEmail = async (email) =>{
+  // console.log(
+  //   "gia tri cua redux ",
+  //   useSelector((state) => state.user)
+  // );
+
+  const getDataByEmail = async (email) => {
     var requestOptions = {
-      method: 'GET',
-      redirect: 'follow'
+      method: "GET",
+      redirect: "follow",
     };
-  
-  fetch(`${url_email}${email}`, requestOptions)
-      .then(response => response.text())
-      .then(result => {setdataResponse(result)})
-      .catch(error => console.log('error', error));
-      
-  }
+
+    fetch(`${url_email}${email}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        setdataResponse(result);
+      })
+      .catch((error) => console.log("error", error));
+  };
   // console.log("Data res",dataResponse);
   //forgot password press
   const onForgotPassPressed = () => {
@@ -154,9 +145,7 @@ console.log("gia tri cua redux ",useSelector(state => state.user));
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
     if (result === null) {
-      errors["email"] = " Email không đúng định dạng! VD: xxx@yyy.com";
       check = false;
-      seterror(errors);
     } else {
       errors["email"] = "";
       seterror(errors);
@@ -169,11 +158,18 @@ console.log("gia tri cua redux ",useSelector(state => state.user));
     let formIsValid = true;
     if (!email) {
       formIsValid = false;
-      errors["email"] = "Không được bỏ trống email !";
-    } else if (!password) {
-      formIsValid = false;
-      errors["password"] = "Không được bỏ trống mật khẩu !";
+      errors["email"] = "Không được bỏ trống email!";
+    } else {
+      if (!validateEmail(email)) {
+        formIsValid = false;
+        errors["email"] = " Email không đúng định dạng! VD: xxx@yyy.com";
+        seterror(errors);
+      } else if (!password) {
+        formIsValid = false;
+        errors["password"] = "Không được bỏ trống mật khẩu !";
+      }
     }
+
     seterror(errors);
     return formIsValid;
   };

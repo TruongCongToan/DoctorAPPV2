@@ -3,6 +3,4 @@ const allAction = {
     userAction:userAction   
 }
 
-
-
 export default allAction;
