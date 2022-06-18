@@ -1,0 +1,5 @@
+export const GET_RESPONSE = "GET_RESPONSE"
+export const ADD_SIGN_IN = "ADD_SIGN_IN"
+export const ADD_SIGN_OUT = "ADD_SIGN_OUT"
+export const ADD_USER = "ADD_USER"
+export const ADD_LIST_USER = "ADD_LIST_USER"
