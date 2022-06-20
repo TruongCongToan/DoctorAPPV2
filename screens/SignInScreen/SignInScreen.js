@@ -101,15 +101,6 @@ const SignInScreen = () => {
     await getDataByEmail(url, email);
     navigation.navigate("Drawer");
   };
-  // useEffect(() => {
-  //   // console.log("gia tri res ", dataResponse);
-  //   dispatch(allAction.userAction.addSignIn(dataResponse));
-  // }, [dataResponse]);
-
-  // console.log(
-  //   "gia tri cua redux ",
-  //   useSelector((state) => state.user.signInPerson.full_name)
-  // );
 
   const getDataByEmail = async (email) => {
     var requestOptions = {

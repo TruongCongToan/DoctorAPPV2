@@ -54,7 +54,7 @@ const HeaderScreen = () => {
           name=""
           size={30}
           color="black"
-          style={{ margin: 16 }}
+          style={{ margin: 20 }}
           onPress={() => {
             navigation.navigate("Search");
           }}

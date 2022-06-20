@@ -4,13 +4,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SearchScreen from "../SearchScreen/SearchScreen";
 import HeaderScreen from "../HeaderScreen/HeaderScreen";
+import TableTwo from "../../components/TableTwo/TableTwo";
 // import { Container } from "native-base";
 // import { useSelector } from "react-redux";
 const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
     <HeaderScreen navigation = {navigation}/>
-  
+    <TableTwo/>
     </SafeAreaView>
   );
 };

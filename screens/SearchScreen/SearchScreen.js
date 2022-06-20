@@ -81,7 +81,7 @@ const SearchScreen = () => {
         <SafeAreaView style={{ flex: 1 }}>
 
             <View style={styles.container}  >
-                {/* <HeaderLogo/> */}
+                <HeaderLogo/>
                 <SearchBar
                     round
                     searchIcon={{ size: 24,color:'white' }}
