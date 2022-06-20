@@ -23,8 +23,8 @@ const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const [dataResponse, setdataResponse] = useState({});
 
+  
   var url = "https://api-truongcongtoan-login.herokuapp.com/api/user/login";
   var url_email = "https://api-truongcongtoan-login.herokuapp.com/api/user/";
 
@@ -99,16 +99,16 @@ const SignInScreen = () => {
 
   const getLogInedPersonInfo = async (url, email) => {
     await getDataByEmail(url, email);
-    navigation.navigate("HomeTab");
+    navigation.navigate("Drawer");
   };
-  useEffect(() => {
-    console.log("gia tri res ", dataResponse);
-    dispatch(allAction.userAction.addSignIn(dataResponse));
-  }, [dataResponse]);
+  // useEffect(() => {
+  //   // console.log("gia tri res ", dataResponse);
+  //   dispatch(allAction.userAction.addSignIn(dataResponse));
+  // }, [dataResponse]);
 
   // console.log(
   //   "gia tri cua redux ",
-  //   useSelector((state) => state.user)
+  //   useSelector((state) => state.user.signInPerson.full_name)
   // );
 
   const getDataByEmail = async (email) => {
@@ -120,7 +120,10 @@ const SignInScreen = () => {
     fetch(`${url_email}${email}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        setdataResponse(result);
+
+        dispatch(allAction.userAction.addSignIn(JSON.parse(result)));
+        // setdataResponse(JSON.parse(result));
+        
       })
       .catch((error) => console.log("error", error));
   };

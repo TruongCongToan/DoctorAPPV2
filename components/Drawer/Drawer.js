@@ -13,6 +13,7 @@ import PrivacyScreen from '../../screens/PrivacyScreen/PrivacyScreen';
 import Logout from '../../screens/LogOut/Logout';
 import { BottomTabNavigator } from '../BottomTabNavigator/BottomTabNavigator';
 import CutomDrawer from './CutomDrawer';
+import SearchScreen from '../../screens/SearchScreen/SearchScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -52,6 +53,7 @@ const DrawerNavigator = () => {
         <Drawer.Screen name="Liên hệ" component={ContactUs} />
         <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
         <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
+        <Drawer.Screen name="Search" component={SearchScreen} />
         {/* <Drawer.Screen name="Đăng xuất" component={Logout} /> */}
 
       </Drawer.Navigator>

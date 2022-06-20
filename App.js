@@ -27,10 +27,13 @@ export default function App() {
               screenOptions={{ headerShown: false }}
             >
 
-  <Stack.Screen name="SignIn" component={SignInScreen} />
-
+              <Stack.Screen name="SignIn" component={SignInScreen} />
+              <Stack.Screen name="Drawer" component={DrawerNavigator} />
+              <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="ForgotPassWord" component={ForgotPassWord} />
+            <Stack.Screen name="NewPassWord" component={NewPassWord} />
             </Stack.Navigator> */}
-            <DrawerNavigator />
+           <DrawerNavigator/>
             {/* <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ForgotPassWord" component={ForgotPassWord} />

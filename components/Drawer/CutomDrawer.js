@@ -6,13 +6,13 @@ import {
 } from "@react-navigation/drawer";
 
 import { useNavigation } from "@react-navigation/native";
-
+import { useSelector } from "react-redux";
 const CutomDrawer = (props) => {
 
-    const navigation = useNavigation();
-    const LogoutPress = () =>{
-        navigation.navigate("")
-    }
+  const navigation = useNavigation();
+  const LogoutPress = () => {
+    navigation.navigate("")
+  }
   return (
     <>
       <DrawerContentScrollView {...props}>
@@ -27,9 +27,11 @@ const CutomDrawer = (props) => {
         >
           <View>
             <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-              Truong Cong Toan
+              {
+                (useSelector(state => state.user.signInPerson.full_name))
+              }
             </Text>
-            <Text style={{ fontSize: 13 }}>truongcongtoan629@gmail.com</Text>
+            <Text style={{ fontSize: 13 }}> {(useSelector(state => state.user.signInPerson.email))}</Text>
           </View>
           <Image
             style={{ width: 40, height: 40, borderRadius: 30 }}
@@ -51,7 +53,7 @@ const CutomDrawer = (props) => {
           padding: 20,
         }}
       >
-        <Text style={{}} onPress ={LogoutPress}>Đăng xuất</Text>
+        <Text style={{}} onPress={LogoutPress}>Đăng xuất</Text>
       </TouchableOpacity>
     </>
   );
