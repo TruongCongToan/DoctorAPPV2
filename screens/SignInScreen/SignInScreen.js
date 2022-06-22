@@ -9,6 +9,10 @@ import {
   Alert,
 } from "react-native";
 
+import FlashMessage from "react-native-flash-message";
+import { showMessage, hideMessage } from "react-native-flash-message";
+
+
 import Logo from "../../assets/image/healthcare.png";
 import CustomButton from "../../components/CustomButton";
 import CustomInput from "../../components/CustomInput";
@@ -46,6 +50,11 @@ const SignInScreen = () => {
       seterror(errorsCheck);
       try {
         handleLogin(url, loginData);
+        showMessage({
+          message: "Hello World",
+          description: "This is our second message",
+          type: "success",
+        });
       } catch (error) {
         Toast.show({
           type: "error",
@@ -206,6 +215,8 @@ const SignInScreen = () => {
           type="TERTIARY"
         />
       </View>
+      <FlashMessage position="top" />
+
     </ScrollView>
   );
 };
