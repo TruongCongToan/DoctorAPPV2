@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 import { BottomTabNavigator } from "./components/BottomTabNavigator/BottomTabNavigator";
 import SignInScreen from "./screens/SignInScreen/SignInScreen";
 import DrawerNavigator from "./components/Drawer/Drawer";
+import PickPhoto from "./components/TableTwo/PickPhoto";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -33,6 +34,7 @@ export default function App() {
             <Stack.Screen name="ForgotPassWord" component={ForgotPassWord} />
             <Stack.Screen name="NewPassWord" component={NewPassWord} />
             </Stack.Navigator> */}
+            {/* <PickPhoto /> */}
            <DrawerNavigator/>
             {/* <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />

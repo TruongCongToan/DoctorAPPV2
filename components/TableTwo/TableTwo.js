@@ -16,7 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import SelectDropdown from 'react-native-select-dropdown'
 import FlashMessage from "react-native-flash-message";
 import { showMessage, hideMessage } from "react-native-flash-message";
-
+import * as ImagePicker from 'expo-image-picker';
 
 const styles = StyleSheet.create({
   inputColor: {
@@ -55,6 +55,8 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
   const [role, setrole] = useState('')
   const [address, setaddress] = useState('')
   const [gender, setgender] = useState('')
+  const [image, setImage] = useState(null);
+
 
   const genders = ["Nam", "Nữ", "Khác"]
   const roles = ["Quản trị viên", "Bác sĩ", "Bệnh nhân"]
@@ -69,21 +71,24 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
       setrole(dataUser.role)
     setaddress(dataUser.address)
     setgender(dataUser.gender)
-    // validateBlank()
+    setImage(dataUser.image)
+
   }, [dataUser])
 
   useEffect(() => {
     validateBlank()
     setdataUpdate({
-      full_name:full_name,
-      email:email,
-      gender:gender,
-      role:role,
-      phone_number:phone_number,
-      address:address
+      full_name: full_name,
+      email: email,
+      gender: gender,
+      role: role,
+      phone_number: phone_number,
+      address: address,
+      image: image
     })
-  }, [full_name, email, gender, role, phone_number, address])
+  }, [full_name, email, gender, role, phone_number, address, image])
 
+  
   //validate email
   const validateEmail = (email) => {
     let errors = {};
@@ -174,9 +179,21 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
     }
   };
 
+  const handleChoosePhoto = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      base64: true,
+      quality: 1,
+    });
 
-  const handleChoosePhoto = () => {
-    alert("ok")
+    // console.log((result));
+
+    if (!result.cancelled) {
+      setImage(`data:image/jpeg;base64, ${result.base64}`);
+    }
   }
   const formatT = (input, flag) => {
     if (flag === "gender") {
@@ -221,40 +238,43 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
     }
   }
   const [dataUpdate, setdataUpdate] = useState({
-    email:'',
-    password:'',
-    full_name:'',
-    gender:'',
-    role:'',
-    phone_number:'',
-    address:''
+    user_id: 192,
+    email: '',
+    password: '',
+    full_name: '',
+    gender: '',
+    role: '',
+    phone_number: '',
+    address: '',
+    image: ''
   })
 
-  const updateUser = (email,data) => {
+  const updateUser = (email, data) => {
+
+
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTU4OTQ0OTMsIm5iZiI6MTY1NTg5Mzg5MywiaWQiOjE5MSwgInJvbGUiOiJVU0VSIn0.qHD6jGpSxXs6upKSvPF0CfxAJ-68BAeO0Z6CcPS3YwE");
+    myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTUzNDU5NTUsIm5iZiI6MTY1NTM0NTM1NSwiaWQiOjE3NCwgInJvbGUiOiJVU0VSIn0.alQtNuY68UxtxStAqDWho6F5c8BU82kLrHFV8k8OrM8");
     myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-      "role": "R3",
-      "gender": "O"
-    });
-
+    
+    var raw = JSON.stringify(
+      data
+    );
+    
     var requestOptions = {
       method: 'PUT',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
-
-    fetch(`https://api-truongcongtoan-login.herokuapp.com/api/user/trang@gmail.com`, requestOptions)
+    
+    fetch(`http://api-truongcongtoan.herokuapp.com/api/users/${email}`, requestOptions)
       .then(response => response.text())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
+
   }
   const handleSave = () => {
-    console.log("du lieu thu duoc ", full_name);
-    console.log("check ", validateBlank(), error["email"]);
+
     if (validateBlank() === false) {
       if (error["full_name"]) {
         showMessage({
@@ -292,19 +312,18 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
                     type: "danger",
                   });
                 } else {
-                 
-                 try {
-                  updateUser(email)
-                  showMessage({
-                    message: `Chỉnh sửa thành công !`,
-                    type: "success",
-                  });
-                 } catch (error) {
-                  showMessage({
-                    message: `${error["address"]}`,
-                    type: "danger",
-                  });
-                 }
+                  try {
+                    updateUser(email, dataUpdate)
+                    showMessage({
+                      message: `Chỉnh sửa thành công !`,
+                      type: "success",
+                    });
+                  } catch (error) {
+                    showMessage({
+                      message: `${error["address"]}`,
+                      type: "danger",
+                    });
+                  }
                 }
               }
             }
@@ -312,10 +331,19 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
         }
       }
     } else {
-      showMessage({
-        message: `Thanh cong`,
-        type: "success",
-      });
+      try {
+        updateUser(email, dataUpdate)
+        showMessage({
+          message: `Chỉnh sửa thông tin thành công !`,
+          type: "success",
+        });
+        setvisible(false)
+      } catch (error) {
+        showMessage({
+          message: `${error["address"]}`,
+          type: "danger",
+        });
+      }
     }
   }
 
@@ -370,21 +398,48 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
               Thông tin người dùng
             </Text>
 
+            {/* {image && <Image source={{ uri: image }} style={{ width: 50, height: 50 }} />} */}
             <View style={{ flexDirection: "row", marginTop: 20 }}>
-              <TouchableOpacity onPress={handleChoosePhoto}
+
+              <TouchableOpacity
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 30,
+                  marginTop: 10,
+                  marginLeft: 15,
+                  borderWidth: 0.5,
+                  borderColor: 'black'
+                }}
+                onPress={handleChoosePhoto}
               >
-                <Image
+                <Ionicons
+                  name="image-outline"
+                  size={25}
+                  color="black"
                   style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 30,
-                    marginTop: 5,
-                    marginLeft: 15
+                    position: 'absolute',
+                    left: 15,
+                    top: 10
                   }}
-                  source={{
-                    uri: "https://images.unsplash.com/photo-1655453421065-20c9655a229d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-                  }}
+
                 />
+                {
+                  image &&
+                  <Image
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 30,
+                      marginTop: 0,
+                      marginLeft: 0,
+
+                    }}
+                    source={{
+                      uri: image
+                    }}
+                  />
+                }
               </TouchableOpacity>
               <View style={{ width: '90%' }}>
                 <Text style={{ marginLeft: 12, fontWeight: '500' }}>Họ và tên</Text>
@@ -577,6 +632,7 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
                 }}
                 onPress={() => {
                   setvisible(false);
+                  //  console.log(dataUpdate);
                 }}
               >
                 <Text style={{ color: "white" }}>Cancel</Text>
@@ -589,6 +645,7 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
     </Modal>
   );
 };
+//------------------------------------------------------------------------------------------------------------------
 const TableTwo = () => {
   const [dataGet, setDataGet] = useState([]);
   const [showBox, setShowBox] = useState(true);
@@ -621,6 +678,7 @@ const TableTwo = () => {
         {
           text: "Sửa",
           onPress: () => {
+           
             setvisible(true);
           },
         },
@@ -651,7 +709,7 @@ const TableTwo = () => {
             deleteUser(input.email);
             setcount(count + 1);
             showMessage({
-              message: `Thanh cong`,
+              message: `Cập nhật thông tin người dùng thành công !`,
               type: "success",
             });
             setShowBox(false);
@@ -681,7 +739,7 @@ const TableTwo = () => {
     fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         setData(JSON.parse(result))
       })
       .catch((error) => console.log("error", error));

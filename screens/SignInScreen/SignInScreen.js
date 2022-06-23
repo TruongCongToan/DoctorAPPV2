@@ -64,7 +64,7 @@ const SignInScreen = () => {
       }
     }
 
-    console.log(validateBlank());
+    // console.log(validateBlank());
   };
 
   //add new data

@@ -65,7 +65,7 @@ const SignUpcreen = () => {
             text1: "Thông báo",
             text2: "Đăng ký tài khoản thành công!",
           });
-          console.log(JSON.parse(result).token);
+          // console.log(JSON.parse(result).token);
           navigation.navigate("SignIn");
         } else {
           Toast.show({
