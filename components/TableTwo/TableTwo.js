@@ -79,7 +79,7 @@ const TableTwo = () => {
             Toast.show({
               type: "success",
               text1: "Thông báo",
-              text2: "Cập nhật thông tin tài khoản thành công !",
+              text2: "Cập nhật thông tin tài khoản thành công!",
             });
             setShowBox(false);
           },
@@ -94,21 +94,21 @@ const TableTwo = () => {
   var checkLoadingPage = useSelector(state => state.user)
   useEffect(() => {
     handleLogin(url, setDataGet);
-    handleLogin(url_Doctor,setdoctorList,'doctorList')
+    handleLogin(url_Doctor,setdoctorList)
   }, [count, checkLoadingPage]);
 
-  const handleLogin = async (url, setData,flag) => {
+  // useEffect(() => {
+  //     dis
+  // }, [doctorList])
+  
+  const handleLogin = async (url, setData) => {
     var requestOptions = {
       method: "GET",
       transparentirect: "follow",
     };
-
     fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        if (flag === "doctorList") {
-          dispatch(allAction.userAction.addListUser(JSON.parse(result)));
-        }
         setData(JSON.parse(result))
       })
       .catch((error) => console.log("error", error));
