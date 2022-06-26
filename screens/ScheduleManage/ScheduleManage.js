@@ -9,17 +9,17 @@ import Toast from "react-native-toast-message";
 
 const ScheduleManage = () => {
 
-  const useLoginRole = useSelector(state => state.user.signInPerson.role);
   const [selectedStartDate, setselectedStartDate] = useState(null)
   const [ScheduleTime, setScheduleTime] = useState([])
   const [selectTime, setselectTime] = useState(ScheduleTime)
+
+  const [selectTimeDataCheck, setselectTimeDataCheck] = useState([])
 
   const [listDoctors, setlistDoctors] = useState([])
   const [selectedDoctorId, setselectedDoctorId] = useState(0)
   const [scheduleList, setscheduleList] = useState([])
   const [listUsersData, setlistUsersData] = useState([])
   const [eror, seteror] = useState({})
-const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
   const MAX_NUMBER = 10;
   let result = [];
 
@@ -89,17 +89,7 @@ const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
     setselectedDoctorId(value)
   }
 
-  const handleOnpress = (item) => {
-    const newItem = selectTime.map((val) => {
-      if (val.id === item.id) {
-        return { ...val, selected: !val.selected }
-      } else {
-        return val;
-      }
-    })
-    setselectTime(newItem)
-  }
-
+ 
   const buildDataInput = (inputData) => {
     let object = {};
     if (inputData) {
@@ -111,6 +101,7 @@ const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
   }
 
   const validateBlank = () => {
+    selectTimeCheck()
     let errors = {};
     let formIsValid = true;
     if (!selectedDoctorId) {
@@ -121,7 +112,7 @@ const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
         formIsValid = false;
         errors["date"] = "Bạn cần phải chọn ngày đăng ký khám!";
       } else {
-        if (!selectedTimeDataPush && selectedTimeDataPush.length < 0) {
+        if (selectTimeDataCheck.length === 0 ) {
           formIsValid = false;
           errors["time"] = "Bạn cần phải chọn khung thời gian khám!";
         }
@@ -130,10 +121,34 @@ const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
     seteror(errors);
     return formIsValid;
   }
+ 
+  useEffect(() => {
+    validateBlank()
+  }, [selectedDoctorId, selectedStartDate, selectTime])
+
+  const handleOnpress = (item) => {
+    const newItem = selectTime.map((val) => {
+      if (val.id === item.id) {
+        return { ...val, selected: !val.selected }
+      } else {
+        return val;
+      }
+    })
+    setselectTime(newItem)
+  }
+  const selectTimeCheck = () =>{
+    let selectedTimeArr =[]
+    selectTime.map( item =>{
+      if (item.selected) {
+        selectedTimeArr.push(item)
+      }
+    })
+    setselectTimeDataCheck(selectedTimeArr)
+  }
+
   const handleSave = () => {
-   
+
     if (!validateBlank()) {
-      console.log("gia tri check",eror["doctor"] );
 
       if (eror["doctor"]) {
         Toast.show({
@@ -141,48 +156,62 @@ const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
           text1: "Thông báo",
           text2: `${eror['doctor']}`,
         });
-      }else{
-        if (!eror['date']) {
+      } else {
+        if (eror['date']) {
           Toast.show({
             type: "error",
             text1: "Thông báo",
-            text2: `${eror['date']}`,
+            text2: `${eror["date"]}`,
           });
-        }else{
-          if (!eror['time']) {
+        } else {
+          if (eror['time']) {
+            console.log("gia tri ",eror["time"]);
             Toast.show({
               type: "error",
               text1: "Thông báo",
               text2: `${eror['time']}`,
             });
-          }else{
-            let formatedDateDataPush = new Date(selectedStartDate).getTime();
-            selectedTimeDataPush = selectTime.filter(item => item.selected === true);
-            if (selectedTimeDataPush && selectedTimeDataPush.length > 0) {
-        
-              selectedTimeDataPush.map(item => {
-                let object = {};
-                object.maxnumber = MAX_NUMBER;
-                object.date = formatedDateDataPush.toString();
-           
-                object.doctorid = selectedDoctorId;
-                object.timetype = item.key;
-        
-                result.push(object);
-        
-              });
-              //check exist
-              const myDifferences = _.differenceWith(result, scheduleList, (a, b) => {
-                return a.timetype === b.timetype && a.date === b.date;
-              });
-              if (myDifferences && myDifferences.length > 0) {
-                let payload = {
-                  "bulkSchedules": myDifferences
-                }
-                handleLogin(url_Schedule, payload)
-              }
-            }
+          } 
+        }
+      }
+    }else {
+      let formatedDateDataPush = new Date(selectedStartDate).getTime();
+      let selectedTimeDataPush = selectTime.filter(item => item.selected === true);
+      if (selectedTimeDataPush && selectedTimeDataPush.length > 0) {
+
+        selectedTimeDataPush.map(item => {
+          let object = {};
+          object.maxnumber = MAX_NUMBER;
+          object.date = formatedDateDataPush.toString();
+
+          object.doctorid = selectedDoctorId;
+          object.timetype = item.key;
+
+          result.push(object);
+
+        });
+        //check exist
+        const myDifferences = _.differenceWith(result, scheduleList, (a, b) => {
+          return a.timetype === b.timetype && a.date === b.date;
+        });
+        if (myDifferences && myDifferences.length > 0) {
+          let payload = {
+            "bulkSchedules": myDifferences
           }
+         try {
+          handleLogin(url_Schedule, payload)
+          Toast.show({
+            type: "success",
+            text1: "Thông báo",
+            text2: "Đã cập nhật lịch khám thành công!",
+          });
+         } catch (error) {
+          Toast.show({
+            type: "error",
+            text1: "Thông báo",
+            text2: "Không thể đăng ký lịch khám,vui lòng kiểm tra lại!",
+          });
+         }
         }
       }
     }
@@ -206,14 +235,14 @@ const [selectedTimeDataPush, setselectedTimeDataPush] = useState([])
 
         <Text style={{ fontSize: 13, fontWeight: '400', marginLeft: 10 }}> *Xin mời quản trị viên và bác sĩ lựa chọn kế hoạch khám bệnh trong tương lai</Text>
         <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>Chọn bác sĩ</Text>
-            <RNPickerSelect
-              onValueChange={handleChangeDoctor}
-              placeholder={{
-                label: 'Chọn bác sĩ ... ',
-                value: null,
-              }}
-              items={listDoctors}
-            />
+        <RNPickerSelect
+          onValueChange={handleChangeDoctor}
+          placeholder={{
+            label: 'Chọn bác sĩ ... ',
+            value: null,
+          }}
+          items={listDoctors}
+        />
         <View>
           <Text style={{ fontSize: 17, fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>Chọn ngày đăng ký khám</Text>
           <CalendarPicker
