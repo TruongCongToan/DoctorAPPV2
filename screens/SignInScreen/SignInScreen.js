@@ -13,7 +13,7 @@ import FlashMessage from "react-native-flash-message";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 
-import Logo from "../../assets/image/healthcare.png";
+import Logo from "../../assets/image/healthcare.jpg";
 import CustomButton from "../../components/CustomButton";
 import CustomInput from "../../components/CustomInput";
 import SocialSignInButton from "../../components/SocialSignInButton";
@@ -22,15 +22,17 @@ import Toast from "react-native-toast-message";
 
 import { useDispatch, useSelect, useSelector } from "react-redux";
 import allAction from "../../components/redux/action/allAction";
+import AppLoader from "../AppLoader/AppLoader";
 
 const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const [loginPending, setloginPending] = useState(false)
 
   
   var url = "https://api-truongcongtoan-login.herokuapp.com/api/user/login";
-  var url_email = "https://api-truongcongtoan-login.herokuapp.com/api/user/";
+  var url_email = "https://api-truongcongtoan.herokuapp.com/api/users/";
 
   const [loginData, setloginData] = useState({
     email: "",
@@ -50,9 +52,10 @@ const SignInScreen = () => {
       seterror(errorsCheck);
       try {
         handleLogin(url, loginData);
+        setloginPending(true)
         showMessage({
-          message: "Hello World",
-          description: "This is our second message",
+          message: "Health care xin chào !",
+          description: "Chúc bạn một ngày tốt lành !",
           type: "success",
         });
       } catch (error) {
@@ -95,8 +98,9 @@ const SignInScreen = () => {
       .then((result) => {
         if (JSON.parse(result).access_token) {
           getLogInedPersonInfo(email);
-          // console.log(JSON.parse(result).access_token);
+          setloginPending(false)
         } else {
+          setloginPending(false)
           Toast.show({
             type: "error",
             text1: "Thông báo",
@@ -121,6 +125,9 @@ const SignInScreen = () => {
     fetch(`${url_email}${email}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        console.log("email",`${url_email}${email}`);
+          console.log(result);
+
 
         dispatch(allAction.userAction.addSignIn(JSON.parse(result)));
         // setdataResponse(JSON.parse(result));
@@ -128,8 +135,7 @@ const SignInScreen = () => {
       })
       .catch((error) => console.log("error", error));
   };
-  // console.log("Data res",dataResponse);
-  //forgot password press
+ 
   const onForgotPassPressed = () => {
     navigation.navigate("ForgotPassWord");
   };
@@ -182,7 +188,7 @@ const SignInScreen = () => {
       <View style={styles.root}>
         <Image
           source={Logo}
-          style={[styles.logo, { height: height * 0.3 }]}
+          style={[styles.logo, { height: height * 0.2 }]}
           resizeMode="contain"
         />
 
@@ -216,7 +222,7 @@ const SignInScreen = () => {
         />
       </View>
       <FlashMessage position="top" />
-
+    {loginPending ?  <AppLoader /> : null}
     </ScrollView>
   );
 };
@@ -231,6 +237,7 @@ const styles = StyleSheet.create({
     maxHeight: 200,
     borderRadius: 10,
     borderWidth: 0,
+    marginTop:20
   },
   error: {
     fontSize: 12,

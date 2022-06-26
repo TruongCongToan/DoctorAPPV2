@@ -1,10 +1,11 @@
-import {ADD_USER,ADD_LIST_USER,GET_RESPONSE,ADD_SIGN_IN} from '../constant'
+import {ADD_USER,ADD_LIST_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LOADING_PAGE} from '../constant'
 
 const initialState = {
    listUser:[],
     response:{},
     signInPerson:{},
-    user:{}
+    user:{},
+    checkLoadingPage:{}
 }
 const userReducer =(state= initialState,action)=>{
     switch(action.type){
@@ -29,6 +30,11 @@ const userReducer =(state= initialState,action)=>{
         return{
             ...state,
             signInPerson:action.payload
+        }
+    case ADD_LOADING_PAGE:
+        return{
+            ...state,
+            checkLoadingPage:action.payload
         }
      
     default: return state

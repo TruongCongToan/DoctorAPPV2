@@ -1,7 +1,6 @@
 import { View, Text, Image, TouchableOpacity,StyleSheet, FlatList, ScrollView } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import SearchScreen from "../SearchScreen/SearchScreen";
 import HeaderScreen from "../HeaderScreen/HeaderScreen";
 import TableTwo from "../../components/TableTwo/TableTwo";

@@ -5,6 +5,7 @@ import CustomInput from "../../components/CustomInput";
 import SocialSignInButton from "../../components/SocialSignInButton";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
+import AppLoader from "../AppLoader/AppLoader";
 
 const SignUpcreen = () => {
   const [fullname, setfullname] = useState("");
@@ -12,6 +13,7 @@ const SignUpcreen = () => {
   const [email, setemail] = useState("");
   const [passwordRepeate, setpasswordRepeate] = useState("");
 
+  const [loginPending, setloginPending] = useState(false)
   const [registerData, setregisterData] = useState("");
   const [error, seterror] = useState({});
 
@@ -23,7 +25,9 @@ const SignUpcreen = () => {
   const onSignUpPress = () => {
     if (validateBlank()) {
       try {
+        setloginPending(true)
         handleRegister(url, registerData);
+       
       } catch (error) {
         Toast.show({
           type: "error",
@@ -41,6 +45,7 @@ const SignUpcreen = () => {
       password: password,
     });
   }, [fullname, email, password]);
+
 
   const handleRegister = async (url, data = {}) => {
     console.log("calling data ...");
@@ -65,7 +70,7 @@ const SignUpcreen = () => {
             text1: "Thông báo",
             text2: "Đăng ký tài khoản thành công!",
           });
-          // console.log(JSON.parse(result).token);
+          setloginPending(false)
           navigation.navigate("SignIn");
         } else {
           Toast.show({
@@ -207,6 +212,7 @@ const SignUpcreen = () => {
           type="TERTIARY"
         />
       </View>
+      {loginPending ?  <AppLoader /> : null}
     </ScrollView>
   );
 };

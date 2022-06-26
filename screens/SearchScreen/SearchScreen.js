@@ -8,13 +8,20 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, FlatList } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import HeaderLogo from '../HeaderScreen/HeaderLogo'
+import ModalPopup from '../../components/TableTwo/ModalPopup'
+import { useSelector } from "react-redux";
+
 const SearchScreen = () => {
     const [search, setSearch] = useState('');
     const [filteredDataSource, setFilteredDataSource] = useState([]);
     const [masterDataSource, setMasterDataSource] = useState([]);
+    const [visible, setvisible] = useState(false);
+    var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/";
+
+    var checkLoadingPage = useSelector(state => state.user)
 
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/posts')
+        fetch(url_User)
             .then((response) => response.json())
             .then((responseJson) => {
                 setFilteredDataSource(responseJson);
@@ -23,17 +30,14 @@ const SearchScreen = () => {
             .catch((error) => {
                 console.error(error);
             });
-    }, []);
+    }, [checkLoadingPage]);
 
     const searchFilterFunction = (text) => {
         // Check if searched text is not blank
         if (text) {
-            // Inserted text is not blank
-            // Filter the masterDataSource
-            // Update FilteredDataSource
             const newData = masterDataSource.filter(function (item) {
-                const itemData = item.title
-                    ? item.title.toUpperCase()
+                const itemData = item.full_name
+                    ? item.full_name.toUpperCase()
                     : ''.toUpperCase();
                 const textData = text.toUpperCase();
                 return itemData.indexOf(textData) > -1;
@@ -41,8 +45,6 @@ const SearchScreen = () => {
             setFilteredDataSource(newData);
             setSearch(text);
         } else {
-            // Inserted text is blank
-            // Update FilteredDataSource with masterDataSource
             setFilteredDataSource(masterDataSource);
             setSearch(text);
         }
@@ -50,18 +52,18 @@ const SearchScreen = () => {
 
     const ItemView = ({ item }) => {
         return (
-            // Flat List Item
             <Text style={styles.itemStyle} onPress={() => getItem(item)}>
-                {item.id}
-                {'.'}
-                {item.title.toUpperCase()}
+
+                {item.full_name.toUpperCase()}
+                {' - '}
+                {"Loại tài khoản : "}
+                {item.allCodeRole.valuevi}
             </Text>
         );
     };
 
     const ItemSeparatorView = () => {
         return (
-            // Flat List Item Separator
             <View
                 style={{
                     height: 0.5,
@@ -71,46 +73,66 @@ const SearchScreen = () => {
             />
         );
     };
+    const [dataUser, setdataUser] = useState({})
 
     const getItem = (item) => {
         // Function for click on an item
-        alert('Id : ' + item.id + ' Title : ' + item.title);
-    };
+        setvisible(true);
+        // alert('Id : ' + item.id + ' full_name : ' + item.email);
+        handleLogin(`${url_User}${item.email}`, setdataUser)
 
+    };
+    // console.log("gia tri lay duoc la ",dataUser);
+  
+    const handleLogin = async (url, setData) => {
+        // console.log("calling data ...");
+    
+        var requestOptions = {
+          method: "GET",
+          transparentirect: "follow",
+        };
+    
+        fetch(url, requestOptions)
+          .then((response) => response.text())
+          .then((result) => {
+            setData(JSON.parse(result))
+          })
+          .catch((error) => console.log("error", error));
+      };
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <ModalPopup visible={visible} setvisible={setvisible} dataUser={dataUser}/>
+                <View style={styles.container}  >
+                    <HeaderLogo />
+                    <SearchBar
+                        round
+                        searchIcon={{ size: 24, color: 'white' }}
+                        onChangeText={(text) => searchFilterFunction(text)}
+                        onClear={(text) => searchFilterFunction('')}
+                        placeholder="Tìm kiếm thông tin..."
+                        value={search}
+                        inputContainerStyle={{ backgroundColor: '#0092c5' }}
+                        placeholderTextColor={'white'}
 
-            <View style={styles.container}  >
-                <HeaderLogo/>
-                <SearchBar
-                    round
-                    searchIcon={{ size: 24,color:'white' }}
-                    onChangeText={(text) => searchFilterFunction(text)}
-                    onClear={(text) => searchFilterFunction('')}
-                    placeholder="Tìm kiếm thông tin..."
-                    value={search}
-                    inputContainerStyle={{ backgroundColor: '#0092c5' }}
-                    placeholderTextColor={'white'}
+                        containerStyle={{
+                            backgroundColor: 'white',
+                            borderWidth: 1,
+                            borderTopColor: 'white',
+                            corlor: 'white',
+                            borderBottomColor: 'white',
+                            elevation: 0
+                            , borderRadius: 5
+                        }}
 
-                    containerStyle={{
-                        backgroundColor: 'white',
-                        borderWidth: 1,
-                        borderTopColor: 'white',
-                        corlor: 'white',
-                        borderBottomColor:'white',
-                        elevation: 0
-                        , borderRadius: 5
-                    }}
-                 
-                />
-                <FlatList
-                    data={filteredDataSource}
-                    keyExtractor={(item, index) => index.toString()}
-                    ItemSeparatorComponent={ItemSeparatorView}
-                    renderItem={ItemView}
+                    />
+                    <FlatList
+                        data={filteredDataSource}
+                        keyExtractor={(item, index) => index.toString()}
+                        ItemSeparatorComponent={ItemSeparatorView}
+                        renderItem={ItemView}
 
-                />
-            </View>
+                    />
+                </View>
         </SafeAreaView>
     );
 };
