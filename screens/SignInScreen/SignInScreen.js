@@ -6,7 +6,6 @@ import {
   StyleSheet,
   useWindowDimensions,
   ScrollView,
-  Alert,
 } from "react-native";
 
 import FlashMessage from "react-native-flash-message";
@@ -20,7 +19,7 @@ import SocialSignInButton from "../../components/SocialSignInButton";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
-import { useDispatch, useSelect, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import allAction from "../../components/redux/action/allAction";
 import AppLoader from "../AppLoader/AppLoader";
 

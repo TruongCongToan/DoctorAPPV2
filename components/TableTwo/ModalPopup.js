@@ -19,7 +19,7 @@ import {
   import FlashMessage from "react-native-flash-message";
   import { showMessage, hideMessage } from "react-native-flash-message";
   import * as ImagePicker from 'expo-image-picker';
-  import { useDispatch, useSelect, useSelector } from "react-redux";
+  import { useDispatch,  } from "react-redux";
   import allAction from "../redux/action/allAction";
   import AppLoader from "../../screens/AppLoader/AppLoader";
   import Toast from "react-native-toast-message";

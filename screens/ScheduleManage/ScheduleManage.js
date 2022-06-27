@@ -2,19 +2,15 @@ import { View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native
 import React, { useState, useEffect } from 'react'
 import HeaderLogo from '../HeaderScreen/HeaderLogo'
 import RNPickerSelect from 'react-native-picker-select';
-import { useSelector } from "react-redux";
 import CalendarPicker from 'react-native-calendar-picker';
 import _ from 'lodash';
 import Toast from "react-native-toast-message";
 
 const ScheduleManage = () => {
-
   const [selectedStartDate, setselectedStartDate] = useState(null)
   const [ScheduleTime, setScheduleTime] = useState([])
   const [selectTime, setselectTime] = useState(ScheduleTime)
-
   const [selectTimeDataCheck, setselectTimeDataCheck] = useState([])
-
   const [listDoctors, setlistDoctors] = useState([])
   const [selectedDoctorId, setselectedDoctorId] = useState(0)
   const [scheduleList, setscheduleList] = useState([])
@@ -24,19 +20,34 @@ const ScheduleManage = () => {
   let result = [];
 
   var url_Time = "https://api-truongcongtoan.herokuapp.com/api/allcode/TIME"
-  var url_Schedule = "https://api-truongcongtoan.herokuapp.com/api/schedules"
+  var url_Schedule = "https://api-truongcongtoan.herokuapp.com/api/schedules/"
   var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/doctors"
-
 
   const fetchDataTime = (url, setData) => {
     var requestOptions = {
       method: 'GET',
       redirect: 'follow'
     };
-
     fetch(url, requestOptions)
       .then(response => response.text())
       .then(result => { setData(JSON.parse(result)) })
+      .catch(error => console.log('error', error));
+  }
+  useEffect(() => {
+    fetchDataTime(url_Time, setScheduleTime)
+    fetchDataTime(url_Schedule, setscheduleList)
+    fetchDataTime(url_User, setlistUsersData)
+  }, [])
+  const fetchDataById = (url, setData,id) => {
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    fetch(`${url}${id}`, requestOptions)
+      .then(response => response.text())
+      .then(result => { 
+        setData(JSON.parse(result))
+       })
       .catch(error => console.log('error', error));
   }
   useEffect(() => {
@@ -48,28 +59,28 @@ const ScheduleManage = () => {
     setselectTime(ScheduleTime)
 
   }, [ScheduleTime])
-
+  const [addDataResponse, setaddDataResponse] = useState([])
   const handleLogin = async (url, data = {}) => {
     console.log("calling data ...");
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
     var raw = JSON.stringify(data);
-
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: raw,
       redirect: "follow",
     };
-
     return fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        console.log(result);
+        setaddDataResponse(JSON.parse(result))
       })
       .catch((error) => console.log("error", error));
   };
+  useEffect(() => {
+    fetchDataById(url_Schedule,setscheduleList,selectedDoctorId)
+  }, [addDataResponse])
 
   useEffect(() => {
     let listdoctor = []
@@ -81,15 +92,13 @@ const ScheduleManage = () => {
     }
     setlistDoctors(listdoctor)
   }, [listUsersData]);
-
+  
   const onDateChange = (date) => {
     setselectedStartDate(date)
   }
   const handleChangeDoctor = (value) => {
     setselectedDoctorId(value)
   }
-
- 
   const buildDataInput = (inputData) => {
     let object = {};
     if (inputData) {
@@ -99,7 +108,6 @@ const ScheduleManage = () => {
     }
     return object;
   }
-
   const validateBlank = () => {
     selectTimeCheck()
     let errors = {};
@@ -121,7 +129,6 @@ const ScheduleManage = () => {
     seteror(errors);
     return formIsValid;
   }
- 
   useEffect(() => {
     validateBlank()
   }, [selectedDoctorId, selectedStartDate, selectTime])
@@ -145,7 +152,6 @@ const ScheduleManage = () => {
     })
     setselectTimeDataCheck(selectedTimeArr)
   }
-
   const handleSave = () => {
 
     if (!validateBlank()) {
@@ -178,17 +184,13 @@ const ScheduleManage = () => {
       let formatedDateDataPush = new Date(selectedStartDate).getTime();
       let selectedTimeDataPush = selectTime.filter(item => item.selected === true);
       if (selectedTimeDataPush && selectedTimeDataPush.length > 0) {
-
         selectedTimeDataPush.map(item => {
           let object = {};
           object.maxnumber = MAX_NUMBER;
           object.date = formatedDateDataPush.toString();
-
           object.doctorid = selectedDoctorId;
           object.timetype = item.key;
-
           result.push(object);
-
         });
         //check exist
         const myDifferences = _.differenceWith(result, scheduleList, (a, b) => {
@@ -199,6 +201,7 @@ const ScheduleManage = () => {
             "bulkSchedules": myDifferences
           }
          try {
+          console.log("payload",payload);
           handleLogin(url_Schedule, payload)
           Toast.show({
             type: "success",
@@ -215,11 +218,7 @@ const ScheduleManage = () => {
         }
       }
     }
-
-
   }
-
-
   return (
     <View style={{ width: '100%', height: '100%' }}>
       <HeaderLogo />
@@ -231,10 +230,11 @@ const ScheduleManage = () => {
           marginTop: 40,
           marginBottom: 10,
           textAlign: 'center'
+          
         }}> Quản lý kế hoạch khám bệnh</Text>
 
         <Text style={{ fontSize: 13, fontWeight: '400', marginLeft: 10 }}> *Xin mời quản trị viên và bác sĩ lựa chọn kế hoạch khám bệnh trong tương lai</Text>
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>Chọn bác sĩ</Text>
+        <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10, marginTop: 10 ,color:eror["doctor"] ? "red":"black"}}>1. Chọn bác sĩ</Text>
         <RNPickerSelect
           onValueChange={handleChangeDoctor}
           placeholder={{
@@ -244,13 +244,13 @@ const ScheduleManage = () => {
           items={listDoctors}
         />
         <View>
-          <Text style={{ fontSize: 17, fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>Chọn ngày đăng ký khám</Text>
+          <Text style={{ fontSize: 17, fontWeight: 'bold', marginLeft: 10, marginTop: 10,color:eror["date"] ? "red":"black" }}>2. Chọn ngày đăng ký khám</Text>
           <CalendarPicker
             onDateChange={onDateChange}
           />
         </View>
         <View>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>Chọn khung thời gian khám</Text>
+          <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 10, marginTop: 10,color:eror["time"] ? "red":"black" }}>3. Chọn khung thời gian khám</Text>
           <ScrollView horizontal={true} style={{ width: 500 }}>
             <FlatList
               data={selectTime}
@@ -279,17 +279,12 @@ const ScheduleManage = () => {
                 alignItems: "center",
               }}
               onPress={handleSave}
-
             >
               <Text style={{ color: "white" }}>Lưu thông tin</Text>
             </TouchableOpacity>
-
           </View>
         </View>
-
       </ScrollView>
-
-
     </View>
   )
 }

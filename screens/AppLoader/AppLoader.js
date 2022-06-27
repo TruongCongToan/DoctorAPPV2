@@ -6,6 +6,7 @@ const AppLoader = () => {
   return (
     <View style = {[StyleSheet.absoluteFillObject,styles.container]}>
       <LottieView source={require('../../assets/image/blueheart.json')} autoPlay loop style={{justifyContent:'center',alignItems:'center',marginBottom:'10%'}}/>
+      
     </View>
   )
 }

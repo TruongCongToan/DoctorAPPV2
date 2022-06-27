@@ -1,29 +1,43 @@
 import { View, Text, Image, TouchableOpacity,StyleSheet, FlatList, ScrollView } from "react-native";
-import React from "react";
+import React,{useEffect,useState} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SearchScreen from "../SearchScreen/SearchScreen";
 import HeaderScreen from "../HeaderScreen/HeaderScreen";
 import TableTwo from "../../components/TableTwo/TableTwo";
+import { useSelector } from "react-redux";
+import TableOne from "../../components/TableTwo/TableOne";
 // import { Container } from "native-base";
 // import { useSelector } from "react-redux";
+var url = "https://api-truongcongtoan.herokuapp.com/api/users/doctors";
+
 const HomeScreen = ({ navigation }) => {
+  var SignInPerson = useSelector(state => state.user.signInPerson)
+
+  // console.log("asdw",SignInPerson.signInPerson.role);
+  const [listUsers, setlistUsers] = useState([])
+  const fetchData = async (url, setData) => {
+    var requestOptions = {
+      method: "GET",
+      transparentirect: "follow",
+    };
+    fetch(url, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        setData(JSON.parse(result))
+      })
+      .catch((error) => console.log("error", error));
+  };
+  useEffect(() => {
+    fetchData(url,setlistUsers)
+  }, [])
+  
   return (
     <SafeAreaView style={{ flex: 1 }}>
     <HeaderScreen navigation = {navigation}/>
-    <TableTwo/>
+   
+    {SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} /> : <TableTwo/>}
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-});
+
 export default HomeScreen;

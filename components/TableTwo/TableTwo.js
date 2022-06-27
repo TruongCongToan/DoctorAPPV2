@@ -11,8 +11,6 @@ import AppLoader from "../../screens/AppLoader/AppLoader";
 import ModalPopup from "./ModalPopup";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
-import { useDispatch,  } from "react-redux";
-import allAction from "../redux/action/allAction";
 
 
 const TableTwo = () => {
@@ -20,13 +18,12 @@ const TableTwo = () => {
   const [showBox, setShowBox] = useState(true);
   const [visible, setvisible] = useState(false);
   const [count, setcount] = useState(1)
-  const [dataUser, setdataUser] = useState({})
+  const [dataUser, setdataUser] = useState([])
   const [doctorList, setdoctorList] = useState([])
 
   var url = "https://api-truongcongtoan.herokuapp.com/api/users";
   var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/";
   var url_Doctor = "http://api-truongcongtoan.herokuapp.com/api/users/doctors"
-  const dispatch = useDispatch();
 
   const showConfirmDialog = (item, index) => {
     handleLogin(`${url_User}${item.email}`, setdataUser)
@@ -385,6 +382,7 @@ const TableTwo = () => {
           }
         </View>
       </ScrollView>
+      {dataGet.length === 0 ? <AppLoader /> : null}
     </>
   );
 };
