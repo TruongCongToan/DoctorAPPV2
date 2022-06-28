@@ -12,8 +12,8 @@ var url = "https://api-truongcongtoan.herokuapp.com/api/users/doctors";
 const HomeScreen = ({ navigation }) => {
   var SignInPerson = useSelector(state => state.user.signInPerson)
 
-  // console.log("asdw",SignInPerson.signInPerson.role);
   const [listUsers, setlistUsers] = useState([])
+
   const fetchData = async (url, setData) => {
     var requestOptions = {
       method: "GET",
@@ -28,13 +28,13 @@ const HomeScreen = ({ navigation }) => {
   };
   useEffect(() => {
     fetchData(url,setlistUsers)
-  }, [])
+  }, [SignInPerson])
   
   return (
     <SafeAreaView style={{ flex: 1 }}>
     <HeaderScreen navigation = {navigation}/>
    
-    {SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} /> : <TableTwo/>}
+    {SignInPerson && SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} /> : <TableTwo/>}
     </SafeAreaView>
   );
 };

@@ -22,15 +22,16 @@ const BottomTabNavigator = () => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            position: "absolute",
-            bottom: 25,
-            left: 20,
-            right: 20,
+            position: 'absolute',
+            bottom: 0,
+            left: 5,
+            right: 5,
             elevation: 0,
             backgroundColor: "#ffffff",
             borderRadius: 15,
             height: 80,
             shadowColor: "black",
+            paddingBottom:10
           },
         }}
       >
@@ -163,6 +164,5 @@ const BottomTabNavigator = () => {
     </>
   );
 };
-const styles = StyleSheet.create({});
 
 export { BottomTabNavigator };

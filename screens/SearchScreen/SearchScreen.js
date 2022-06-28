@@ -10,6 +10,7 @@ import { SearchBar } from 'react-native-elements';
 import HeaderLogo from '../HeaderScreen/HeaderLogo'
 import ModalPopup from '../../components/TableTwo/ModalPopup'
 import { useSelector } from "react-redux";
+import AppLoader from '../AppLoader/AppLoader';
 
 const SearchScreen = () => {
     const [search, setSearch] = useState('');
@@ -133,6 +134,7 @@ const SearchScreen = () => {
 
                     />
                 </View>
+                {!dataUser ? <AppLoader /> : null}
         </SafeAreaView>
     );
 };

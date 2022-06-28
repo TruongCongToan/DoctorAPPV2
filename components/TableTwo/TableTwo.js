@@ -90,13 +90,16 @@ const TableTwo = () => {
   };
   var checkLoadingPage = useSelector(state => state.user)
   useEffect(() => {
-    handleLogin(url, setDataGet);
-    handleLogin(url_Doctor,setdoctorList)
-  }, [count, checkLoadingPage]);
+    let isCancelled = false;
 
-  // useEffect(() => {
-  //     dis
-  // }, [doctorList])
+    if (!isCancelled) {
+      handleLogin(url, setDataGet);
+      handleLogin(url_Doctor,setdoctorList)
+    }
+    return () => {
+      isCancelled = true;
+    };
+  }, [count, checkLoadingPage]);
   
   const handleLogin = async (url, setData) => {
     var requestOptions = {
@@ -269,7 +272,8 @@ const TableTwo = () => {
             </View>
           </View>
 
-          {dataGet
+          {
+          dataGet
             ?
             dataGet.map((item, index) => (
               <View style={{ flexDirection: "row" }} key={index}>
@@ -382,7 +386,7 @@ const TableTwo = () => {
           }
         </View>
       </ScrollView>
-      {dataGet.length === 0 ? <AppLoader /> : null}
+      {/* {dataGet.length === 0 ? <AppLoader /> : null} */}
     </>
   );
 };

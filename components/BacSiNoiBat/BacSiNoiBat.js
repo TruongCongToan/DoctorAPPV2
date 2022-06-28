@@ -20,7 +20,7 @@ const BacSiNoiBat = (props) => {
   }
 
   const onPressImg = (value) => {
-    console.log("imag",value);
+    console.log("imag");
   }
   return (
     <SafeAreaView style={{ flex: 1 }}>

@@ -46,7 +46,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Trang chủ" component={BottomTabNavigator} />
       {
-        signInPerson && (signInPerson.role === "R1" || signInPerson.role === "R2")
+        signInPerson && signInPerson.role && (signInPerson.role === "R1" || signInPerson.role === "R2")
           ?
           <>
             <Drawer.Screen name="Quản lý lịch khám bệnh" component={ScheduleManage} />
@@ -55,7 +55,8 @@ const DrawerNavigator = () => {
           </>
           :
          
-          <>{
+          <>
+          {
             personDataLogin ?
          <>
           <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
