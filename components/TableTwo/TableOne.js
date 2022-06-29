@@ -1,4 +1,4 @@
-import { View, Text, Image, ScrollView, ImageBackground } from 'react-native'
+import { View, Text, Image, ScrollView, RefreshControl, StyleSheet, ImageBackground } from 'react-native'
 import React from 'react'
 import BacSiNoiBat from '../BacSiNoiBat/BacSiNoiBat'
 import BannerScreen from './BannerScreen'
@@ -6,15 +6,32 @@ import BannerScreen from './BannerScreen'
 const TableOne = (props) => {
 
     let listUsers = props.listUsers
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const wait = (timeout) => {
+        return new Promise(resolve => setTimeout(resolve, timeout));
+    }
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
 
     const onPressViewMore = () => {
         console.log("View More");
     }
     return (
-        
+
         <View style={{ flex: 1 }}>
 
-            <ScrollView>
+            <ScrollView
+                // contentContainerStyle= {styles.scrollView}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
+            >
                 <View >
                     <BannerScreen />
                 </View>
@@ -31,5 +48,16 @@ const TableOne = (props) => {
         </View>
     )
 }
-
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    scrollView: {
+      flex: 1,
+      backgroundColor: 'transparent',
+      alignItems: 'center',
+      justifyContent: 'center',
+      
+    },
+  });
 export default TableOne

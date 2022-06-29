@@ -1,11 +1,12 @@
-import {ADD_USER,ADD_LIST_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LOADING_PAGE} from '../constant'
+import {ADD_USER,ADD_LIST_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LOADING_PAGE,ADD_MARKDOWN} from '../constant'
 
 const initialState = {
    listUser:[],
     response:{},
     signInPerson:{},
-    user:{},
-    checkLoadingPage:{}
+    getoneuser:{},
+    checkLoadingPage:{},
+    markdown:{}
 }
 const userReducer =(state= initialState,action)=>{
     switch(action.type){
@@ -18,7 +19,7 @@ const userReducer =(state= initialState,action)=>{
     case ADD_USER:
         return{
             ...state,
-            user:action.payload
+            getoneuser:action.payload
         }
 
     case GET_RESPONSE:
@@ -36,6 +37,11 @@ const userReducer =(state= initialState,action)=>{
             ...state,
             checkLoadingPage:action.payload
         }
+    case ADD_MARKDOWN:
+            return{
+                ...state,
+                markdown:action.payload
+            }
      
     default: return state
     }

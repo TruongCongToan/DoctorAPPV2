@@ -1,4 +1,4 @@
-import {ADD_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LIST_USER,ADD_LOADING_PAGE} from '../constant'
+import {ADD_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LIST_USER,ADD_LOADING_PAGE,ADD_MARKDOWN} from '../constant'
 
 const addUser = ( obj) =>{
     return{
@@ -30,4 +30,10 @@ const addCheckLoadingPage = (obj) =>{
         payload:obj
     }
 }
- export default{getResponse,addSignIn,addUser,addListUser,addCheckLoadingPage}
+const addMarkDown = (obj) =>{
+    return{
+        type:ADD_MARKDOWN,
+        payload:obj
+    }
+}
+ export default{getResponse,addSignIn,addUser,addListUser,addCheckLoadingPage,addMarkDown}

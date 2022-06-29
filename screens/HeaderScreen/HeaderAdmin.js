@@ -9,6 +9,8 @@ const HeaderScreen = ({navigation}) => {
           backgroundColor: "#ffffff",
           flexDirection: "row",
           justifyContent: "space-between",
+          borderBottomWidth:0.2,
+          borderBottomColor:'gray'
         }}
       >
         <TouchableOpacity

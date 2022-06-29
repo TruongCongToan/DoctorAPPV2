@@ -1,34 +1,62 @@
 import { View, Text, Image, SafeAreaView, TouchableOpacity, Dimensions, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-
-const images = [
-  "https://cdn.pixabay.com/photo/2022/06/22/10/47/cheetah-7277665_1280.jpg",
-  "https://cdn.pixabay.com/photo/2021/08/21/09/26/dawn-6562295_1280.jpg",
-  "https://cdn.pixabay.com/photo/2021/11/22/16/45/sheeps-6816871_1280.jpg",
-  "https://cdn.pixabay.com/photo/2021/08/21/09/26/dawn-6562295_1280.jpg",
-  "https://cdn.pixabay.com/photo/2021/11/22/16/45/sheeps-6816871_1280.jpg"
-]
+import { useNavigation } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
+import allAction from '../redux/action/allAction'
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
+const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/"
+const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
 
 const BacSiNoiBat = (props) => {
+
   let listUsers = props.listUsers
+  const navigation = useNavigation();
+  const [SelectedUser, setSelectedUser] = useState({})
+  const [markDownGet, setmarkDownGet] = useState({})
+  const [count, setcount] = useState(0)
 
-  const onchange = () => {
+  const dispatch = useDispatch();
 
+  const onchange = (nativeEvent) => {
   }
+const fetchData = (url,email,setData) =>{
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+  
+  fetch(`${url}${email}`, requestOptions)
+    .then(response => response.text())
+    .then(result => setData(JSON.parse(result)))
+    .catch(error => console.log('error', error));
+}
+
 
   const onPressImg = (value) => {
-    console.log("imag");
+    fetchData(url_User,value.email,setSelectedUser)
+    fetchData(url_markdown,value.user_id,setmarkDownGet)
+    navigation.navigate("Chitietbacsi")
   }
+  useEffect(() => {
+    let check = false ;
+    if (!check) {
+     dispatch(allAction.userAction.addUser(SelectedUser))
+     dispatch(allAction.userAction.addMarkDown(markDownGet))
+    }
+    return () => {
+      check = true
+    }
+  }, [SelectedUser])
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, alignItems: 'center', width: WIDTH,height:300}}>
         <ScrollView
           onScroll={({ nativeEvent }) => onchange(nativeEvent)}
           showsHorizontalScrollIndicator={false}
-          pagingEnabled
+          // pagingEnabled
           horizontal
           style={{
             width: WIDTH, height: HEIGHT * 0.25

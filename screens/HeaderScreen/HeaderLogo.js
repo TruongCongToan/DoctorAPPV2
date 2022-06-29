@@ -11,7 +11,8 @@ const HeaderScreen = () => {
           backgroundColor: "#ffffff",
           flexDirection: "row",
           justifyContent: "space-between",
-          // borderColor:'red's
+          borderBottomWidth:0.2,
+          borderBottomColor:'gray'
         }}
       >
         <TouchableOpacity
@@ -53,7 +54,7 @@ const HeaderScreen = () => {
           name=""
           size={30}
           color="black"
-          style={{ margin: 20 }}
+          style={{ margin: 15 }}
           onPress={() => {
             navigation.navigate("Search");
           }}

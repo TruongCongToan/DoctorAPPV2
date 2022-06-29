@@ -17,6 +17,7 @@ import ForgotPassWord from "./screens/ForgotPassWord/ForgotPassWord";
 import NewPassWord from "./screens/NewPassWord/NewPassWord";
 import SearchScreen from "./screens/SearchScreen/SearchScreen";
 import {LogBox} from "react-native";
+import Chitietbacsi from "./components/Chitietbacsi/Chitietbacsi";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -34,8 +35,8 @@ export default function App() {
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaView style={styles.root}>
             <NavigationContainer>
-              {/* <Stack.Navigator
-                initialRouteName="SignIn"
+              <Stack.Navigator
+                initialRouteName="Drawer"
                 screenOptions={{ headerShown: false }}
               >
                 <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -44,8 +45,9 @@ export default function App() {
                 <Stack.Screen name="ForgotPassWord" component={ForgotPassWord} />
                 <Stack.Screen name="NewPassWord" component={NewPassWord} />
                 <Stack.Screen name="Search" component={SearchScreen} />
-              </Stack.Navigator> */}
-              <DrawerNavigator/>
+                <Stack.Screen name="Chitietbacsi" component={Chitietbacsi} />
+              </Stack.Navigator>
+              {/* <DrawerNavigator/> */}
               {/* <DatePickerCustom/> */}
               {/* <AppLoader/> */}
               {/* <DrawerNavigator/> */}
