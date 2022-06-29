@@ -1,8 +1,8 @@
-import {ADD_USER,ADD_LIST_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LOADING_PAGE,ADD_MARKDOWN} from '../constant'
+import {ADD_USER,ADD_LIST_USER,ADD_DOCTORINFO,ADD_SIGN_IN,ADD_LOADING_PAGE,ADD_MARKDOWN} from '../constant'
 
 const initialState = {
    listUser:[],
-    response:{},
+    doctorInfo:{},
     signInPerson:{},
     getoneuser:{},
     checkLoadingPage:{},
@@ -22,10 +22,10 @@ const userReducer =(state= initialState,action)=>{
             getoneuser:action.payload
         }
 
-    case GET_RESPONSE:
+    case ADD_DOCTORINFO:
         return{
             ...state,
-            response:action.payload
+            doctorInfo:action.payload
         }
     case ADD_SIGN_IN:
         return{

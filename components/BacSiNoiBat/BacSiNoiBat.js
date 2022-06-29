@@ -8,6 +8,7 @@ const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
 const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/"
 const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
+const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/"
 
 const BacSiNoiBat = (props) => {
 
@@ -15,7 +16,7 @@ const BacSiNoiBat = (props) => {
   const navigation = useNavigation();
   const [SelectedUser, setSelectedUser] = useState({})
   const [markDownGet, setmarkDownGet] = useState({})
-  const [count, setcount] = useState(0)
+  const [doctorInfo, setdoctorInfo] = useState({})
 
   const dispatch = useDispatch();
 
@@ -37,6 +38,7 @@ const fetchData = (url,email,setData) =>{
   const onPressImg = (value) => {
     fetchData(url_User,value.email,setSelectedUser)
     fetchData(url_markdown,value.user_id,setmarkDownGet)
+    fetchData(url_Info,value.user_id,setdoctorInfo)
     navigation.navigate("Chitietbacsi")
   }
   useEffect(() => {
@@ -44,6 +46,7 @@ const fetchData = (url,email,setData) =>{
     if (!check) {
      dispatch(allAction.userAction.addUser(SelectedUser))
      dispatch(allAction.userAction.addMarkDown(markDownGet))
+     dispatch(allAction.userAction.addDoctorInfo(doctorInfo))
     }
     return () => {
       check = true

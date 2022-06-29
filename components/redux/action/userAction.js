@@ -1,4 +1,4 @@
-import {ADD_USER,GET_RESPONSE,ADD_SIGN_IN,ADD_LIST_USER,ADD_LOADING_PAGE,ADD_MARKDOWN} from '../constant'
+import {ADD_USER,ADD_SIGN_IN,ADD_LIST_USER,ADD_LOADING_PAGE,ADD_MARKDOWN,ADD_DOCTORINFO} from '../constant'
 
 const addUser = ( obj) =>{
     return{
@@ -12,9 +12,9 @@ const addListUser = ( obj) =>{
         payload:obj
     }
 }
-const getResponse = (obj) =>{
+const addDoctorInfo = (obj) =>{
     return{
-        type:GET_RESPONSE,
+        type:ADD_DOCTORINFO,
         payload:obj
     }
 }
@@ -36,4 +36,4 @@ const addMarkDown = (obj) =>{
         payload:obj
     }
 }
- export default{getResponse,addSignIn,addUser,addListUser,addCheckLoadingPage,addMarkDown}
+ export default{addDoctorInfo,addSignIn,addUser,addListUser,addCheckLoadingPage,addMarkDown}
