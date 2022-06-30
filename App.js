@@ -36,7 +36,7 @@ export default function App() {
           <SafeAreaView style={styles.root}>
             <NavigationContainer>
               <Stack.Navigator
-                initialRouteName="Drawer"
+                initialRouteName="SignIn"
                 screenOptions={{ headerShown: false }}
               >
                 <Stack.Screen name="SignIn" component={SignInScreen} />

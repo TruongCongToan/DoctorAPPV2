@@ -22,13 +22,14 @@ const BacSiNoiBat = (props) => {
 
   const onchange = (nativeEvent) => {
   }
-const fetchData = (url,email,setData) =>{
+const fetchData = (url,user_id,setData) =>{
+  console.log("id la ",user_id);
   var requestOptions = {
     method: 'GET',
-    redirect: 'follow'
+    redirect: 'follow'  
   };
   
-  fetch(`${url}${email}`, requestOptions)
+  fetch(`${url}${user_id}`, requestOptions)
     .then(response => response.text())
     .then(result => setData(JSON.parse(result)))
     .catch(error => console.log('error', error));

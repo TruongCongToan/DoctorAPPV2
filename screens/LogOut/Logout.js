@@ -10,7 +10,7 @@ const Logout = () => {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-  const loginPerson = useSelector( state => state.user.signInPerson.email)
+  const loginPerson = useSelector( state => state.user.signInPerson)
 
   const onPressLogout = () =>{
     dispatch(allAction.userAction.addSignIn(null));
@@ -21,7 +21,7 @@ const Logout = () => {
       <HeaderLogo />
      <View style={{flexDirection:'row'}}>
        <Text style={{marginTop:20,marginLeft:10,fontSize:15}}> Đăng xuất khỏi tài khoản: </Text> 
-       <Text style={{marginTop:15,marginLeft:13,fontSize:15,borderWidth:0.3,padding:5,width:150,backgroundColor:'white',fontWeight:'bold',textAlign:'center'}}>{loginPerson}</Text>
+       <Text style={{marginTop:15,marginLeft:13,fontSize:15,borderWidth:0.3,padding:5,width:150,backgroundColor:'white',fontWeight:'bold',textAlign:'center'}}>{loginPerson ? loginPerson.email: null}</Text>
        </View>
       <View style={{alignItems:'center',justifyContent:'center',marginTop:20}}>
       <TouchableOpacity 

@@ -1,10 +1,12 @@
-import { View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, FlatList,RefreshControl, StyleSheet,TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import HeaderLogo from '../HeaderScreen/HeaderLogo'
 import RNPickerSelect from 'react-native-picker-select';
 import CalendarPicker from 'react-native-calendar-picker';
 import _ from 'lodash';
 import Toast from "react-native-toast-message";
+import moment from "moment";
+import "moment/locale/vi";
 
 const ScheduleManage = () => {
   const [selectedStartDate, setselectedStartDate] = useState(null)
@@ -94,7 +96,12 @@ const ScheduleManage = () => {
   }, [listUsersData]);
   
   const onDateChange = (date) => {
-    setselectedStartDate(date)
+    let d = new Date(date);
+    let e = new Date(d.getTime() + 3.6e6);
+    let change = e.toISOString().replace("Z", "+07:00");
+    let changeCopy = change.toString()
+    let timestamp = changeCopy.replace("T06","T00")
+    setselectedStartDate(timestamp)
   }
   const handleChangeDoctor = (value) => {
     setselectedDoctorId(value)
@@ -129,6 +136,7 @@ const ScheduleManage = () => {
     seteror(errors);
     return formIsValid;
   }
+ 
   useEffect(() => {
     validateBlank()
   }, [selectedDoctorId, selectedStartDate, selectTime])
@@ -181,6 +189,7 @@ const ScheduleManage = () => {
         }
       }
     }else {
+        // let formatedDateDataPush = moment(selectedStartDate).unix() * 1000;
       let formatedDateDataPush = new Date(selectedStartDate).getTime();
       let selectedTimeDataPush = selectTime.filter(item => item.selected === true);
       if (selectedTimeDataPush && selectedTimeDataPush.length > 0) {
@@ -200,7 +209,7 @@ const ScheduleManage = () => {
           let payload = {
             "bulkSchedules": myDifferences
           }
-         try {
+     
           console.log("payload",payload);
           handleLogin(url_Schedule, payload)
           Toast.show({
@@ -208,21 +217,34 @@ const ScheduleManage = () => {
             text1: "Thông báo",
             text2: "Đã cập nhật lịch khám thành công!",
           });
-         } catch (error) {
-          Toast.show({
-            type: "error",
-            text1: "Thông báo",
-            text2: "Không thể đăng ký lịch khám,vui lòng kiểm tra lại!",
-          });
-         }
+          // alert("Đã cập nhật lịch khám thành công!")
         }
       }
     }
   }
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  
+    const [refreshing, setRefreshing] = React.useState(false);
+  
+    const onRefresh = React.useCallback(() => {
+     
+      setRefreshing(true);
+      wait(2000).then(() => setRefreshing(false));
+    }, []);
+  
   return (
     <View style={{ width: '100%', height: '100%' }}>
       <HeaderLogo />
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         <Text style={{
           fontSize: 20,
           textTransform: "uppercase",
@@ -288,5 +310,18 @@ const ScheduleManage = () => {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+  },
+});
 
 export default ScheduleManage

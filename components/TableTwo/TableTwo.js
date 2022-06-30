@@ -4,6 +4,8 @@ import {
   Text,
   Alert,
   ScrollView,
+  RefreshControl,
+  StyleSheet,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -12,21 +14,30 @@ import ModalPopup from "./ModalPopup";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 
-
 const TableTwo = () => {
   const [dataGet, setDataGet] = useState([]);
   const [showBox, setShowBox] = useState(true);
   const [visible, setvisible] = useState(false);
-  const [count, setcount] = useState(1)
-  const [dataUser, setdataUser] = useState([])
-  const [doctorList, setdoctorList] = useState([])
+  const [count, setcount] = useState(1);
+  const [dataUser, setdataUser] = useState([]);
+  const [doctorList, setdoctorList] = useState([]);
 
   var url = "https://api-truongcongtoan.herokuapp.com/api/users";
   var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/";
-  var url_Doctor = "http://api-truongcongtoan.herokuapp.com/api/users/doctors"
+  var url_Doctor = "http://api-truongcongtoan.herokuapp.com/api/users/doctors";
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(() => {
+    handleLogin(url, setDataGet);
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   const showConfirmDialog = (item, index) => {
-    handleLogin(`${url_User}${item.email}`, setdataUser)
+    handleLogin(`${url_User}${item.email}`, setdataUser);
     return Alert.alert(
       "Thao tác với tài khoản",
       `Email:  ${item.email}`,
@@ -44,7 +55,6 @@ const TableTwo = () => {
         {
           text: "Sửa",
           onPress: () => {
-
             setvisible(true);
           },
         },
@@ -53,15 +63,18 @@ const TableTwo = () => {
   };
   const deleteUser = (email) => {
     var requestOptions = {
-      method: 'DELETE',
-      redirect: 'follow'
+      method: "DELETE",
+      redirect: "follow",
     };
 
-    fetch(`https://api-truongcongtoan.herokuapp.com/api/users/${email}`, requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
-      .catch(error => console.log('error', error));
-  }
+    fetch(
+      `https://api-truongcongtoan.herokuapp.com/api/users/${email}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+  };
 
   const onDeletePress = (input) => {
     return Alert.alert(
@@ -88,19 +101,19 @@ const TableTwo = () => {
       ]
     );
   };
-  var checkLoadingPage = useSelector(state => state.user)
+  var checkLoadingPage = useSelector((state) => state.user);
   useEffect(() => {
     let isCancelled = false;
 
     if (!isCancelled) {
       handleLogin(url, setDataGet);
-      handleLogin(url_Doctor,setdoctorList)
+      handleLogin(url_Doctor, setdoctorList);
     }
     return () => {
       isCancelled = true;
     };
   }, [count, checkLoadingPage]);
-  
+
   const handleLogin = async (url, setData) => {
     var requestOptions = {
       method: "GET",
@@ -109,7 +122,7 @@ const TableTwo = () => {
     fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        setData(JSON.parse(result))
+        setData(JSON.parse(result));
       })
       .catch((error) => console.log("error", error));
   };
@@ -146,7 +159,7 @@ const TableTwo = () => {
               name="close-sharp"
               size={30}
               color="black"
-              onPress={() => { }}
+              onPress={() => {}}
             />
           </View>
           <View
@@ -154,9 +167,20 @@ const TableTwo = () => {
           ></View>
         </View>
       </ModalPopup>
-
-      <ScrollView horizontal>
-
+      <ScrollView
+  horizontal
+     contentContainerStyle={styles.ScrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          
+          />
+        }
+      >
+      <ScrollView
+        horizontal
+      >
         <View
           style={{
             flex: 1,
@@ -272,9 +296,7 @@ const TableTwo = () => {
             </View>
           </View>
 
-          {
-          dataGet
-            ?
+          {dataGet ? 
             dataGet.map((item, index) => (
               <View style={{ flexDirection: "row" }} key={index}>
                 <View
@@ -381,14 +403,27 @@ const TableTwo = () => {
                 </View>
               </View>
             ))
-            :
+           : 
             <AppLoader />
           }
         </View>
+      </ScrollView>
       </ScrollView>
       {/* {dataGet.length === 0 ? <AppLoader /> : null} */}
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 export default TableTwo;
