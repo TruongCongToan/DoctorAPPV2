@@ -1,16 +1,14 @@
-// Searching using Search Bar Filter in React Native List View
-// https://aboutreact.com/react-native-search-bar-filter-on-listview/
 
-// import React in our code
 import React, { useState, useEffect } from 'react';
 
-// import all the components we are going to use
-import { SafeAreaView, Text, StyleSheet, View, FlatList } from 'react-native';
+import { SafeAreaView, Text, StyleSheet, View, FlatList ,TouchableOpacity,Image} from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import HeaderLogo from '../HeaderScreen/HeaderLogo'
 import ModalPopup from '../../components/TableTwo/ModalPopup'
 import { useSelector } from "react-redux";
 import AppLoader from '../AppLoader/AppLoader';
+import EvilIcons from "@expo/vector-icons/EvilIcons";
+
 
 const SearchScreen = () => {
     const [search, setSearch] = useState('');
@@ -53,13 +51,32 @@ const SearchScreen = () => {
 
     const ItemView = ({ item }) => {
         return (
-            <Text style={styles.itemStyle} onPress={() => getItem(item)}>
-
-                {item.full_name.toUpperCase()}
-                {' - '}
-                {"Loại tài khoản : "}
-                {item.allCodeRole.valuevi}
-            </Text>
+            <TouchableOpacity onPress={() => getItem(item)}> 
+            <View style={{ flex: 1, flexDirection: "row",height:80 }}>
+              {item.image ?
+              <Image
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 100,
+                  marginTop: 10,
+                  marginLeft: 10,
+                  borderWidth: 0.3,
+                  borderColor: "black",
+                }}
+                source={{ uri: item.image }}
+              />
+              :
+              <EvilIcons name="user" size={70} color="black" />}
+             
+              <View style={{ flexDirection: "column", marginLeft: 15 }}>
+                <Text style={styles.itemStyle}>
+                  Bác sĩ {item.full_name}
+                </Text>
+                <Text style={{ paddingLeft: 10 }}>Loại tài khoản: {item.allCodeRole ? item.allCodeRole.valuevi : null}</Text>
+              </View>
+            </View>
+            </TouchableOpacity>
         );
     };
 
@@ -111,6 +128,7 @@ const SearchScreen = () => {
                         onChangeText={(text) => searchFilterFunction(text)}
                         onClear={(text) => searchFilterFunction('')}
                         placeholder="Tìm kiếm thông tin..."
+                        style={{color:'white'}}
                         value={search}
                         inputContainerStyle={{ backgroundColor: '#0092c5' }}
                         placeholderTextColor={'white'}

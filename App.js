@@ -18,6 +18,8 @@ import NewPassWord from "./screens/NewPassWord/NewPassWord";
 import SearchScreen from "./screens/SearchScreen/SearchScreen";
 import {LogBox} from "react-native";
 import Chitietbacsi from "./components/Chitietbacsi/Chitietbacsi";
+import ListAllDoctorScreen from "./screens/SearchScreen/ListAllDoctorScreen";
+import BookingScheduleScreen from "./screens/BookingScheduleScreen/BookingScheduleScreen";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -36,7 +38,7 @@ export default function App() {
           <SafeAreaView style={styles.root}>
             <NavigationContainer>
               <Stack.Navigator
-                initialRouteName="SignIn"
+                initialRouteName="Drawer"
                 screenOptions={{ headerShown: false }}
               >
                 <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -45,7 +47,9 @@ export default function App() {
                 <Stack.Screen name="ForgotPassWord" component={ForgotPassWord} />
                 <Stack.Screen name="NewPassWord" component={NewPassWord} />
                 <Stack.Screen name="Search" component={SearchScreen} />
+                <Stack.Screen name="SeeMore" component={ListAllDoctorScreen} />
                 <Stack.Screen name="Chitietbacsi" component={Chitietbacsi} />
+                <Stack.Screen name="Datlich" component={BookingScheduleScreen} />
               </Stack.Navigator>
               {/* <DrawerNavigator/> */}
               {/* <DatePickerCustom/> */}

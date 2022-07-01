@@ -9,28 +9,42 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import HeaderLogo from "../../screens/HeaderScreen/HeaderLogo";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import moment from "moment";
 import "moment/locale/vi";
 import RNPickerSelect from "react-native-picker-select";
-import axios from "axios";
+import allAction from "../redux/action/allAction";
+import { useNavigation } from "@react-navigation/native";
 
 const Chitietbacsi = () => {
   const dataOneUser = useSelector((state) => state.user.getoneuser);
   const markdown = useSelector((state) => state.user.markdown);
   const doctorInfo = useSelector((state) => state.user.doctorInfo);
+  const signInPerson = useSelector((state) => state.user.signInPerson);
 
   const [alldays, setalldays] = useState([]);
   const [allAvaiableTime, setallAvaiableTime] = useState([]);
 
-  const [selectedDate, setselectedDate] = useState({});
+  const [selectedDate, setselectedDate] = useState("");
+  const [checkOpenPrice, setcheckOpenPrice] = useState(false);
 
   const [initialDate, setinitialDate] = useState({
     label: "Chọn ngày đăng ký",
     value: null,
   });
+  const [bookingInfo, setbookingInfo] = useState({
+    statusid: "S1",
+    doctorid: "",
+    patientid: "",
+    date: "",
+    timetype: "",
+  });
+  const [selectedTimeType, setselectedTimeType] = useState("");
+  const navigation = useNavigation();
+
+  const dispatch = useDispatch();
 
   var url_Schedule = "https://api-truongcongtoan.herokuapp.com/api/schedules/";
 
@@ -88,13 +102,48 @@ const Chitietbacsi = () => {
     fetchData(url_Schedule, doctoIDGet, date, setallAvaiableTime);
   };
   const timeBookingPress = (value) => {
-    console.log("value", value.allCode.key);
+    setselectedTimeType(value.allCode);
+   navigation.navigate("Datlich");
   };
-  const [checkOpenPrice, setcheckOpenPrice] = useState(false)
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      setbookingInfo({
+        statusid: "S1",
+        doctorid: doctoIDGet,
+        patientid: signInPerson.user_id,
+        date: selectedDate,
+        timetypeValue:selectedTimeType.valuevi,
+        timetype: selectedTimeType.key,
+      });
+    }
+    return () => {
+      check = true;
+    };
+  }, [selectedTimeType.key,doctoIDGet,signInPerson,selectedDate]);
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      dispatch(allAction.userAction.addBookingInfo(bookingInfo));
+    }
+    return () => {
+      check = true;
+    };
+  }, [bookingInfo]);
 
-const previewPrice = () =>{
-  setcheckOpenPrice(!checkOpenPrice)
-}
+  console.log("gia tri nhan duoc ", bookingInfo);
+  const previewPrice = () => {
+    setcheckOpenPrice(!checkOpenPrice);
+  };
+  const formatPayment = (input) => {
+    if (input === "PAY1") {
+      return "tiền mặt";
+    } else if (input === "PAY2") {
+      return "quẹt thẻ";
+    } else {
+      return "tiền mặt và quẹt thẻ";
+    }
+  };
   return (
     <View style={{ flex: 1 }}>
       <HeaderLogo />
@@ -184,6 +233,7 @@ const previewPrice = () =>{
                 paddingLeft: 10,
                 fontSize: 14,
                 color: "#0092c5",
+                paddingTop: 10,
                 textTransform: "uppercase",
               }}
             >
@@ -327,56 +377,100 @@ const previewPrice = () =>{
             }}
           />
 
-          <View style={{ flexDirection: "row", marginLeft: 10 ,marginTop:20}}>
-            {
-            !checkOpenPrice ?
+          <View style={{ flexDirection: "row", marginLeft: 10, marginTop: 20 }}>
+            {!checkOpenPrice ? (
               <>
-              <FontAwesome5 name="money-bill" size={20} color="black" />
-            <Text
-              style={{
-                fontWeight: "500",
-                paddingLeft: 10,
-                fontSize: 14,
-                color: "black",
-                textTransform: "uppercase",
-              }}
-            >
-              Giá khám:
-            </Text>
-            <Text style={{ paddingLeft: 15 }}>{doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi:null} VNĐ</Text>
-            <TouchableOpacity onPress={previewPrice}>
-              <Text style={{paddingLeft:10,color: "#0092c5",}}>Xem chi tiết</Text>
-            </TouchableOpacity>
+                <FontAwesome5 name="money-bill" size={20} color="black" />
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    paddingLeft: 10,
+                    fontSize: 14,
+                    color: "black",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Giá khám:
+                </Text>
+                <Text style={{ paddingLeft: 15 }}>
+                  {doctorInfo.allCodePrice
+                    ? doctorInfo.allCodePrice.valuevi
+                    : null}{" "}
+                  VNĐ
+                </Text>
+                <TouchableOpacity onPress={previewPrice}>
+                  <Text style={{ paddingLeft: 10, color: "#0092c5" }}>
+                    Xem chi tiết
+                  </Text>
+                </TouchableOpacity>
               </>
-              :
+            ) : (
               <View>
-             <View style={{width:'100%',flexDirection:'row'}}>
-             <FontAwesome5 name="money-bill" size={20} color="black" />
-            <Text
-              style={{
-                fontWeight: "500",
-                paddingLeft: 10,
-                fontSize: 14,
-                color: "black",
-                textTransform: "uppercase",
-              }}
-            >
-              Giá khám:
-            </Text>
-               </View>
-            <View style={{width:'auto',height:'auto',backgroundColor: '#eee',borderWidth:0.3}}>
-                {console.log("note la ",doctorInfo.note)}
-             <View style={{flexDirection:'row'}}>
-             <Text style={{fontSize:14,paddingLeft:7}}> Giá khám:</Text>
-             <Text style={{paddingLeft:'50%',fontWeight:'500',fontSize:15,paddingRight:5}}>{doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi:null} VNĐ</Text>
-               </View>
-               <Text style={{fontSize:13,fontWeight:'300'}}>{doctorInfo ? doctorInfo.note : null }</Text>
-               <TouchableOpacity onPress={previewPrice}>
-               <Text style={{color: "#0092c5",marginTop:20}}>Ẩn bảng giá</Text>
-               </TouchableOpacity>
-            </View>
+                <View style={{ width: "100%", flexDirection: "row" }}>
+                  <FontAwesome5 name="money-bill" size={20} color="black" />
+                  <Text
+                    style={{
+                      fontWeight: "500",
+                      paddingLeft: 10,
+                      fontSize: 14,
+                      color: "black",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Giá khám:
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: "auto",
+                    height: "auto",
+                    backgroundColor: "#eee",
+                    borderWidth: 0.3,
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={{ fontSize: 14, paddingLeft: 7 }}>
+                      {" "}
+                      Giá khám:
+                    </Text>
+                    <Text
+                      style={{
+                        paddingLeft: "50%",
+                        fontWeight: "500",
+                        fontSize: 15,
+                        paddingRight: 5,
+                      }}
+                    >
+                      {doctorInfo.allCodePrice
+                        ? doctorInfo.allCodePrice.valuevi
+                        : null}{" "}
+                      VNĐ
+                    </Text>
+                  </View>
+                  <Text
+                    style={{ fontSize: 13, fontWeight: "300", paddingLeft: 8 }}
+                  >
+                    {doctorInfo ? doctorInfo.note : null}
+                  </Text>
+                  <View style={{ marginTop: 10 }}>
+                    {console.log(doctorInfo.allCodePayment.key)}
+                    <Text style={{ paddingLeft: 8 }}>
+                      Người bệnh có thể thanh toán chi phí bằng hình thức{" "}
+                      {
+                        <Text style={{ fontWeight: "bold" }}>
+                          {formatPayment(doctorInfo.allCodePayment.key)}
+                        </Text>
+                      }
+                    </Text>
+                  </View>
+                  <TouchableOpacity onPress={previewPrice}>
+                    <Text style={{ color: "#0092c5", marginTop: 10 }}>
+                      Ẩn bảng giá
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            }
+            )}
           </View>
           <Text
             style={{
@@ -387,12 +481,11 @@ const previewPrice = () =>{
             }}
           />
 
-            <View>
-            {
-              (markdown || markdown.contentMarkDown)  ? <Text> {markdown.contentMarkDown}</Text>:null
-            }
-            </View>
-
+          <View style={{ marginLeft: 15 }}>
+            {markdown || markdown.contentMarkDown ? (
+              <Text> {markdown.contentMarkDown}</Text>
+            ) : null}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -408,6 +501,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
+    // backgroundColor: 'red',
   },
 });
 export default Chitietbacsi;

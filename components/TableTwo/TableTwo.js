@@ -296,7 +296,8 @@ const TableTwo = () => {
             </View>
           </View>
 
-          {dataGet ? 
+          {
+          dataGet.length >0 ?
             dataGet.map((item, index) => (
               <View style={{ flexDirection: "row" }} key={index}>
                 <View
@@ -403,7 +404,7 @@ const TableTwo = () => {
                 </View>
               </View>
             ))
-           : 
+            :
             <AppLoader />
           }
         </View>

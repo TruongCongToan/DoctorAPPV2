@@ -2,8 +2,12 @@ import { View, Text, Image, ScrollView, RefreshControl, StyleSheet, ImageBackgro
 import React from 'react'
 import BacSiNoiBat from '../BacSiNoiBat/BacSiNoiBat'
 import BannerScreen from './BannerScreen'
+import { useNavigation } from '@react-navigation/native'
+
 
 const TableOne = (props) => {
+
+    const navigation = useNavigation()
 
     let listUsers = props.listUsers
     const [refreshing, setRefreshing] = React.useState(false);
@@ -17,7 +21,7 @@ const TableOne = (props) => {
     }, []);
 
     const onPressViewMore = () => {
-        console.log("View More");
+        navigation.navigate("SeeMore")
     }
     return (
 
