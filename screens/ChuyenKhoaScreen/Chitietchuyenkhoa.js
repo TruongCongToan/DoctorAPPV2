@@ -30,10 +30,11 @@ const Chitietchuyenkhoa = () => {
   const [allAvaiableTime, setallAvaiableTime] = useState([]);
   const [markdownByCK, setmarkdownByCK] = useState([]);
   const [selectedTimeType, setselectedTimeType] = useState("");
-  const [selectedDoctor, setselectedDoctor] = useState("");
+  const [selectedDoctor, setselectedDoctor] = useState(0);
   const [checkOpenPrice, setcheckOpenPrice] = useState(false);
   const [dropdownValue, setdropdownValue] = useState("PROA");
   const [loading, setloading] = useState("");
+  const [itemMarkdownGet, setitemMarkdownGet] = useState({});
 
   const [bookingInfo, setbookingInfo] = useState({
     statusId: "S1",
@@ -53,6 +54,7 @@ const Chitietchuyenkhoa = () => {
 
   const signInPerson = useSelector((state) => state.user.signInPerson);
 
+  const [selectedIndex, setselectedIndex] = useState(0);
   let arrDate = [];
   for (let i = 0; i < 7; i++) {
     let object = {};
@@ -97,15 +99,19 @@ const Chitietchuyenkhoa = () => {
       })
       .catch((error) => console.log("error", error));
   };
-  const handleOnchangeDate = (date, item) => {
-    setselectedDate(date);
-    console.log("date la ", date);
-    console.log("item la ", item);
-    // setselectedDoctor(item.doctorInfo.user.user_id);
-    // fetchData(url_Schedule, item.doctorInfo.user.user_id, date, setallAvaiableTime);
-  };
 
-  // console.log("setallAvaiableTime : ",allAvaiableTime);
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      console.log("selecdoctor ", selectedDoctor);
+      console.log("date ", selectedDate);
+      fetchData(url_Schedule, selectedDoctor, selectedDate, setallAvaiableTime);
+    }
+    return () => {
+      check = true;
+    };
+  }, [selectedDoctor, selectedDate, selectedIndex]);
+
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -129,7 +135,6 @@ const Chitietchuyenkhoa = () => {
     setselectedTimeType(value.allCode);
     navigation.navigate("Datlich");
   };
-
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -175,6 +180,14 @@ const Chitietchuyenkhoa = () => {
     setloading("loading");
     setdropdownValue(value);
   };
+
+  const viewDetailPress = () => {
+    dispatch(allAction.userAction.addUser(itemMarkdownGet.doctorInfo.user));
+    dispatch(allAction.userAction.addMarkDown(itemMarkdownGet));
+    dispatch(allAction.userAction.addDoctorInfo(itemMarkdownGet.doctorInfo));
+    navigation.navigate("Chitietbacsi");
+  };
+
   return (
     <View style={{ flex: 1 }}>
       {markdownByCK.length === 0 ? <AppLoader /> : null}
@@ -236,8 +249,6 @@ const Chitietchuyenkhoa = () => {
           </Text>
           <View style={{ width: "50%" }}>
             <RNPickerSelect
-              // onValueChange={handleOnchangeDate}
-
               onValueChange={handleDropdownChange}
               value={dropdownValue}
               placeholder={{
@@ -272,25 +283,34 @@ const Chitietchuyenkhoa = () => {
                   }}
                 >
                   {item.doctorInfo.user.image ? (
-                    <Image
-                      style={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: 100,
-                        marginTop: 10,
-                        marginLeft: 10,
-                        borderWidth: 0.3,
-                        borderColor: "black",
+                    <TouchableOpacity
+                      onPress={() => {
+                        viewDetailPress;
+                        setitemMarkdownGet(item);
                       }}
-                      source={{ uri: item.doctorInfo.user.image }}
-                    />
+                    >
+                      <Image
+                        style={{
+                          width: 80,
+                          height: 80,
+                          borderRadius: 100,
+                          marginTop: 10,
+                          marginLeft: 10,
+                          borderWidth: 0.3,
+                          borderColor: "black",
+                        }}
+                        source={{ uri: item.doctorInfo.user.image }}
+                      />
+                    </TouchableOpacity>
                   ) : (
                     <EvilIcons name="user" size={100} color="black" />
                   )}
                   <View style={{ width: "70%", paddingLeft: 15 }}>
-                    <Text style={{ fontSize: 14, color: "#0092c5" }}>
-                      Bác sĩ chuyên khoa {item.doctorInfo.user.full_name}
-                    </Text>
+                    <TouchableOpacity onPress={viewDetailPress}>
+                      <Text style={{ fontSize: 14, color: "#0092c5" }}>
+                        Bác sĩ chuyên khoa {item.doctorInfo.user.full_name}
+                      </Text>
+                    </TouchableOpacity>
                     <Text style={{ fontSize: 12, fontWeight: "300" }}>
                       {item.description}
                     </Text>
@@ -326,7 +346,13 @@ const Chitietchuyenkhoa = () => {
                     Ngày khám
                   </Text>
                   <RNPickerSelect
-                    onValueChange={handleOnchangeDate}
+                    onValueChange={(date) => {
+                      setselectedDoctor(item.doctorInfo.user.user_id);
+                      setselectedDate(date);
+                      setselectedIndex(key);
+                    }}
+                    // onClose={() => console.log("cloese")}
+
                     placeholder={{
                       label: "Chọn ngày khám bệnh ",
                       value: null,
@@ -379,7 +405,7 @@ const Chitietchuyenkhoa = () => {
                                     backgroundColor: "#1aa1b3",
                                     marginLeft: 10,
                                     marginRight: 10,
-                                    // borderRadius:1
+                                    // bBácorderRadius:1
                                   }}
                                   key={index}
                                   onPress={() => timeBookingPress(item)}

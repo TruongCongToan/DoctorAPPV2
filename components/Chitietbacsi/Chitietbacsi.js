@@ -17,7 +17,7 @@ import "moment/locale/vi";
 import RNPickerSelect from "react-native-picker-select";
 import allAction from "../redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
-import AppLoader from '../../screens/AppLoader/AppLoader'
+
 const Chitietbacsi = () => {
   const dataOneUser = useSelector((state) => state.user.getoneuser);
   const markdown = useSelector((state) => state.user.markdown);
