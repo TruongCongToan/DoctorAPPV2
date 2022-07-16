@@ -1,36 +1,42 @@
 import React, { useState, useEffect } from "react";
 
 // import all the components we are going to use
-import { SafeAreaView, Text, StyleSheet, View, Image,FlatList ,TouchableOpacity} from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { SearchBar } from "react-native-elements";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
 import { useSelector } from "react-redux";
 import AppLoader from "../AppLoader/AppLoader";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux";
 import allAction from "../../components/redux/action/allAction";
 
-
 const ListAllDoctorScreen = () => {
+  const navigation = useNavigation();
 
-    const navigation = useNavigation()
-
-    
   const [search, setSearch] = useState("");
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
 
-  const url_User_Doctor = "https://api-truongcongtoan.herokuapp.com/api/users/doctors";
-  const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/"
-  const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
-  const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/"
-  
-  const [SelectedUser, setSelectedUser] = useState({})
-  const [markDownGet, setmarkDownGet] = useState({})
-  const [doctorInfo, setdoctorInfo] = useState({})
-  const dispatch = useDispatch();
+  const url_User_Doctor =
+    "https://api-truongcongtoan.herokuapp.com/api/users/doctors";
+  const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/";
+  const url_markdown =
+    "https://api-truongcongtoan.herokuapp.com/api/markdowns/";
+  const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
 
+  const [SelectedUser, setSelectedUser] = useState({});
+  const [markDownGet, setmarkDownGet] = useState({});
+  const [doctorInfo, setdoctorInfo] = useState({});
+  const dispatch = useDispatch();
 
   var checkLoadingPage = useSelector((state) => state.user);
 
@@ -65,32 +71,32 @@ const ListAllDoctorScreen = () => {
   };
 
   const ItemView = ({ item }) => {
+    console.log("gia tri chuyen khoa ",item);
     return (
-        <TouchableOpacity onPress={() => getItem(item)}> 
-      <View style={{ flex: 1, flexDirection: "row",height:80 }}>
-        {item.image ?
-        <Image
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 100,
-            marginTop: 10,
-            marginLeft: 10,
-            borderWidth: 0.3,
-            borderColor: "black",
-          }}
-          source={{ uri: item.image }}
-        />
-        :
-        <EvilIcons name="user" size={70} color="black" />}
+      <TouchableOpacity onPress={() => getItem(item)}>
+        <View style={{ flex: 1, flexDirection: "row", height: 80 }}>
+          {item.image ? (
+            <Image
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 100,
+                marginTop: 10,
+                marginLeft: 10,
+                borderWidth: 0.3,
+                borderColor: "black",
+              }}
+              source={{ uri: item.image }}
+            />
+          ) : (
+            <EvilIcons name="user" size={70} color="black" />
+          )}
 
-        <View style={{ flexDirection: "column", marginLeft: 15 }}>
-          <Text style={styles.itemStyle}>
-            Bác sĩ {item.full_name}
-          </Text>
-          <Text style={{ paddingLeft: 10 }}>Khoa thần kinh</Text>
+          <View style={{ flexDirection: "column", marginLeft: 15 }}>
+            <Text style={styles.itemStyle}>Bác sĩ {item.full_name}</Text>
+            <Text style={{ paddingLeft: 10 }}>Khoa thần kinh</Text>
+          </View>
         </View>
-      </View>
       </TouchableOpacity>
     );
   };
@@ -110,38 +116,37 @@ const ListAllDoctorScreen = () => {
 
   const getItem = (item) => {
     //   console.log("item ",item.email,item.user_id);
-    navigation.navigate("Chitietbacsi")
-    fetchData(url_User,item.email,setSelectedUser)
-    fetchData(url_markdown,item.user_id,setmarkDownGet)
-    fetchData(url_Info,item.user_id,setdoctorInfo)
+    navigation.navigate("Chitietbacsi");
+    fetchData(url_User, item.email, setSelectedUser);
+    fetchData(url_markdown, item.user_id, setmarkDownGet);
+    fetchData(url_Info, item.user_id, setdoctorInfo);
   };
   useEffect(() => {
-    let check = false ;
+    let check = false;
     if (!check) {
-     dispatch(allAction.userAction.addUser(SelectedUser))
-     dispatch(allAction.userAction.addMarkDown(markDownGet))
-     dispatch(allAction.userAction.addDoctorInfo(doctorInfo))
+      dispatch(allAction.userAction.addUser(SelectedUser));
+      dispatch(allAction.userAction.addMarkDown(markDownGet));
+      dispatch(allAction.userAction.addDoctorInfo(doctorInfo));
     }
     return () => {
-      check = true
-    }
-  }, [SelectedUser])
+      check = true;
+    };
+  }, [SelectedUser]);
 
- const fetchData = (url,user_id,setData) =>{
-  console.log("id la ",user_id);
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'  
+  const fetchData = (url, user_id, setData) => {
+    console.log("id la ", user_id);
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${url}${user_id}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => setData(JSON.parse(result)))
+      .catch((error) => console.log("error", error));
   };
-  
-  fetch(`${url}${user_id}`, requestOptions)
-    .then(response => response.text())
-    .then(result => setData(JSON.parse(result)))
-    .catch(error => console.log('error', error));
-}
   return (
     <SafeAreaView style={{ flex: 1 }}>
-    
       <View style={styles.container}>
         <HeaderLogo />
         <SearchBar
@@ -174,14 +179,14 @@ const ListAllDoctorScreen = () => {
         >
           Bác sĩ nổi bật
         </Text>
-        <FlatList
-          data={filteredDataSource}
-          keyExtractor={(item, index) => index.toString()}
-          ItemSeparatorComponent={ItemSeparatorView}
-          renderItem={ItemView}
-        />
-        
       </View>
+      <FlatList
+        data={filteredDataSource}
+        keyExtractor={(item, index) => index.toString()}
+        ItemSeparatorComponent={ItemSeparatorView}
+        renderItem={ItemView}
+      />
+      
       {!dataUser ? <AppLoader /> : null}
     </SafeAreaView>
   );

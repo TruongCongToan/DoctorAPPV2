@@ -37,7 +37,7 @@ const TableTwo = () => {
   }, []);
 
   const showConfirmDialog = (item, index) => {
-    handleLogin(`${url_User}${item.email}`, setdataUser);
+    handleLogin(`${url_User}${item.user_id}`, setdataUser);
     return Alert.alert(
       "Thao tác với tài khoản",
       `Email:  ${item.email}`,
@@ -84,7 +84,7 @@ const TableTwo = () => {
         {
           text: "Có",
           onPress: () => {
-            deleteUser(input.email);
+            deleteUser(input.user_id);
             setcount(count + 1);
             Toast.show({
               type: "success",
@@ -102,6 +102,8 @@ const TableTwo = () => {
     );
   };
   var checkLoadingPage = useSelector((state) => state.user);
+  var loginUser = useSelector((state) => state.user.signInPerson);
+
   useEffect(() => {
     let isCancelled = false;
 
@@ -123,8 +125,7 @@ const TableTwo = () => {
       .then((response) => response.text())
       .then((result) => {
         setData(JSON.parse(result));
-      })
-      .catch((error) => console.log("error", error));
+      }).catch((error) => console.log("error", error));
   };
 
   // console.log("data get " ,dataGet);
@@ -140,7 +141,14 @@ const TableTwo = () => {
     }
   };
   const rowPress = (item, index) => {
-    showConfirmDialog(item, index);
+    if (loginUser.role === "R1") {
+      showConfirmDialog(item, index);
+    } else {
+      return Alert.alert(
+        "Thông báo",
+        "Chỉ có quản trị viên mới có quyền chỉnh sửa thông tin tài khoản!"
+      );
+    }
   };
 
   return (
@@ -168,19 +176,16 @@ const TableTwo = () => {
         </View>
       </ModalPopup>
       <ScrollView
-  horizontal
-     contentContainerStyle={styles.ScrollView}
+        horizontal
+        contentContainerStyle={styles.scrollView}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-      <ScrollView
-        horizontal
-      >
+        
+   
+      <View style={{flex:1}}>
+      <ScrollView horizontal>
         <View
           style={{
             flex: 1,
@@ -188,6 +193,7 @@ const TableTwo = () => {
             alignItems: "center",
             width: "100%",
             height: "50%",
+          marginTop:15
           }}
         >
           <Text
@@ -196,6 +202,7 @@ const TableTwo = () => {
               textTransform: "uppercase",
               fontWeight: "bold",
               marginBottom: 20,
+              
             }}
           >
             Quản lý tài khoản
@@ -297,7 +304,6 @@ const TableTwo = () => {
           </View>
 
           {
-          dataGet.length >0 ?
             dataGet.map((item, index) => (
               <View style={{ flexDirection: "row" }} key={index}>
                 <View
@@ -404,13 +410,16 @@ const TableTwo = () => {
                 </View>
               </View>
             ))
-            :
-            <AppLoader />
           }
         </View>
+        
       </ScrollView>
-      </ScrollView>
+      
+      </View>
       {/* {dataGet.length === 0 ? <AppLoader /> : null} */}
+      </ScrollView>
+      {/* <AppLoader />  */}
+      {dataGet.length === 0 ? <AppLoader /> : null}
     </>
   );
 };
@@ -420,10 +429,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: "transparent",
     alignItems: "center",
     justifyContent: "center",
+    
   },
 });
 

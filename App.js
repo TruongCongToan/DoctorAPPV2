@@ -20,6 +20,8 @@ import {LogBox} from "react-native";
 import Chitietbacsi from "./components/Chitietbacsi/Chitietbacsi";
 import ListAllDoctorScreen from "./screens/SearchScreen/ListAllDoctorScreen";
 import BookingScheduleScreen from "./screens/BookingScheduleScreen/BookingScheduleScreen";
+import ListSpecialtiesScreen from "./screens/SearchScreen/ListSpecialtiesScreen";
+import Chitietchuyenkhoa from "./screens/ChuyenKhoaScreen/Chitietchuyenkhoa";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -48,7 +50,9 @@ export default function App() {
                 <Stack.Screen name="NewPassWord" component={NewPassWord} />
                 <Stack.Screen name="Search" component={SearchScreen} />
                 <Stack.Screen name="SeeMore" component={ListAllDoctorScreen} />
+                <Stack.Screen name="SeeMoreSpecialties" component={ListSpecialtiesScreen} />
                 <Stack.Screen name="Chitietbacsi" component={Chitietbacsi} />
+                <Stack.Screen name="Chitietchuyenkhoa" component={Chitietchuyenkhoa} />
                 <Stack.Screen name="Datlich" component={BookingScheduleScreen} />
               </Stack.Navigator>
               {/* <DrawerNavigator/> */}

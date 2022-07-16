@@ -16,6 +16,7 @@ import CutomDrawer from './CutomDrawer';
 import { useSelector } from 'react-redux';
 import ScheduleManage from '../../screens/ScheduleManage/ScheduleManage';
 import MarkdownScreen from '../../screens/MarkdownScreen/MarkdownScreen';
+import ChuyenKhoaScreen from '../../screens/ChuyenKhoaScreen/ChuyenKhoaScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -51,6 +52,7 @@ const DrawerNavigator = () => {
           <>
             <Drawer.Screen name="Quản lý lịch khám bệnh" component={ScheduleManage} />
             <Drawer.Screen name="Quản lý thông tin của bác sĩ" component={MarkdownScreen} />
+            <Drawer.Screen name="Quản lý chuyên khoa" component={ChuyenKhoaScreen} />
             <Drawer.Screen name="Đăng xuất" component={Logout} />
           </>
           :

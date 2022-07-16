@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import CustomButton from "../../components/CustomButton";
 import CustomInput from "../../components/CustomInput";
 import SocialSignInButton from "../../components/SocialSignInButton";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import AppLoader from "../AppLoader/AppLoader";
+import RNPickerSelect from "react-native-picker-select";
+
 
 const SignUpcreen = () => {
   const [fullname, setfullname] = useState("");
@@ -13,29 +22,44 @@ const SignUpcreen = () => {
   const [email, setemail] = useState("");
   const [passwordRepeate, setpasswordRepeate] = useState("");
 
-  const [loginPending, setloginPending] = useState(false)
+  const [loginPending, setloginPending] = useState(false);
   const [registerData, setregisterData] = useState("");
   const [error, seterror] = useState({});
+  const [role, setrole] = useState("");
 
   const navigation = useNavigation();
 
-  var url = "https://api-truongcongtoan-login.herokuapp.com/api/user/register";
+  var url = "https://api-truongcongtoan.herokuapp.com/api/user/register";
 
   //onSignUpPress
   const onSignUpPress = () => {
-    if (validateBlank()) {
-      try {
-        setloginPending(true)
+    // console.log("resgister data ",registerData);
+    if (!validateBlank()) {
+        if (error["fullname"]) {
+          pushError(error["fullname"])
+        }else{
+          if (error["email"]) {
+            pushError(error["email"])
+          }else{
+            if (error["password"]) {
+              pushError(error["password"])
+            }else{
+              if (error["passwordRepeate"]) {
+                pushError(error["passwordRepeate"])
+              }else{
+                if (error["role"]) {
+                  pushError(error["role"])
+                }
+              }
+            }
+          }
+        }
+        
+    
+      }else{
+        setloginPending(true);
         handleRegister(url, registerData);
-       
-      } catch (error) {
-        Toast.show({
-          type: "error",
-          text1: "Thông báo",
-          text2: "Đăng ký tài khoản không thành công,vui lòng thử lại sau!",
-        });
       }
-    }
   };
 
   useEffect(() => {
@@ -43,8 +67,9 @@ const SignUpcreen = () => {
       full_name: fullname,
       email: email,
       password: password,
+      role:role
     });
-  }, [fullname, email, password]);
+  }, [fullname, email, password,role]);
 
 
   const handleRegister = async (url, data = {}) => {
@@ -61,16 +86,19 @@ const SignUpcreen = () => {
       redirect: "follow",
     };
 
+    // github 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
+
     fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        console.log("gia tri thu duic ", result);
         if (JSON.parse(result).token) {
           Toast.show({
             type: "success",
             text1: "Thông báo",
             text2: "Đăng ký tài khoản thành công!",
           });
-          setloginPending(false)
+          setloginPending(false);
           navigation.navigate("SignIn");
         } else {
           Toast.show({
@@ -84,7 +112,7 @@ const SignUpcreen = () => {
   };
   //register Press
   const onSignInPress = () => {
-    navigation.navigate("SignIn")
+    navigation.navigate("SignIn");
   };
   //onPrivicyPress
   const onPrivicyPress = () => {
@@ -150,13 +178,30 @@ const SignUpcreen = () => {
           formIsValid = false;
           errors["passwordRepeate"] =
             "Mật khẩu nhập không khớp, vui lòng kiểm tra lại !";
+        }else{
+          if (!role) {
+            formIsValid = false;
+          errors["role"] =
+            "Vui lòng chọn loại tài khoản !";
+          }
         }
       }
     }
-
     seterror(errors);
     return formIsValid;
   };
+
+  const pushError = (input) => {
+    return Alert.alert(
+      "Thông báo",
+      `${input}`,
+      [
+        {
+          text: "Ok",
+        },
+      ]
+    );
+  }
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.root}>
@@ -187,6 +232,34 @@ const SignUpcreen = () => {
         />
         <Text style={styles.error}> {error["passwordRepeate"]}</Text>
 
+        <View
+          style={{
+            backgroundColor: "white",
+            width: "100%",
+            height: 50,
+            borderColor: "#e8e8e8",
+            borderWidth: 1,
+            borderRadius: 5,
+            paddingLeft: 10,
+            paddingHorizontal: 10,
+            marginVertical: 10,
+          }}
+        >
+
+        <RNPickerSelect
+          onValueChange={setrole}
+          placeholder={{
+            label: "Loại tài khoản đăng ký",
+            value: null,
+          }}
+          items={[
+            { label: 'Bác sĩ', value: 'R2' },
+            { label: 'Bệnh nhân', value: 'R3' },
+        ]}
+        />
+
+        </View>
+
         <CustomButton
           onPress={onSignUpPress}
           text="Đăng ký tài khoản"
@@ -212,7 +285,7 @@ const SignUpcreen = () => {
           type="TERTIARY"
         />
       </View>
-      {loginPending ?  <AppLoader /> : null}
+      {loginPending ? <AppLoader /> : null}
     </ScrollView>
   );
 };

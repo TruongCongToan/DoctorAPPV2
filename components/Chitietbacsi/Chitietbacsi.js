@@ -17,7 +17,7 @@ import "moment/locale/vi";
 import RNPickerSelect from "react-native-picker-select";
 import allAction from "../redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
-
+import AppLoader from '../../screens/AppLoader/AppLoader'
 const Chitietbacsi = () => {
   const dataOneUser = useSelector((state) => state.user.getoneuser);
   const markdown = useSelector((state) => state.user.markdown);
@@ -35,7 +35,7 @@ const Chitietbacsi = () => {
     value: null,
   });
   const [bookingInfo, setbookingInfo] = useState({
-    statusid: "S1",
+    statusId: "S1",
     doctorid: "",
     patientid: "",
     date: "",
@@ -85,7 +85,9 @@ const Chitietbacsi = () => {
 
     fetch(`${url}${user_id}/${date}`, requestOptions)
       .then((response) => response.text())
-      .then((result) => setData(JSON.parse(result)))
+      .then((result) => {
+        setData(JSON.parse(result));
+      })
       .catch((error) => console.log("error", error));
   };
   const [doctoIDGet, setdoctoIDGet] = useState(0);
@@ -103,24 +105,26 @@ const Chitietbacsi = () => {
   };
   const timeBookingPress = (value) => {
     setselectedTimeType(value.allCode);
-   navigation.navigate("Datlich");
+    navigation.navigate("Datlich");
   };
   useEffect(() => {
     let check = false;
     if (!check) {
       setbookingInfo({
-        statusid: "S1",
+        statusId: "S1",
         doctorid: doctoIDGet,
         patientid: signInPerson.user_id,
         date: selectedDate,
-        timetypeValue:selectedTimeType.valuevi,
+        timetypeValue: selectedTimeType.valuevi,
         timetype: selectedTimeType.key,
       });
     }
     return () => {
       check = true;
     };
-  }, [selectedTimeType.key,doctoIDGet,signInPerson,selectedDate]);
+  }, [selectedTimeType.key, doctoIDGet, signInPerson, selectedDate]);
+
+  console.log("Booking info ",bookingInfo);
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -131,7 +135,7 @@ const Chitietbacsi = () => {
     };
   }, [bookingInfo]);
 
-  console.log("gia tri nhan duoc ", bookingInfo);
+  // console.log("gia tri nhan duoc ", bookingInfo);
   const previewPrice = () => {
     setcheckOpenPrice(!checkOpenPrice);
   };
@@ -140,14 +144,17 @@ const Chitietbacsi = () => {
       return "tiền mặt";
     } else if (input === "PAY2") {
       return "quẹt thẻ";
-    } else {
+    } else if (input === "PAY3") {
       return "tiền mặt và quẹt thẻ";
+    } else {
+      return "Không có dữ liệu";
     }
   };
   return (
     <View style={{ flex: 1 }}>
       <HeaderLogo />
 
+     {/* {!doctorInfo.addressclinicid  ? <AppLoader /> : null} */}
       <ScrollView>
         <View style={{ flex: 1 }}>
           <ScrollView
@@ -184,7 +191,7 @@ const Chitietbacsi = () => {
                 <Text style={{ fontSize: 15, fontWeight: "600" }}>
                   Bác sĩ {`${dataOneUser.full_name}`}
                 </Text>
-                {markdown.errorCode === 404 ? (
+                {!markdown ? (
                   <ScrollView horizontal>
                     <Text
                       style={{ fontSize: 12, fontWeight: "300", width: 200 }}
@@ -198,7 +205,7 @@ const Chitietbacsi = () => {
                       <Text
                         style={{ fontSize: 13, fontWeight: "300", width: 200 }}
                       >
-                        {markdown.description}
+                        {markdown ? markdown.description : null}
                       </Text>
                     </ScrollView>
                     <View
@@ -355,7 +362,8 @@ const Chitietbacsi = () => {
                 Địa chỉ phòng khám
               </Text>
             </View>
-            {doctorInfo || doctorInfo.nameclinic ? (
+            {/* {console.log("gia tri check ", doctorInfo.addressclinicid)} */}
+            {doctorInfo.addressclinicid ? (
               <View style={{ flexDirection: "column" }}>
                 <Text style={{ padding: 10 }}>{doctorInfo.nameclinic}</Text>
                 <Text style={{ paddingTop: 5, paddingLeft: 10 }}>
@@ -363,7 +371,14 @@ const Chitietbacsi = () => {
                 </Text>
               </View>
             ) : (
-              <Text style={{ fontSize: 12, fontWeight: "300", width: 200 }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "300",
+                  width: 200,
+                  padding: 15,
+                }}
+              >
                 Không có dữ liệu về địa chỉ phòng khám
               </Text>
             )}
@@ -381,6 +396,7 @@ const Chitietbacsi = () => {
             {!checkOpenPrice ? (
               <>
                 <FontAwesome5 name="money-bill" size={20} color="black" />
+
                 <Text
                   style={{
                     fontWeight: "500",
@@ -394,9 +410,9 @@ const Chitietbacsi = () => {
                 </Text>
                 <Text style={{ paddingLeft: 15 }}>
                   {doctorInfo.allCodePrice
-                    ? doctorInfo.allCodePrice.valuevi
-                    : null}{" "}
-                  VNĐ
+                    ? `${doctorInfo.allCodePrice.valuevi} VNĐ`
+                    : "Không có dữ liệu"}
+                  {""}
                 </Text>
                 <TouchableOpacity onPress={previewPrice}>
                   <Text style={{ paddingLeft: 10, color: "#0092c5" }}>
@@ -442,10 +458,10 @@ const Chitietbacsi = () => {
                       }}
                     >
                       {doctorInfo.allCodePrice
-                        ? doctorInfo.allCodePrice.valuevi
-                        : null}{" "}
-                      VNĐ
+                        ? `${doctorInfo.allCodePrice.valuevi} VNĐ`
+                        : null}
                     </Text>
+                    {console.log("gia tri dia chi ", doctorInfo)}
                   </View>
                   <Text
                     style={{ fontSize: 13, fontWeight: "300", paddingLeft: 8 }}
@@ -453,12 +469,15 @@ const Chitietbacsi = () => {
                     {doctorInfo ? doctorInfo.note : null}
                   </Text>
                   <View style={{ marginTop: 10 }}>
-                    {console.log(doctorInfo.allCodePayment.key)}
                     <Text style={{ paddingLeft: 8 }}>
                       Người bệnh có thể thanh toán chi phí bằng hình thức{" "}
                       {
                         <Text style={{ fontWeight: "bold" }}>
-                          {formatPayment(doctorInfo.allCodePayment.key)}
+                          {formatPayment(
+                            !doctorInfo.allCodePayment
+                              ? null
+                              : doctorInfo.allCodePayment.key
+                          )}
                         </Text>
                       }
                     </Text>
@@ -482,7 +501,7 @@ const Chitietbacsi = () => {
           />
 
           <View style={{ marginLeft: 15 }}>
-            {markdown || markdown.contentMarkDown ? (
+            { markdown ? (
               <Text> {markdown.contentMarkDown}</Text>
             ) : null}
           </View>

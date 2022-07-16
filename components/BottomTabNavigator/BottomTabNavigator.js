@@ -12,8 +12,11 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Toast from "react-native-toast-message";
 import { MainStackNavigator } from "../StackNavigator/StackNavigator";
+import { useSelector } from "react-redux";
 
 const BottomTabNavigator = () => {
+  // const signInPerson = useSelector((state) => state.user.signInPerson);
+  // console.log("gia tri signInPerson ",signInPerson);
   const Tab = createBottomTabNavigator();
   return (
     <>

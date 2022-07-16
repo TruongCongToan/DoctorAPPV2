@@ -7,12 +7,15 @@ import { useSelector } from "react-redux";
 import TableOne from "../../components/TableTwo/TableOne";
 // import { Container } from "native-base";
 // import { useSelector } from "react-redux";
-var url = "https://api-truongcongtoan.herokuapp.com/api/users/doctors";
+const url = "https://api-truongcongtoan.herokuapp.com/api/users/doctors";
+const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties"
+
 
 const HomeScreen = ({ navigation }) => {
   var SignInPerson = useSelector(state => state.user.signInPerson)
 
   const [listUsers, setlistUsers] = useState([])
+  const [listSpecialties, setlistSpecialties] = useState([])
 
   const fetchData = async (url, setData) => {
     var requestOptions = {
@@ -28,13 +31,14 @@ const HomeScreen = ({ navigation }) => {
   };
   useEffect(() => {
     fetchData(url,setlistUsers)
+    fetchData(url_Specialties,setlistSpecialties)
   }, [SignInPerson])
   
   return (
     <SafeAreaView style={{ flex: 1 }}>
     <HeaderScreen navigation = {navigation}/>
    
-    {SignInPerson && SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} /> : <TableTwo/>}
+    {SignInPerson && SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} listSpecialties ={listSpecialties}/> : <TableTwo/>}
     </SafeAreaView>
   );
 };

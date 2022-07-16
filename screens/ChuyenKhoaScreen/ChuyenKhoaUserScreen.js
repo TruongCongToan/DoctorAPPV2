@@ -2,19 +2,20 @@ import { View, Text, Image, SafeAreaView, TouchableOpacity, Dimensions, ScrollVi
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
-import allAction from '../redux/action/allAction'
+import allAction from '../../components/redux/action/allAction'
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
-const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/"
+const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties/"
 const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
-const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/"
+const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/specialties/"
 
-const BacSiNoiBat = (props) => {
+const ChuyenKhoaUserScreen = (props) => {
 
-  let listUsers = props.listUsers
+  let listSpecialties = props.listSpecialties
   const navigation = useNavigation();
   const [SelectedUser, setSelectedUser] = useState({})
+  const [selectedSpecialties, setselectedSpecialties] = useState({})
   const [markDownGet, setmarkDownGet] = useState({})
   const [doctorInfo, setdoctorInfo] = useState({})
 
@@ -23,7 +24,7 @@ const BacSiNoiBat = (props) => {
   const onchange = (nativeEvent) => {
   }
 const fetchData = (url,user_id,setData) =>{
-  console.log("get data ...");
+  console.log("id la ",user_id);
   var requestOptions = {
     method: 'GET',
     redirect: 'follow'  
@@ -37,41 +38,24 @@ const fetchData = (url,user_id,setData) =>{
 
 
   const onPressImg = (value) => {
-    console.log("gia tri id ",value.user_id);
-    fetchData(url_User,value.user_id,setSelectedUser)
-    fetchData(url_Info,value.user_id,setdoctorInfo)
-    navigation.navigate("Chitietbacsi")
+    fetchData(url_Specialties,value.id,setselectedSpecialties)
+    // fetchData(url_markdown,value.user_id,setmarkDownGet)
+    // fetchData(url_Info,value.user_id,setdoctorInfo)
+    navigation.navigate("Chitietchuyenkhoa")
+    // console.log("gia tr la ",value.id);
   }
-  // console.log("gia tri cua 1 usser ",SelectedUser.user_id);
-useEffect(() => {
-  let check = false
-if (!check && doctorInfo && doctorInfo.id) {
-  fetchData(url_markdown,doctorInfo.id,setmarkDownGet)
-}else{
-  setmarkDownGet(null)
-}
-  return () => {
-    check = true
-  }
-}, [doctorInfo.id])
 
-
-  
   useEffect(() => {
     let check = false ;
     if (!check) {
-     dispatch(allAction.userAction.addUser(SelectedUser))
-     dispatch(allAction.userAction.addMarkDown(markDownGet))
-     dispatch(allAction.userAction.addDoctorInfo(doctorInfo))
+     dispatch(allAction.specialtiesAction.addOneSpecialties(selectedSpecialties))
+   
     }
     return () => {
       check = true
     }
- 
-  }, [SelectedUser,doctorInfo,markDownGet])
+  }, [selectedSpecialties])
 
-  // console.log("gia tri cua doctor info ",doctorInfo.id);
-  // console.log("gia tri cua doctor info ",markDownGet ? markDownGet.description: null);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, alignItems: 'center', width: WIDTH,height:300}}>
@@ -85,17 +69,17 @@ if (!check && doctorInfo && doctorInfo.id) {
           }}
         >
          {
-           listUsers&&listUsers.length >0 && listUsers.map((item, index) =>
+           listSpecialties&&listSpecialties.length >0 && listSpecialties.map((item, index) =>
               <TouchableOpacity key={index} onPress={() => onPressImg(item)}>
-                <View style={{width:150,height:200,alignItems:'center',borderColor:'gray',backgroundColor:'white',marginTop:10,borderRadius:10,borderWidth:0.5, marginLeft: 20}}>
+                <View style={{width:200,height:200,alignItems:'center',borderColor:'gray',backgroundColor:'white',marginTop:10,borderRadius:10,borderWidth:0.5, marginLeft: 20}}>
                 <Image
                   key={index}
                   source={ {uri: item.image}}
                   resizeMethod='auto'
                   // HEIGHT * 0.15
-                  style={{ width: 100, borderRadius:100,marginTop: 10, height: 100 }}
+                  style={{ width: '100%', height: 150 ,borderRadius:10}}
                 />
-                <Text style={{width:100,textAlign:'center',marginTop:20}}>Bác sĩ {`${item.full_name}`}</Text>
+                <Text style={{width:100,textAlign:'center',marginTop:20}}>{`${item.name}`}</Text>
                 </View>
               </TouchableOpacity>
             )
@@ -108,4 +92,4 @@ if (!check && doctorInfo && doctorInfo.id) {
   )
 }
 
-export default BacSiNoiBat
+export default ChuyenKhoaUserScreen

@@ -3,6 +3,7 @@ import React from 'react'
 import BacSiNoiBat from '../BacSiNoiBat/BacSiNoiBat'
 import BannerScreen from './BannerScreen'
 import { useNavigation } from '@react-navigation/native'
+import ChuyenKhoaUserScreen from '../../screens/ChuyenKhoaScreen/ChuyenKhoaUserScreen'
 
 
 const TableOne = (props) => {
@@ -10,6 +11,8 @@ const TableOne = (props) => {
     const navigation = useNavigation()
 
     let listUsers = props.listUsers
+    let listSpecialties = props.listSpecialties
+
     const [refreshing, setRefreshing] = React.useState(false);
 
     const wait = (timeout) => {
@@ -20,8 +23,13 @@ const TableOne = (props) => {
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
-    const onPressViewMore = () => {
-        navigation.navigate("SeeMore")
+    const onPressViewMore = (flag) => {
+        if (flag === "doctor") {
+            navigation.navigate("SeeMore")
+        }else if (flag === "specialties") {
+            navigation.navigate("SeeMoreSpecialties")
+        }
+       
     }
     return (
 
@@ -39,14 +47,22 @@ const TableOne = (props) => {
                 <View >
                     <BannerScreen />
                 </View>
+                <View style={{ borderWidth: 0.2, borderColor: 'gray', height: 300, marginTop: 10 }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontSize: 15, fontWeight: "600", margin: 10 }}>Các chuyên khoa phổ biến</Text>
+                        <Text style={{ fontSize: 15, fontWeight: "600", margin: 10, color: '#2584ff', marginLeft: '25%' }} onPress={() => onPressViewMore("specialties")}>Xem thêm</Text>
+                    </View>
+                    <ChuyenKhoaUserScreen listSpecialties={listSpecialties} />
+                </View>
 
-                <View style={{ borderWidth: 0.3, borderColor: 'gray', height: 300, marginTop: 10 }}>
+                <View style={{ borderWidth: 0.3, borderColor: 'gray', height: 300, marginTop: 50 }}>
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{ fontSize: 15, fontWeight: "600", margin: 10 }}>Các bác sĩ nổi bật</Text>
-                        <Text style={{ fontSize: 15, fontWeight: "600", margin: 10, color: '#2584ff', marginLeft: '40%' }} onPress={onPressViewMore}>Xem thêm</Text>
+                        <Text style={{ fontSize: 15, fontWeight: "600", margin: 10, color: '#2584ff', marginLeft: '40%' }} onPress={() => onPressViewMore("doctor")}>Xem thêm</Text>
                     </View>
                     <BacSiNoiBat listUsers={listUsers} />
                 </View>
+              
             </ScrollView>
 
         </View>

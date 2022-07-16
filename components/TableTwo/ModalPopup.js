@@ -16,7 +16,7 @@ import {
   import React, { useState, useEffect } from "react";
   import Ionicons from "@expo/vector-icons/Ionicons";
   import SelectDropdown from 'react-native-select-dropdown'
-  import FlashMessage from "react-native-flash-message";
+  // import FlashMessage from "react-native-flash-message";
   import { showMessage, hideMessage } from "react-native-flash-message";
   import * as ImagePicker from 'expo-image-picker';
   import { useDispatch,  } from "react-redux";
@@ -51,12 +51,15 @@ import {
   
   });
 const ModalPopup = ({ visible, setvisible, dataUser }) => {
+
+  
     const [showModal, setshowModal] = useState(visible);
     const [error, seterror] = useState({});
     const [loginPending, setloginPending] = useState(false)
   
     const [full_name, setfull_name] = useState('')
     const [email, setemail] = useState('')
+    const [user_id, setuser_id] = useState('')
     const [phone_number, setphone_number] = useState('')
     const [role, setrole] = useState('')
     const [address, setaddress] = useState('')
@@ -72,19 +75,30 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
     useEffect(() => {
       toggleModal();
     }, [visible]);
+
     useEffect(() => {
-  
       setfull_name(dataUser.full_name)
       setemail(dataUser.email)
+      setuser_id(dataUser.user_id)
       setphone_number(dataUser.phone_number),
-        setrole(dataUser.role)
+      setrole(dataUser.role)
       setaddress(dataUser.address)
       setgender(dataUser.gender)
       setImage(dataUser.image)
-  
     }, [dataUser])
+
+    const [dataUpdate, setdataUpdate] = useState({
+      email: '',
+      password: '',
+      full_name: '',
+      gender: '',
+      role: '',
+      phone_number: '',
+      address: '',
+      image: '',
+      doctorid: ''
+    })
     useEffect(() => {
-  
       var RandomNumber = Math.floor(Math.random() * 200) + 1 ;
   
       validateBlank()
@@ -249,20 +263,9 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
         }
       }
     }
-    const [dataUpdate, setdataUpdate] = useState({
-      user_id: 192,
-      email: '',
-      password: '',
-      full_name: '',
-      gender: '',
-      role: '',
-      phone_number: '',
-      address: '',
-      image: '',
-      doctorid: ''
-    })
+ 
   
-    const updateUser = (email, data) => {
+    const updateUser = (id, data) => {
   
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
@@ -279,34 +282,23 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
       };
       let count = 0;
   
-      fetch(`http://api-truongcongtoan.herokuapp.com/api/users/${email}`, requestOptions)
+      fetch(`http://api-truongcongtoan.herokuapp.com/api/users/${id}`, requestOptions)
         .then(response => response.text())
         .then(result => {
-          console.log(result);
           setloginPending(false)
-          if (result === email) {
             dispatch(allAction.userAction.addCheckLoadingPage(count + 1));
-  
             Toast.show({
               type: "success",
               text1: "Thông báo",
               text2: "Cập nhật thông tin tài khoản thành công !",
             });
             setvisible(false);
-          } else {
-            Toast.show({
-              type: "error",
-              text1: "Thông báo",
-              text2: "Cập nhật thông tin tài khoản không thành công !",
-            });
-            setvisible(false);
-          }
+          
   
         })
         .catch(error => console.log('error', error));
     }
     const pushError = (input) => {
-      console.log("gia tri cua ", input);
       return Alert.alert(
         "Error!",
         `${input}`,
@@ -360,9 +352,10 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
         }
       } else {
         try {
-          updateUser(email, dataUpdate)
+          updateUser(user_id, dataUpdate)
           setloginPending(true)
         } catch (error) {
+          console.log(error);
           showMessage({
             message: `${error["address"]}`,
             type: "danger",
@@ -663,7 +656,7 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
             </View>
           </View>
          
-          <FlashMessage position="top" />
+          {/* <FlashMessage position="top" /> */}
           {loginPending ?  <AppLoader /> : null}
         </Modal>
   

@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, FlatList,RefreshControl, StyleSheet,TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, FlatList,RefreshControl, StyleSheet,TouchableOpacity,  Alert,
+} from 'react-native'
 import React, { useState, useEffect } from 'react'
 import HeaderLogo from '../HeaderScreen/HeaderLogo'
 import RNPickerSelect from 'react-native-picker-select';
@@ -40,6 +41,7 @@ const ScheduleManage = () => {
     fetchDataTime(url_Schedule, setscheduleList)
     fetchDataTime(url_User, setlistUsersData)
   }, [])
+
   const fetchDataById = (url, setData,id) => {
     var requestOptions = {
       method: 'GET',
@@ -53,17 +55,15 @@ const ScheduleManage = () => {
       .catch(error => console.log('error', error));
   }
   useEffect(() => {
-    fetchDataTime(url_Time, setScheduleTime)
-    fetchDataTime(url_Schedule, setscheduleList)
-    fetchDataTime(url_User, setlistUsersData)
-  }, [])
-  useEffect(() => {
     setselectTime(ScheduleTime)
 
   }, [ScheduleTime])
   const [addDataResponse, setaddDataResponse] = useState([])
+
   const handleLogin = async (url, data = {}) => {
     console.log("calling data ...");
+
+    console.log("Data payload ",data);
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify(data);
@@ -80,6 +80,8 @@ const ScheduleManage = () => {
       })
       .catch((error) => console.log("error", error));
   };
+
+
   useEffect(() => {
     fetchDataById(url_Schedule,setscheduleList,selectedDoctorId)
   }, [addDataResponse])
@@ -96,12 +98,30 @@ const ScheduleManage = () => {
   }, [listUsersData]);
   
   const onDateChange = (date) => {
-    let d = new Date(date);
+    // console.log("Date la ",parseInt(date.toISOString().slice(8, 10)));
+    // console.log("Home nay  la ",parseInt(new Date().toISOString().slice(8,10)));
+    // console.log("gia tri thoi gian ",new Data().getHours());
+    console.log("gia tri check ",parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)));
+
+    if ((parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)) )<0) {
+      return Alert.alert(
+        "Thông báo",
+        "Ngày đăng ký lịch khám phải bắt đầu từ ngày hôm nay!"
+      );
+    }else if ((parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)) ) > 7) {
+      return Alert.alert(
+        "Thông báo",
+        "Bạn chỉ có thể đăng ký lịch khám trong vòng 1 tuần kể từ ngày hôm nay!"
+      );
+    }else{
+      let d = new Date(date);
     let e = new Date(d.getTime() + 3.6e6);
     let change = e.toISOString().replace("Z", "+07:00");
     let changeCopy = change.toString()
     let timestamp = changeCopy.replace("T06","T00")
     setselectedStartDate(timestamp)
+    }
+    
   }
   const handleChangeDoctor = (value) => {
     setselectedDoctorId(value)
@@ -210,7 +230,6 @@ const ScheduleManage = () => {
             "bulkSchedules": myDifferences
           }
      
-          console.log("payload",payload);
           handleLogin(url_Schedule, payload)
           Toast.show({
             type: "success",

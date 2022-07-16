@@ -8,8 +8,8 @@ import {
   ScrollView,
 } from "react-native";
 
-import FlashMessage from "react-native-flash-message";
-import { showMessage, hideMessage } from "react-native-flash-message";
+// import FlashMessage from "react-native-flash-message";
+// import { showMessage, hideMessage } from "react-native-flash-message";
 
 
 import Logo from "../../assets/image/healthcare.jpg";
@@ -30,7 +30,7 @@ const SignInScreen = () => {
   const [loginPending, setloginPending] = useState(false)
 
   
-  var url = "https://api-truongcongtoan-login.herokuapp.com/api/user/login";
+  var url = "https://api-truongcongtoan.herokuapp.com/api/user/login";
   var url_email = "https://api-truongcongtoan.herokuapp.com/api/users/";
 
   const [loginData, setloginData] = useState({
@@ -52,11 +52,11 @@ const SignInScreen = () => {
       try {
         handleLogin(url, loginData);
         setloginPending(true)
-        showMessage({
-          message: "Health care xin chào !",
-          description: "Chúc bạn một ngày tốt lành !",
-          type: "success",
-        });
+        // showMessage({
+        //   message: "Health care xin chào !",
+        //   description: "Chúc bạn một ngày tốt lành !",
+        //   type: "success",
+        // });
       } catch (error) {
         Toast.show({
           type: "error",
@@ -95,42 +95,47 @@ const SignInScreen = () => {
     return fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        if (JSON.parse(result).access_token) {
-          getLogInedPersonInfo(email);
-          setloginPending(false)
-        } else {
+        // console.log("result la ",result);
+        if (result === "Tài khoản hoặc mật khẩu không chính xác") {
           setloginPending(false)
           Toast.show({
             type: "error",
             text1: "Thông báo",
             text2: "Thông tin email và mật khẩu không chính xác !",
           });
+        } else {
+          getLogInedPersonInfo(JSON.parse(result).userid);
+          Toast.show({
+            type: "success",
+            text1: "Thông báo",
+            text2: "Health Care Xin chúc bạn một ngày an lành !",
+          });
+          setloginPending(false)
+
+          
         }
       })
       .catch((error) => console.log("error", error));
   };
 
-  const getLogInedPersonInfo = async (url, email) => {
-    await getDataByEmail(url, email);
+  const getLogInedPersonInfo = async (id) => {
+    await getDataByEmail(id);
     navigation.navigate("Drawer");
   };
 
-  const getDataByEmail = async (email) => {
+  const getDataByEmail = async (id) => {
     var requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    fetch(`${url_email}${email}`, requestOptions)
+    fetch(`${url_email}${id}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        console.log("email",`${url_email}${email}`);
-          console.log(result);
+        console.log("email",`${url_email}${id}`);
+          console.log("GEt by email",result);
 
-
-        dispatch(allAction.userAction.addSignIn(JSON.parse(result)));
-        // setdataResponse(JSON.parse(result));
-        
+        dispatch(allAction.userAction.addSignIn(JSON.parse(result)));        
       })
       .catch((error) => console.log("error", error));
   };
@@ -220,7 +225,7 @@ const SignInScreen = () => {
           type="TERTIARY"
         />
       </View>
-      <FlashMessage position="top" />
+      {/* <FlashMessage position="top" /> */}
     {loginPending ?  <AppLoader /> : null}
     </ScrollView>
   );
