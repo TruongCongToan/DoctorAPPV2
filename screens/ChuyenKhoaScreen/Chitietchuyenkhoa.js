@@ -182,11 +182,25 @@ const Chitietchuyenkhoa = () => {
   };
 
   const viewDetailPress = () => {
-    dispatch(allAction.userAction.addUser(itemMarkdownGet.doctorInfo.user));
-    dispatch(allAction.userAction.addMarkDown(itemMarkdownGet));
-    dispatch(allAction.userAction.addDoctorInfo(itemMarkdownGet.doctorInfo));
+   
     navigation.navigate("Chitietbacsi");
   };
+  useEffect(() => {
+    let check = false
+    if (!check) {
+     if (itemMarkdownGet && itemMarkdownGet.doctorInfo) {
+      dispatch(allAction.userAction.addUser(itemMarkdownGet.doctorInfo.user));
+      dispatch(allAction.userAction.addMarkDown(itemMarkdownGet));
+      dispatch(allAction.userAction.addDoctorInfo(itemMarkdownGet.doctorInfo));
+     }else{
+      return;
+     }
+    }
+    return () => {
+      check = true
+    }
+  }, [itemMarkdownGet])
+  
 
   return (
     <View style={{ flex: 1 }}>
@@ -285,7 +299,7 @@ const Chitietchuyenkhoa = () => {
                   {item.doctorInfo.user.image ? (
                     <TouchableOpacity
                       onPress={() => {
-                        viewDetailPress;
+                        viewDetailPress();
                         setitemMarkdownGet(item);
                       }}
                     >
@@ -306,7 +320,12 @@ const Chitietchuyenkhoa = () => {
                     <EvilIcons name="user" size={100} color="black" />
                   )}
                   <View style={{ width: "70%", paddingLeft: 15 }}>
-                    <TouchableOpacity onPress={viewDetailPress}>
+                  <TouchableOpacity
+                      onPress={() => {
+                        viewDetailPress();
+                        setitemMarkdownGet(item);
+                      }}
+                    >
                       <Text style={{ fontSize: 14, color: "#0092c5" }}>
                         Bác sĩ chuyên khoa {item.doctorInfo.user.full_name}
                       </Text>
