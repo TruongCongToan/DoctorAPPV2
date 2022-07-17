@@ -305,7 +305,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
     let formIsValid = true;
     if (!full_name) {
       formIsValid = false;
-      errors["full_name"] = "Không được bỏ  trống ô: họ và tên !";
+      errors["full_name"] = "Bạn không được bỏ  trống ô: họ và tên !";
     } else {
         if (!validateStr(full_name)) {
           formIsValid = false;
@@ -313,11 +313,11 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
         }else{
           if (!gender) {
             formIsValid = false;
-            errors["gender"] = "Không được bỏ  trống ô: Giới tính!";
+            errors["gender"] = "Bạn không được bỏ  trống ô: Giới tính!";
           }else{
             if (!birth_year) {
               formIsValid = false;
-              errors["birth_year"] = "Không được bỏ  trống ô: Giới tính!";
+              errors["birth_year"] = "Bạn không được bỏ  trống ô: Giới tính!";
             }else{
               if (!pattern.test(birth_year)) {
               formIsValid = false;
@@ -325,7 +325,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
               }else{
                 if (!email) {
                   formIsValid = false;
-                  errors["email"] = "Không được bỏ  trống ô: Email!";
+                  errors["email"] = "Bạn không được bỏ  trống ô: Email!";
                 }else{
                   if (!validateEmail(email)) {
                     formIsValid = false;
@@ -333,7 +333,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
                   }else{
                     if (!phone_number) {
                       formIsValid = false;
-                      errors["phone_number"] = "Không được bỏ  trống ô: Số điện thoại!";
+                      errors["phone_number"] = "Bạn không được bỏ  trống ô: Số điện thoại!";
                     }else{
                       if (!validatePhoneNumber(phone_number)) {
                         formIsValid = false;
@@ -341,11 +341,11 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
                       }else{
                         if (!address) {
                           formIsValid = false;
-                          errors["address"] = "Không được bỏ  trống ô: Địa chỉ!";
+                          errors["address"] = "Bạn không được bỏ  trống ô: Địa chỉ!";
                         }else{
                           if (!reason) {
                             formIsValid = false;
-                            errors["reason"] = "Không được bỏ  trống ô: Lý do khám bệnh!";
+                            errors["reason"] = "Bạn không được bỏ  trống ô: Lý do khám bệnh!";
                           }
                         }
                       }

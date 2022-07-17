@@ -285,13 +285,15 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
       fetch(`http://api-truongcongtoan.herokuapp.com/api/users/${id}`, requestOptions)
         .then(response => response.text())
         .then(result => {
-          setloginPending(false)
+          if (result) {
             dispatch(allAction.userAction.addCheckLoadingPage(count + 1));
             Toast.show({
               type: "success",
               text1: "Thông báo",
               text2: "Cập nhật thông tin tài khoản thành công !",
             });
+          }
+          setloginPending(false)
             setvisible(false);
           
   

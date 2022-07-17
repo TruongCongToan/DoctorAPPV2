@@ -74,6 +74,7 @@ const ListSpecialtiesScreen = () => {
 
   const ItemView = ({ item }) => {
     return (
+       <>
         <TouchableOpacity onPress={() => getItem(item)}> 
       <View style={{ flex: 1, flexDirection: "row",height:120 }}>
         {item.image ?
@@ -99,6 +100,11 @@ const ListSpecialtiesScreen = () => {
         </View>
       </View>
       </TouchableOpacity>
+      <View style={{height:20}}>
+
+      </View>
+       </>
+
     );
   };
 

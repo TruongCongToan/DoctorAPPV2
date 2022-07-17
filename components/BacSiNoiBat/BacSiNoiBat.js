@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
 import allAction from '../redux/action/allAction'
+import PropTypes from 'prop-types';
+
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
@@ -107,5 +109,9 @@ if (!check && doctorInfo && doctorInfo.id) {
     </SafeAreaView>
   )
 }
+
+BacSiNoiBat.propTypes = {
+  name: PropTypes.array
+};
 
 export default BacSiNoiBat

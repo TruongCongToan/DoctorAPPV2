@@ -4,6 +4,8 @@ import BacSiNoiBat from '../BacSiNoiBat/BacSiNoiBat'
 import BannerScreen from './BannerScreen'
 import { useNavigation } from '@react-navigation/native'
 import ChuyenKhoaUserScreen from '../../screens/ChuyenKhoaScreen/ChuyenKhoaUserScreen'
+import PropTypes from 'prop-types';
+
 
 
 const TableOne = (props) => {
@@ -68,6 +70,9 @@ const TableOne = (props) => {
         </View>
     )
 }
+TableOne.propTypes = {
+    name: PropTypes.array
+  };
 const styles = StyleSheet.create({
     container: {
       flex: 1,

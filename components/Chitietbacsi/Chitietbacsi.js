@@ -96,7 +96,7 @@ const Chitietbacsi = () => {
   }, [dataOneUser]);
 
   useEffect(() => {
-    fetchData(url_Schedule, doctoIDGet, date, setallAvaiableTime);
+    fetchData(url_Schedule, doctoIDGet, selectedDate, setallAvaiableTime);
   }, [dataOneUser.user_id]);
 
   const handleOnchangeDate = (date) => {
@@ -284,6 +284,9 @@ const Chitietbacsi = () => {
                   justifyContent: "center",
                 }}
               >
+                {
+                  console.log("gia tri cua , " ,dataOneUser.user_id)
+                }
                 {allAvaiableTime.length > 0 ? (
                   <>
                     {allAvaiableTime &&
@@ -299,6 +302,9 @@ const Chitietbacsi = () => {
                           key={index}
                           onPress={() => timeBookingPress(item)}
                         >
+                          {
+                             console.log("gia tri item , " ,item.allCode ? item.allCode.valuevi:"khong co")
+                          }
                           <Text
                             style={{
                               padding: 10,
@@ -307,7 +313,7 @@ const Chitietbacsi = () => {
                               fontWeight: "500",
                             }}
                           >
-                            {item.allCode.valuevi}
+                            {item.allCode ? item.allCode.valuevi :null}
                           </Text>
                         </TouchableOpacity>
                       ))}

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
 import allAction from '../../components/redux/action/allAction'
+import PropTypes from 'prop-types';
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
@@ -38,23 +39,24 @@ const fetchData = (url,user_id,setData) =>{
 
 
   const onPressImg = (value) => {
-    fetchData(url_Specialties,value.id,setselectedSpecialties)
+    // fetchData(url_Specialties,value.id,setselectedSpecialties)
+    dispatch(allAction.specialtiesAction.addOneSpecialties(value.id))
     // fetchData(url_markdown,value.user_id,setmarkDownGet)
     // fetchData(url_Info,value.user_id,setdoctorInfo)
     navigation.navigate("Chitietchuyenkhoa")
     // console.log("gia tr la ",value.id);
   }
 
-  useEffect(() => {
-    let check = false ;
-    if (!check) {
-     dispatch(allAction.specialtiesAction.addOneSpecialties(selectedSpecialties))
+  // useEffect(() => {
+  //   let check = false ;
+  //   if (!check) {
+  //    dispatch(allAction.specialtiesAction.addOneSpecialties(selectedSpecialties))
    
-    }
-    return () => {
-      check = true
-    }
-  }, [selectedSpecialties])
+  //   }
+  //   return () => {
+  //     check = true
+  //   }
+  // }, [selectedSpecialties])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -91,5 +93,7 @@ const fetchData = (url,user_id,setData) =>{
     </SafeAreaView>
   )
 }
-
+ChuyenKhoaUserScreen.propTypes = {
+  name: PropTypes.array
+};
 export default ChuyenKhoaUserScreen
