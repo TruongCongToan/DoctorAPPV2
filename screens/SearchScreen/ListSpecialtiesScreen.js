@@ -22,14 +22,8 @@ const ListSpecialtiesScreen = () => {
   const [masterDataSource, setMasterDataSource] = useState([]);
 
   const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties/";
-  const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/"
-  const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
-  const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/"
-  
-  const [SelectedUser, setSelectedUser] = useState({})
+
   const [SelectedSpecialties, setSelectedSpecialties] = useState({})
-  const [markDownGet, setmarkDownGet] = useState({})
-  const [doctorInfo, setdoctorInfo] = useState({})
   const dispatch = useDispatch();
 
 
@@ -76,14 +70,14 @@ const ListSpecialtiesScreen = () => {
     return (
        <>
         <TouchableOpacity onPress={() => getItem(item)}> 
-      <View style={{ flex: 1, flexDirection: "row",height:120 }}>
+      <View style={{ flex: 1, flexDirection: "row",height:120 ,marginLeft:20}}>
         {item.image ?
         <Image
           style={{
             width: 100,
-            height: 100,
+            height: 110,
             borderRadius: 5,
-            marginTop: 10,
+            marginTop: 20,
             marginLeft: 10,
             borderWidth: 0.3,
             borderColor: "black",
@@ -91,7 +85,7 @@ const ListSpecialtiesScreen = () => {
           source={{ uri: item.image }}
         />
         :
-        <EvilIcons name="user" size={70} color="black" />}
+        <EvilIcons name="user" size={100} color="black" />}
 
         <View style={{ flexDirection: "column", marginLeft: 20 }}>
           <Text style={styles.itemStyle}>
@@ -119,40 +113,12 @@ const ListSpecialtiesScreen = () => {
       />
     );
   };
-  const [dataUser, setdataUser] = useState({});
-
   const getItem = (item) => {
       console.log("item ",item.id);
+      dispatch(allAction.specialtiesAction.addOneSpecialties(item.id))
     navigation.navigate("Chitietchuyenkhoa")
-    fetchData(url_Specialties,item.id,setSelectedSpecialties)
-    // fetchData(url_markdown,item.user_id,setmarkDownGet)
-    // fetchData(url_Info,item.user_id,setdoctorInfo)
   };
-  useEffect(() => {
-    let check = false ;
-    if (!check) {
 
-     dispatch(allAction.specialtiesAction.addOneSpecialties(SelectedSpecialties))
-    //  dispatch(allAction.userAction.addMarkDown(markDownGet))
-    //  dispatch(allAction.userAction.addDoctorInfo(doctorInfo))
-    }
-    return () => {
-      check = true
-    }
-  }, [SelectedSpecialties])
-
- const fetchData = (url,user_id,setData) =>{
-  console.log("id la ",user_id);
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'  
-  };
-  
-  fetch(`${url}${user_id}`, requestOptions)
-    .then(response => response.text())
-    .then(result => setData(JSON.parse(result)))
-    .catch(error => console.log('error', error));
-}
   return (
     <SafeAreaView style={{ flex: 1 }}>
     
@@ -196,7 +162,6 @@ const ListSpecialtiesScreen = () => {
         />
         
       </View>
-      {!dataUser ? <AppLoader /> : null}
     </SafeAreaView>
   );
 };
@@ -206,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   itemStyle: {
-    padding: 10,
+    padding: 20,
   },
 });
 

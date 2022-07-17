@@ -18,15 +18,71 @@ import moment from "moment";
 import "moment/locale/vi";
 import RadioGroup from "react-native-radio-buttons-group";
 import Toast from "react-native-toast-message";
-import { showMessage, hideMessage } from "react-native-flash-message";
-
 
 const BookingScheduleScreen = () => {
   var bookingInfoGet = useSelector((state) => state.user.bookingInfo);
-  var dataOneUser = useSelector((state) => state.user.getoneuser);
-  var doctorInfo = useSelector((state) => state.user.doctorInfo);
-  var signInPerson = useSelector(state => state.user.signInPerson);
 
+  var signInPerson = useSelector((state) => state.user.signInPerson);
+
+  const [dataOneUser, setdataOneUser] = useState({});
+  const [doctorInfo, setdoctorInfo] = useState({});
+  const [markdown, setmarkdown] = useState({});
+
+  const url_MarkDown = "http://api-truongcongtoan.herokuapp.com/api/markdowns/";
+  const url_DoctorInfo =
+    "http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
+
+  const dataOneUser_id = useSelector((state) => state.user.getoneuser);
+
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      fetchData(url_DoctorInfo, dataOneUser_id, setdoctorInfo);
+    }
+    return () => {
+      check = true;
+    };
+  }, [dataOneUser_id]);
+
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      fetchData(url_MarkDown, doctorInfo.id, setmarkdown);
+    }
+    return () => {
+      check = true;
+    };
+  }, [doctorInfo]);
+  console.log(
+    "markdwon suere ",
+    markdown && markdown.doctorInfo && markdown.doctorInfo.user
+      ? markdown.doctorInfo.user.full_name
+      : null
+  );
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      if (markdown && markdown.doctorInfo && markdown.doctorInfo.user) {
+        setdataOneUser(markdown.doctorInfo.user);
+      }
+    }
+    return () => {
+      check = true;
+    };
+  }, [markdown]);
+
+  const fetchData = (url, user_id, setData) => {
+    console.log("get data ...", `${url}${user_id}`);
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${url}${user_id}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => setData(JSON.parse(result)))
+      .catch((error) => console.log("error", error));
+  };
 
   const [full_name, setfull_name] = useState(null);
   const [email, setemail] = useState(null);
@@ -37,8 +93,8 @@ const BookingScheduleScreen = () => {
   const [reason, setreason] = useState(null);
 
   const [error, seterror] = useState({});
-const url_Email = "https://api-truongcongtoan.herokuapp.com/api/sendEmail"
-const url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings"
+  const url_Email = "https://api-truongcongtoan.herokuapp.com/api/sendEmail";
+  const url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings";
   const radioButtonsData = [
     {
       id: "1",
@@ -55,10 +111,8 @@ const url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings"
   const [radioButtons, setRadioButtons] = useState(radioButtonsData);
 
   function onPressRadioButton(radioButtonsArray) {
-  
     setRadioButtons(radioButtonsArray);
   }
-
 
   useEffect(() => {
     // console.log(radioButtons);
@@ -75,278 +129,278 @@ const url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings"
     };
   }, [radioButtons]);
 
-useEffect(() => {
-  let check = false
-  if (!check) {
-    validateBlank()
-    setdataToEmail({
-      full_name:full_name,
-      gender:gender,
-      birth_year:birth_year,
-      email:email,
-      phone_number:phone_number,
-      address:address,
-      reason:reason,
-      ngaykham:`${bookingInfoGet.timetypeValue  ? bookingInfoGet.timetypeValue
-        : null} , ${moment(new Date(bookingInfoGet.date))
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      validateBlank();
+      setdataToEmail({
+        full_name: full_name,
+        gender: gender,
+        birth_year: birth_year,
+        email: email,
+        phone_number: phone_number,
+        address: address,
+        reason: reason,
+        ngaykham: `${
+          bookingInfoGet.timetypeValue ? bookingInfoGet.timetypeValue : null
+        } , ${moment(new Date(bookingInfoGet.date))
           .locale("vi")
           .format("dddd - DD/MM/YYYY")}`,
-          doctor_name:dataOneUser.full_name,
-          price:`${doctorInfo.allCodePrice.valuevi} VNĐ`,
-          doctorid:doctorInfo.user.user_id.toString(),
-          patientid:signInPerson.user_id.toString(),
-          date:bookingInfoGet.date,
-          timetype:bookingInfoGet.timetype
-       
-    })
-  }
-  return () => {
-    check = true
-  }
-}, [full_name,gender,birth_year,email,phone_number,address,reason])
-
-console.log(dataToEmail);
-let dataADD = {
-  ...bookingInfoGet
-}
-const [dataToEmail, setdataToEmail] = useState({
-  ...bookingInfoGet,
-  full_name:'',
-  doctor_name:'',
-  price:'',
-  reason,
-  address,
-  birth_year:'',
-  gender:'',
-  phone_number:'',
-  email:'',
-  ngaykham:'',
-
-})
-
-const [dataErrorBooking, setdataErrorBooking] = useState({})
-const [dataErrorEmail, setdataErrorEmail] = useState({}
-  )
-const addNewBooking = (url,data,setData) =>{
-console.log(data);
-  var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-
-var raw = JSON.stringify(data);
-
-var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: raw,
-  redirect: 'follow'
-};
-
-fetch(url, requestOptions)
-  .then(response => response.text())
-  .then(result => {
-    if(!JSON.parse(result).errorCode){
-      addDataEmail(dataToEmail)
-      Toast.show({
-         type: "success",
-         text1: "Thông báo",
-         text2: "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
-       });
-    }else{
-      Toast.show({
-        type: "error",
-        text1: "Thông báo",
-        text2: "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email !",
+        doctor_name: dataOneUser ? dataOneUser.full_name:null,
+        price: `${doctorInfo && doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi :null} VNĐ`,
+        doctorid: doctorInfo && doctorInfo.user ? doctorInfo.user.user_id.toString():null,
+        patientid: signInPerson.user_id.toString(),
+        date: bookingInfoGet.date,
+        timetype: bookingInfoGet.timetype,
       });
     }
-    console.log("gia tri th duoc ",result);
-  })
-  .catch(error => console.log('error', error));
-}
-const addDataEmail = (data) =>{
-  console.log("start");
-  var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+    return () => {
+      check = true;
+    };
+  }, [full_name, gender, birth_year, email, phone_number, address, reason]);
 
-var raw = JSON.stringify(
-data
-);
+  console.log(dataToEmail);
+  let dataADD = {
+    ...bookingInfoGet,
+  };
+  const [dataToEmail, setdataToEmail] = useState({
+    ...bookingInfoGet,
+    full_name: "",
+    doctor_name: "",
+    price: "",
+    reason,
+    address,
+    birth_year: "",
+    gender: "",
+    phone_number: "",
+    email: "",
+    ngaykham: "",
+  });
 
-var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  body: raw,
-  redirect: 'follow'
-};
+  const [dataErrorBooking, setdataErrorBooking] = useState({});
+  const [dataErrorEmail, setdataErrorEmail] = useState({});
+  const addNewBooking = (url, data, setData) => {
+    console.log(data);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-}
+    var raw = JSON.stringify(data);
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(url, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        if (!JSON.parse(result).errorCode) {
+          addDataEmail(dataToEmail);
+          Toast.show({
+            type: "success",
+            text1: "Thông báo",
+            text2: "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
+          });
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Thông báo",
+            text2:
+              "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email !",
+          });
+        }
+        console.log("gia tri th duoc ", result);
+      })
+      .catch((error) => console.log("error", error));
+  };
+  const addDataEmail = (data) => {
+    console.log("start");
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify(data);
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(
+      "https://api-truongcongtoan.herokuapp.com/api/sendEmail",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+  };
 
   const handleSave = () => {
-   
-     if (!validateBlank()) {
-        if (error["full_name"]) {
-          pushError(error["full_name"])
-        }else if(error["gender"]){
-          pushError(error["gender"])
-        }else if(error["birth_year"]){
-          pushError(error["birth_year"])
-        }else if(error["email"]){
-          pushError(error["email"])
-        }else if (error["address"]) {
-          pushError(error["address"])
-        }else if (error["reason"]) {
-          pushError(error["reason"])
-        }else{
-        alert("OK")
-        }
-     }else{
+    if (!validateBlank()) {
+      if (error["full_name"]) {
+        pushError(error["full_name"]);
+      } else if (error["gender"]) {
+        pushError(error["gender"]);
+      } else if (error["birth_year"]) {
+        pushError(error["birth_year"]);
+      } else if (error["email"]) {
+        pushError(error["email"]);
+      } else if (error["address"]) {
+        pushError(error["address"]);
+      } else if (error["reason"]) {
+        pushError(error["reason"]);
+      } else {
+        alert("OK");
+      }
+    } else {
       try {
-        addNewBooking(url_Booking,dataADD,setdataErrorBooking)
+        addNewBooking(url_Booking, dataADD, setdataErrorBooking);
         // addNewBooking(url_Email,dataToEmail,setdataErrorEmail)
-      //  setdataErrorBooking({});
+        //  setdataErrorBooking({});
       } catch (error) {
         console.log(error);
       }
-     }
+    }
   };
 
-//  useEffect(() => {
-//    let check = false;
-//   if (!check) {
-//     if (dataErrorBooking.errorCode === 400) {
-//        Toast.show({
-//           type: "error",
-//           text1: "Thông báo",
-//           text2: "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email!",
-//         });
-//     }
-//     else if(dataErrorBooking.id){
-//       addDataEmail(dataToEmail)
-//       Toast.show({
-//          type: "success",
-//          text1: "Thông báo",
-//          text2: "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
-//        });
-//     }else{
-//    showMessage({
-//         message: "Thông báo !",
-//         description: "Xin mời bạn điền các thông tin đặt khám !",
-//         type: "success",
-//       });
-//     }
-//   }
-//    return () => {
-//      check = true
-//    }
-//  }, [dataErrorBooking])
- 
+  //  useEffect(() => {
+  //    let check = false;
+  //   if (!check) {
+  //     if (dataErrorBooking.errorCode === 400) {
+  //        Toast.show({
+  //           type: "error",
+  //           text1: "Thông báo",
+  //           text2: "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email!",
+  //         });
+  //     }
+  //     else if(dataErrorBooking.id){
+  //       addDataEmail(dataToEmail)
+  //       Toast.show({
+  //          type: "success",
+  //          text1: "Thông báo",
+  //          text2: "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
+  //        });
+  //     }else{
+  //    showMessage({
+  //         message: "Thông báo !",
+  //         description: "Xin mời bạn điền các thông tin đặt khám !",
+  //         type: "success",
+  //       });
+  //     }
+  //   }
+  //    return () => {
+  //      check = true
+  //    }
+  //  }, [dataErrorBooking])
+
   const pushError = (input) => {
-  
     Toast.show({
       type: "error",
       text1: "Thông báo",
       text2: `${input}`,
     });
-  }
-    //validate email
-    const validateEmail = (email) => {
-      let errors = {};
-      var check = true;
-      var result = String(email)
-        .toLowerCase()
-        .match(
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
-      if (result === null) {
-        check = false;
-      } else {
-        errors["email"] = null;
-        seterror(errors);
-      }
-      return check;
-    };
+  };
+  //validate email
+  const validateEmail = (email) => {
+    let errors = {};
+    var check = true;
+    var result = String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+    if (result === null) {
+      check = false;
+    } else {
+      errors["email"] = null;
+      seterror(errors);
+    }
+    return check;
+  };
 
-    let validateStr = (stringToValidate) => {
-      var pattern = /\d/g;
-      if (!pattern.test(stringToValidate)) {
-       if (!/[~`!#$%()\^&*+=\-\[\]\\';@_,/{}|\\":<>\?]/g.test(stringToValidate)) {
-        return true
-       }else{
-         return false
-       }
+  let validateStr = (stringToValidate) => {
+    var pattern = /\d/g;
+    if (!pattern.test(stringToValidate)) {
+      if (
+        !/[~`!#$%()\^&*+=\-\[\]\\';@_,/{}|\\":<>\?]/g.test(stringToValidate)
+      ) {
+        return true;
       } else {
         return false;
       }
-     
-    };
-        //validate phone_number
-        function validatePhoneNumber(email) {
-          let errors = {};
-          var check = true;
-          var result = String(email)
-            .toLowerCase()
-            .match(
-              /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
-            );
-          if (result === null) {
-            check = false;
-          } else {
-            errors["phone_number"] = null;
-            seterror(errors);
-          }
-          return check;
-        }
+    } else {
+      return false;
+    }
+  };
+  //validate phone_number
+  function validatePhoneNumber(email) {
+    let errors = {};
+    var check = true;
+    var result = String(email)
+      .toLowerCase()
+      .match(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/);
+    if (result === null) {
+      check = false;
+    } else {
+      errors["phone_number"] = null;
+      seterror(errors);
+    }
+    return check;
+  }
   const validateBlank = () => {
-    var pattern =/^[\d\s]+$/ ;
+    var pattern = /^[\d\s]+$/;
     let errors = {};
     let formIsValid = true;
     if (!full_name) {
       formIsValid = false;
       errors["full_name"] = "Bạn không được bỏ  trống ô: họ và tên !";
     } else {
-        if (!validateStr(full_name)) {
+      if (!validateStr(full_name)) {
+        formIsValid = false;
+        errors["full_name"] = "Họ và tên không chứa chữ số và các ký tự khác!";
+      } else {
+        if (!gender) {
           formIsValid = false;
-          errors["full_name"] = "Họ và tên không chứa chữ số và các ký tự khác!";
-        }else{
-          if (!gender) {
+          errors["gender"] = "Bạn không được bỏ  trống ô: Giới tính!";
+        } else {
+          if (!birth_year) {
             formIsValid = false;
-            errors["gender"] = "Bạn không được bỏ  trống ô: Giới tính!";
-          }else{
-            if (!birth_year) {
-              formIsValid = false;
-              errors["birth_year"] = "Bạn không được bỏ  trống ô: Giới tính!";
-            }else{
-              if (!pattern.test(birth_year)) {
+            errors["birth_year"] = "Bạn không được bỏ  trống ô: Giới tính!";
+          } else {
+            if (!pattern.test(birth_year)) {
               formIsValid = false;
               errors["birth_year"] = "Ô ngày sinh cần phải là số!";
-              }else{
-                if (!email) {
+            } else {
+              if (!email) {
+                formIsValid = false;
+                errors["email"] = "Bạn không được bỏ  trống ô: Email!";
+              } else {
+                if (!validateEmail(email)) {
                   formIsValid = false;
-                  errors["email"] = "Bạn không được bỏ  trống ô: Email!";
-                }else{
-                  if (!validateEmail(email)) {
+                  errors["email"] =
+                    "Email không đúng định dạng! VD: xxx@yyy.com!";
+                } else {
+                  if (!phone_number) {
                     formIsValid = false;
-                    errors["email"] = "Email không đúng định dạng! VD: xxx@yyy.com!";
-                  }else{
-                    if (!phone_number) {
+                    errors["phone_number"] =
+                      "Bạn không được bỏ  trống ô: Số điện thoại!";
+                  } else {
+                    if (!validatePhoneNumber(phone_number)) {
                       formIsValid = false;
-                      errors["phone_number"] = "Bạn không được bỏ  trống ô: Số điện thoại!";
-                    }else{
-                      if (!validatePhoneNumber(phone_number)) {
-                        formIsValid = false;
                       errors["phone_number"] = "Ô số điện thoại cần phải là số";
-                      }else{
-                        if (!address) {
+                    } else {
+                      if (!address) {
+                        formIsValid = false;
+                        errors["address"] =
+                          "Bạn không được bỏ  trống ô: Địa chỉ!";
+                      } else {
+                        if (!reason) {
                           formIsValid = false;
-                          errors["address"] = "Bạn không được bỏ  trống ô: Địa chỉ!";
-                        }else{
-                          if (!reason) {
-                            formIsValid = false;
-                            errors["reason"] = "Bạn không được bỏ  trống ô: Lý do khám bệnh!";
-                          }
+                          errors["reason"] =
+                            "Bạn không được bỏ  trống ô: Lý do khám bệnh!";
                         }
                       }
                     }
@@ -356,12 +410,12 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
             }
           }
         }
-     }
-    
+      }
+    }
+
     seterror(errors);
     return formIsValid;
   };
-
 
   const onBookingPress = (input) => {
     return Alert.alert(
@@ -371,7 +425,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
         {
           text: "Có",
           onPress: () => {
-            handleSave()
+            handleSave();
             // Toast.show({
             //   type: "success",
             //   text1: "Thông báo",
@@ -391,7 +445,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
       <HeaderLogo />
       <ScrollView>
         <View style={{ flexDirection: "row" }}>
-          {dataOneUser.image ? (
+          {dataOneUser && dataOneUser.image ? (
             <Image
               style={{
                 width: 100,
@@ -419,7 +473,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
                 Đăng ký khám
               </Text>
               <Text style={{ paddingTop: 10, color: "#0092c5", fontSize: 15 }}>
-                Bác sĩ {dataOneUser.full_name}
+                Bác sĩ {dataOneUser ? dataOneUser.full_name : null}
               </Text>
               <Text style={{ fontSize: 13, paddingTop: 5 }}>
                 {bookingInfoGet.timetypeValue
@@ -446,7 +500,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
           <Ionicons name="radio-button-on" size={20} color="green" />
           <Text>
             Giá khám:{" "}
-            {doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
+            { doctorInfo &&doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
             VNĐ
           </Text>
         </View>
@@ -742,7 +796,8 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
                 fontWeight: "400",
               }}
             >
-             {doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}VNĐ
+              {doctorInfo && doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
+              VNĐ
             </Text>
           </View>
           <View style={{ flexDirection: "row" }}>
@@ -801,11 +856,18 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
                 color: "red",
               }}
             >
-              {doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}VNĐ
+              {doctorInfo && doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
+              VNĐ
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: "column" ,backgroundColor: '#D4EFFC',margin:15}}>
+        <View
+          style={{
+            flexDirection: "column",
+            backgroundColor: "#D4EFFC",
+            margin: 15,
+          }}
+        >
           <Text
             style={{
               textTransform: "uppercase",
@@ -836,8 +898,13 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
           </View>
         </View>
         <View>
-          <View style ={{justifyContent: "center",
-              alignItems: "center",marginTop:10}}>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 10,
+            }}
+          >
             <TouchableOpacity
               style={{
                 width: "80%",
@@ -852,7 +919,7 @@ fetch("https://api-truongcongtoan.herokuapp.com/api/sendEmail", requestOptions)
             >
               <Text style={{ color: "white" }}>Xác nhận đặt khám</Text>
             </TouchableOpacity>
-          </View> 
+          </View>
         </View>
       </ScrollView>
     </View>

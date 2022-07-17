@@ -19,9 +19,8 @@ import allAction from "../redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
 
 const Chitietbacsi = () => {
-  const dataOneUser = useSelector((state) => state.user.getoneuser);
-  const markdown = useSelector((state) => state.user.markdown);
-  const doctorInfo = useSelector((state) => state.user.doctorInfo);
+ 
+  
   const signInPerson = useSelector((state) => state.user.signInPerson);
 
   const [alldays, setalldays] = useState([]);
@@ -73,10 +72,61 @@ const Chitietbacsi = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  let date = alldays && alldays.length > 0 && alldays[0].value;
-  // console.log("gia tri allday ",alldays[0]);
+  // let date = alldays && alldays.length > 0 && alldays[0].value;
+const [dataOneUser, setdataOneUser] = useState({});
+const [doctorInfo, setdoctorInfo] = useState({});
+const [markdown, setmarkdown] = useState({});
+const [doctoIDGet, setdoctoIDGet] = useState(0);
 
-  const fetchData = (url, user_id, date, setData) => {
+
+  const dataOneUser_id = useSelector((state) => state.user.getoneuser);
+
+  useEffect(() => {
+    let check = false
+  if(!check){
+    fetchData(url_DoctorInfo,dataOneUser_id,setdoctorInfo);
+  }
+    return () => {
+      check = true
+    }
+  }, [dataOneUser_id])
+
+  useEffect(() => {
+    let check = false
+  if(!check){
+    fetchData(url_MarkDown,doctorInfo.id,setmarkdown);
+  }
+    return () => {
+      check = true
+    }
+  }, [doctorInfo]);
+console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.doctorInfo.user ? markdown.doctorInfo.user.full_name : null);
+  useEffect(() => {
+    let check = false
+  if(!check){
+   if (markdown  && markdown.doctorInfo && markdown.doctorInfo.user ) {
+    setdataOneUser(markdown.doctorInfo.user)
+   }
+  }
+    return () => {
+      check = true
+    }
+  }, [markdown])
+  
+  const fetchData = (url,user_id,setData) =>{
+    console.log("get data ...",`${url}${user_id}`);
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'  
+    };
+    
+    fetch(`${url}${user_id}`, requestOptions)
+      .then(response => response.text())
+      .then(result => setData(JSON.parse(result)))
+      .catch(error => console.log('error', error));
+  }
+
+  const fetchDataSchedule = (url, user_id, date, setData) => {
     console.log(`${url}${user_id}/${date}`);
     var requestOptions = {
       method: "GET",
@@ -90,18 +140,17 @@ const Chitietbacsi = () => {
       })
       .catch((error) => console.log("error", error));
   };
-  const [doctoIDGet, setdoctoIDGet] = useState(0);
   useEffect(() => {
     setdoctoIDGet(dataOneUser.user_id);
   }, [dataOneUser]);
 
   useEffect(() => {
-    fetchData(url_Schedule, doctoIDGet, selectedDate, setallAvaiableTime);
+    fetchDataSchedule(url_Schedule, doctoIDGet, selectedDate, setallAvaiableTime);
   }, [dataOneUser.user_id]);
 
   const handleOnchangeDate = (date) => {
     setselectedDate(date);
-    fetchData(url_Schedule, doctoIDGet, date, setallAvaiableTime);
+    fetchDataSchedule(url_Schedule, doctoIDGet, date, setallAvaiableTime);
   };
   const timeBookingPress = (value) => {
     setselectedTimeType(value.allCode);
@@ -124,7 +173,6 @@ const Chitietbacsi = () => {
     };
   }, [selectedTimeType.key, doctoIDGet, signInPerson, selectedDate]);
 
-  console.log("Booking info ",bookingInfo);
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -135,7 +183,7 @@ const Chitietbacsi = () => {
     };
   }, [bookingInfo]);
 
-  // console.log("gia tri nhan duoc ", bookingInfo);
+  console.log("gia tri nhan duoc ", bookingInfo);
   const previewPrice = () => {
     setcheckOpenPrice(!checkOpenPrice);
   };
@@ -284,9 +332,7 @@ const Chitietbacsi = () => {
                   justifyContent: "center",
                 }}
               >
-                {
-                  console.log("gia tri cua , " ,dataOneUser.user_id)
-                }
+             
                 {allAvaiableTime.length > 0 ? (
                   <>
                     {allAvaiableTime &&
@@ -414,8 +460,9 @@ const Chitietbacsi = () => {
                 >
                   Giá khám:
                 </Text>
+              
                 <Text style={{ paddingLeft: 15 }}>
-                  {doctorInfo.allCodePrice
+                  {doctorInfo && doctorInfo.allCodePrice
                     ? `${doctorInfo.allCodePrice.valuevi} VNĐ`
                     : "Không có dữ liệu"}
                   {""}
@@ -467,7 +514,6 @@ const Chitietbacsi = () => {
                         ? `${doctorInfo.allCodePrice.valuevi} VNĐ`
                         : null}
                     </Text>
-                    {console.log("gia tri dia chi ", doctorInfo)}
                   </View>
                   <Text
                     style={{ fontSize: 13, fontWeight: "300", paddingLeft: 8 }}

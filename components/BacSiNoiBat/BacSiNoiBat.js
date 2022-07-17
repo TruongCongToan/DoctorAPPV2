@@ -8,73 +8,24 @@ import PropTypes from 'prop-types';
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
-const url_User = "https://api-truongcongtoan.herokuapp.com/api/users/"
-const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
-const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/"
+
 
 const BacSiNoiBat = (props) => {
 
   let listUsers = props.listUsers
   const navigation = useNavigation();
-  const [SelectedUser, setSelectedUser] = useState({})
-  const [markDownGet, setmarkDownGet] = useState({})
-  const [doctorInfo, setdoctorInfo] = useState({})
 
   const dispatch = useDispatch();
 
   const onchange = (nativeEvent) => {
   }
-const fetchData = (url,user_id,setData) =>{
-  console.log("get data ...");
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'  
-  };
-  
-  fetch(`${url}${user_id}`, requestOptions)
-    .then(response => response.text())
-    .then(result => setData(JSON.parse(result)))
-    .catch(error => console.log('error', error));
-}
-
 
   const onPressImg = (value) => {
-    console.log("gia tri id ",value.user_id);
-    fetchData(url_User,value.user_id,setSelectedUser)
-    fetchData(url_Info,value.user_id,setdoctorInfo)
+    dispatch(allAction.userAction.addUser(value.user_id))
+    
     navigation.navigate("Chitietbacsi")
   }
-  // console.log("gia tri cua 1 usser ",SelectedUser.user_id);
-useEffect(() => {
-  let check = false
-if (!check && doctorInfo && doctorInfo.id) {
-  fetchData(url_markdown,doctorInfo.id,setmarkDownGet)
-}else{
-  setmarkDownGet(null)
-}
-  return () => {
-    check = true
-  }
-}, [doctorInfo.id])
-
-
-  
-  useEffect(() => {
-    let check = false ;
-    if (!check) {
-     dispatch(allAction.userAction.addUser(SelectedUser))
-     dispatch(allAction.userAction.addMarkDown(markDownGet))
-     dispatch(allAction.userAction.addDoctorInfo(doctorInfo))
-    }
-    return () => {
-      check = true
-    }
- 
-  }, [SelectedUser,doctorInfo,markDownGet])
-
-  // console.log("gia tri cua doctor info ",doctorInfo.id);
-  // console.log("gia tri cua doctor info ",markDownGet ? markDownGet.description: null);
-  return (
+   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, alignItems: 'center', width: WIDTH,height:300}}>
         <ScrollView
@@ -102,7 +53,6 @@ if (!check && doctorInfo && doctorInfo.id) {
               </TouchableOpacity>
             )
           }
-         {/* </View> */}
         </ScrollView>
 
       </View>

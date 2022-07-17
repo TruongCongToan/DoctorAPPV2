@@ -33,8 +33,6 @@ const ListAllDoctorScreen = () => {
     "https://api-truongcongtoan.herokuapp.com/api/markdowns/";
   const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
 
-  const [SelectedUser, setSelectedUser] = useState({});
-  const [markDownGet, setmarkDownGet] = useState({});
   const [doctorInfo, setdoctorInfo] = useState({});
   const dispatch = useDispatch();
 
@@ -71,7 +69,7 @@ const ListAllDoctorScreen = () => {
   };
 
   const ItemView = ({ item }) => {
-    console.log("gia tri chuyen khoa ",item);
+    // console.log("gia tri chuyen khoa ",item);
     return (
       <TouchableOpacity onPress={() => getItem(item)}>
         <View style={{ flex: 1, flexDirection: "row", height: 80 }}>
@@ -112,39 +110,13 @@ const ListAllDoctorScreen = () => {
       />
     );
   };
-  const [dataUser, setdataUser] = useState({});
 
   const getItem = (item) => {
-    //   console.log("item ",item.email,item.user_id);
+    dispatch(allAction.userAction.addUser(item.user_id));
+// console.log("gia tri item co dc la ",item.user_id);
     navigation.navigate("Chitietbacsi");
-    fetchData(url_User, item.email, setSelectedUser);
-    fetchData(url_markdown, item.user_id, setmarkDownGet);
-    fetchData(url_Info, item.user_id, setdoctorInfo);
   };
-  useEffect(() => {
-    let check = false;
-    if (!check) {
-      dispatch(allAction.userAction.addUser(SelectedUser));
-      dispatch(allAction.userAction.addMarkDown(markDownGet));
-      dispatch(allAction.userAction.addDoctorInfo(doctorInfo));
-    }
-    return () => {
-      check = true;
-    };
-  }, [SelectedUser]);
 
-  const fetchData = (url, user_id, setData) => {
-    console.log("id la ", user_id);
-    var requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
-
-    fetch(`${url}${user_id}`, requestOptions)
-      .then((response) => response.text())
-      .then((result) => setData(JSON.parse(result)))
-      .catch((error) => console.log("error", error));
-  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -186,8 +158,8 @@ const ListAllDoctorScreen = () => {
         ItemSeparatorComponent={ItemSeparatorView}
         renderItem={ItemView}
       />
-      
-      {!dataUser ? <AppLoader /> : null}
+
+      {/* {!dataUser ? <AppLoader /> : null} */}
     </SafeAreaView>
   );
 };

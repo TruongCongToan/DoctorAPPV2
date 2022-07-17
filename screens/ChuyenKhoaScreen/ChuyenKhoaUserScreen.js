@@ -7,56 +7,22 @@ import PropTypes from 'prop-types';
 
 const WIDTH = Dimensions.get('window').width
 const HEIGHT = Dimensions.get('window').height
-const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties/"
-const url_markdown = "https://api-truongcongtoan.herokuapp.com/api/markdowns/"
-const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/specialties/"
+
 
 const ChuyenKhoaUserScreen = (props) => {
 
   let listSpecialties = props.listSpecialties
   const navigation = useNavigation();
-  const [SelectedUser, setSelectedUser] = useState({})
-  const [selectedSpecialties, setselectedSpecialties] = useState({})
-  const [markDownGet, setmarkDownGet] = useState({})
-  const [doctorInfo, setdoctorInfo] = useState({})
 
   const dispatch = useDispatch();
 
   const onchange = (nativeEvent) => {
   }
-const fetchData = (url,user_id,setData) =>{
-  console.log("id la ",user_id);
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'  
-  };
-  
-  fetch(`${url}${user_id}`, requestOptions)
-    .then(response => response.text())
-    .then(result => setData(JSON.parse(result)))
-    .catch(error => console.log('error', error));
-}
-
-
   const onPressImg = (value) => {
-    // fetchData(url_Specialties,value.id,setselectedSpecialties)
     dispatch(allAction.specialtiesAction.addOneSpecialties(value.id))
-    // fetchData(url_markdown,value.user_id,setmarkDownGet)
-    // fetchData(url_Info,value.user_id,setdoctorInfo)
-    navigation.navigate("Chitietchuyenkhoa")
-    // console.log("gia tr la ",value.id);
-  }
 
-  // useEffect(() => {
-  //   let check = false ;
-  //   if (!check) {
-  //    dispatch(allAction.specialtiesAction.addOneSpecialties(selectedSpecialties))
-   
-  //   }
-  //   return () => {
-  //     check = true
-  //   }
-  // }, [selectedSpecialties])
+    navigation.navigate("Chitietchuyenkhoa")
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

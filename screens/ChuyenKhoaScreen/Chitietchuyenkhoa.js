@@ -22,41 +22,29 @@ import allAction from "../../components/redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
 
 const Chitietchuyenkhoa = () => {
+  const [OneSpecialties, setOneSpecialties] = useState({});
 
-const [OneSpecialties, setOneSpecialties] = useState({})
-
-  const specialty_id = useSelector(
-    (state) => state.specialties.oneSpecialties
-  );
+  const specialty_id = useSelector((state) => state.specialties.oneSpecialties);
 
   const [alldays, setalldays] = useState([]);
-  const [selectedDate, setselectedDate] = useState("");
-  const [allAvaiableTime, setallAvaiableTime] = useState([]);
   const [markdownByCK, setmarkdownByCK] = useState([]);
-  const [selectedTimeType, setselectedTimeType] = useState("");
-  const [selectedDoctor, setselectedDoctor] = useState(0);
+
   const [checkOpenPrice, setcheckOpenPrice] = useState({});
   const [dropdownValue, setdropdownValue] = useState("PROA");
   const [loading, setloading] = useState("");
   const [itemMarkdownGet, setitemMarkdownGet] = useState({});
+  const [specialty, setspecialty] = useState({});
 
-  const [bookingInfo, setbookingInfo] = useState({
-    statusId: "S1",
-    doctorid: "",
-    patientid: "",
-    date: "",
-    timetype: "",
-  });
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const url_doctorinfo =
     "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/specialties/";
 
-  const url_Schedule =
-    "https://api-truongcongtoan.herokuapp.com/api/schedules/";
-    const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties/"
 
-  const signInPerson = useSelector((state) => state.user.signInPerson);
+  const url_Specialties =
+    "https://api-truongcongtoan.herokuapp.com/api/specialties/";
+
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -94,30 +82,28 @@ const [OneSpecialties, setOneSpecialties] = useState({})
 
   let date = alldays && alldays.length > 0 && alldays[0].value;
 
-
-  const fetchDataSpcialty = (url,id,setData) =>{
-    console.log("id la ",id);
+  const fetchDataSpcialty = (url, id, setData) => {
+    console.log("id la ", id);
     var requestOptions = {
-      method: 'GET',
-      redirect: 'follow'  
+      method: "GET",
+      redirect: "follow",
     };
     fetch(`${url}${id}`, requestOptions)
-    .then(response => response.text())
-    .then(result => setData(JSON.parse(result)))
-    .catch(error => console.log('error', error));
-}
+      .then((response) => response.text())
+      .then((result) => setData(JSON.parse(result)))
+      .catch((error) => console.log("error", error));
+  };
 
-useEffect(() => {
-  let check = false
- if (!check) {
-  console.log("gia tri id ",specialty_id);
-  fetchDataSpcialty(url_Specialties,specialty_id,setOneSpecialties)
- }
-  return () => {
-    check = true
-  }
-}, [specialty_id])
-
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      console.log("gia tri id ", specialty_id);
+      fetchDataSpcialty(url_Specialties, specialty_id, setOneSpecialties);
+    }
+    return () => {
+      check = true;
+    };
+  }, [specialty_id]);
 
   const fetchData = (url, user_id, provinceid, setData) => {
     console.log(`${url}${user_id}/${provinceid}`);
@@ -125,11 +111,11 @@ useEffect(() => {
       method: "GET",
       redirect: "follow",
     };
-  
+
     fetch(`${url}${user_id}/${provinceid}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        if (result) {
+        if (JSON.parse(result)) {
           // console.log("result la ",result.doctorInfo);
           setData(JSON.parse(result));
         } else {
@@ -143,82 +129,33 @@ useEffect(() => {
   useEffect(() => {
     let check = false;
     if (!check) {
-      fetchData(url_Schedule, selectedDoctor, selectedDate, setallAvaiableTime);
+      setspecialty(OneSpecialties);
+      getMarkdownItemData();
     }
     return () => {
       check = true;
     };
-  }, [selectedDoctor, selectedDate, selectedIndex]);
+  }, [OneSpecialties.id]);
 
-const [specialty, setspecialty] = useState({})
-  useEffect(() => {
-    let check = false
-  if (!check) {
-    setspecialty(OneSpecialties);
-    getMarkdownItemData();
-  }
-    return () => {
-      check = true
-    }
-  }, [OneSpecialties.id])
-  
-  console.log("gi tri chuyen khjoa" ,OneSpecialties.id);
+  console.log("gi tri chuyen khoa", OneSpecialties.id);
 
-
-  const getMarkdownItemData = (id) =>{
+  const getMarkdownItemData = (id) => {
     if (dropdownValue === "PROA") {
       fetchData(url_doctorinfo, id, "ALL", setmarkdownByCK);
     } else {
-      fetchData(
-        url_doctorinfo,
-       id,
-        dropdownValue,
-        setmarkdownByCK
-      );
+      fetchData(url_doctorinfo, id, dropdownValue, setmarkdownByCK);
     }
-  }
-  useEffect(() => {
-    let check = false;
-    if (!check) {
-      getMarkdownItemData(OneSpecialties.id)
-    }
-    return () => {
-      check = true;
-    };
-  }, [specialty.id,OneSpecialties.id, dropdownValue]);
-
-  // console.log("gia tri theo chuyen khoa ",markdownByCK.length);
-
-  const timeBookingPress = (value) => {
-    setselectedTimeType(value.allCode);
-    navigation.navigate("Datlich");
   };
   useEffect(() => {
     let check = false;
     if (!check) {
-      setbookingInfo({
-        statusId: "S1",
-        doctorid: selectedDoctor,
-        patientid: signInPerson.user_id,
-        date: selectedDate,
-        timetypeValue: selectedTimeType.valuevi,
-        timetype: selectedTimeType.key,
-      });
+      getMarkdownItemData(OneSpecialties.id);
     }
     return () => {
       check = true;
     };
-  }, [selectedTimeType.key, signInPerson, selectedDoctor, selectedDate]);
+  }, [specialty.id, OneSpecialties.id, dropdownValue]);
 
-  useEffect(() => {
-    let check = false;
-    if (!check) {
-      dispatch(allAction.userAction.addBookingInfo(bookingInfo));
-    }
-    return () => {
-      check = true;
-    };
-  }, [bookingInfo]);
 
   const previewPriceOpen = (value) => {
     checkOpenPrice[`${value}`] = true;
@@ -251,33 +188,13 @@ const [specialty, setspecialty] = useState({})
     setdropdownValue(value);
   };
 
-  const viewDetailPress = () => {
+  function viewDetailPress(value) {
+    console.log("gia tri value ",value);
+    dispatch(allAction.userAction.addUser(value));
+
     navigation.navigate("Chitietbacsi");
   };
-  useEffect(() => {
-    let check = false;
-    if (!check) {
-      if (itemMarkdownGet && itemMarkdownGet.doctorInfo) {
-        dispatch(allAction.userAction.addUser(itemMarkdownGet.doctorInfo.user));
-        dispatch(allAction.userAction.addMarkDown(itemMarkdownGet));
-        dispatch(
-          allAction.userAction.addDoctorInfo(itemMarkdownGet.doctorInfo)
-        );
-      } else {
-        return;
-      }
-    }
-    return () => {
-      check = true;
-    };
-  }, [itemMarkdownGet]);
 
-  const handleOnchangeValue = (date, doctorid, key) => {
-    console.log("gia tri date ", date, doctorid, key);
-    setselectedDoctor(doctorid);
-    setselectedDate(date);
-    setselectedIndex(key);
-  };
   return (
     <View style={{ flex: 1 }}>
       {markdownByCK.length === 0 ? <AppLoader /> : null}
@@ -333,9 +250,7 @@ const [specialty, setspecialty] = useState({})
                 backgroundColor: "rgba(0,0,0,0.1)",
               }}
             >
-              <Text style={{ padding: 15 }}>
-                {specialty.contentMarkDown}
-              </Text>
+              <Text style={{ padding: 15 }}>{specialty.contentMarkDown}</Text>
             </LinearGradient>
           </ImageBackground>
         </View>
@@ -358,140 +273,94 @@ const [specialty, setspecialty] = useState({})
               ]}
             />
           </View>
-          {markdownByCK &&
-            markdownByCK.length > 0 &&
-            markdownByCK.map((item, key) => (
-              <View
-                key={key}
-                style={{
-                  flexDirection: "column",
-                  borderWidth: 0.3,
-                  borderColor: "gray",
-                  borderRadius: 10,
-                  height: "auto",
-                  marginTop: 20,
-                }}
-              >
-                {console.log(
-                  "item thu duoc la ",
-                  item.doctorInfo.user.full_name
-                )}
+         
+           <>
+            {markdownByCK &&
+              markdownByCK.length > 0 &&
+              markdownByCK.map((item, key) => (
                 <View
+                  key={key}
                   style={{
-                    flexDirection: "row",
+                    flexDirection: "column",
+                    borderWidth: 0.3,
+                    borderColor: "gray",
+                    borderRadius: 10,
+                    height: "auto",
                     marginTop: 20,
                   }}
                 >
-                  {item.doctorInfo.user.image ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        viewDetailPress();
-                        setitemMarkdownGet(item);
-                      }}
-                    >
-                      <Image
+                  {console.log(
+                    "item thu duoc la ",
+                    item.doctorInfo.user.full_name
+                  )}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginTop: 20,
+                    }}
+                  >
+                    {item.doctorInfo.user.image ? (
+                      <TouchableOpacity
+                        // onPress={() => {
+                        //   viewDetailPress();
+                        //   setitemMarkdownGet(item);
+                        // }}
+                        onPress={() =>viewDetailPress(item.doctorInfo.user.user_id) }
+                      >
+                        <Image
+                          style={{
+                            width: 80,
+                            height: 80,
+                            borderRadius: 100,
+                            marginTop: 10,
+                            marginLeft: 10,
+                            borderWidth: 0.3,
+                            borderColor: "black",
+                          }}
+                          source={{ uri: item.doctorInfo.user.image }}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <EvilIcons name="user" size={100} color="black" />
+                    )}
+                    <View style={{ width: "70%", paddingLeft: 15 }}>
+                      <TouchableOpacity
+                       onPress={() =>viewDetailPress(item.doctorInfo.user.user_id) }
+                      >
+                        <Text style={{ fontSize: 14, color: "#0092c5" }}>
+                          Bác sĩ chuyên khoa {item.doctorInfo.user.full_name}
+                        </Text>
+                      </TouchableOpacity>
+                      <Text style={{ fontSize: 12, fontWeight: "300" }}>
+                        {item.description}
+                      </Text>
+                      <View
                         style={{
-                          width: 80,
-                          height: 80,
-                          borderRadius: 100,
-                          marginTop: 10,
-                          marginLeft: 10,
-                          borderWidth: 0.3,
-                          borderColor: "black",
+                          flexDirection: "row",
+                          position: "relative",
+                          top: 10,
                         }}
-                        source={{ uri: item.doctorInfo.user.image }}
+                      >
+                        <EvilIcons name="location" size={25} color="black" />
+                        <Text>{item.doctorInfo.allCodeProvince.valuevi}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      width: "auto",
+                      marginTop: 20,
+                      backgroundColor: "transparent",
+                      height: 100,
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", marginLeft: 5 }}>
+                      <FontAwesome5
+                        name="clinic-medical"
+                        size={20}
+                        color="black"
                       />
-                    </TouchableOpacity>
-                  ) : (
-                    <EvilIcons name="user" size={100} color="black" />
-                  )}
-                  <View style={{ width: "70%", paddingLeft: 15 }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        viewDetailPress();
-                        setitemMarkdownGet(item);
-                      }}
-                    >
-                      <Text style={{ fontSize: 14, color: "#0092c5" }}>
-                        Bác sĩ chuyên khoa {item.doctorInfo.user.full_name}
-                      </Text>
-                    </TouchableOpacity>
-                    <Text style={{ fontSize: 12, fontWeight: "300" }}>
-                      {item.description}
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        position: "relative",
-                        top: 10,
-                      }}
-                    >
-                      <EvilIcons name="location" size={25} color="black" />
-                      <Text>{item.doctorInfo.allCodeProvince.valuevi}</Text>
-                    </View>
-                  </View>
-                </View>
-
-                <View
-                  style={{
-                    width: "auto",
-                    marginTop: 20,
-                    backgroundColor: "transparent",
-                    height: 100,
-                  }}
-                >
-                  <View style={{ flexDirection: "row", marginLeft: 5 }}>
-                    <FontAwesome5
-                      name="clinic-medical"
-                      size={20}
-                      color="black"
-                    />
-                    <Text
-                      style={{
-                        fontWeight: "500",
-                        paddingLeft: 10,
-                        fontSize: 14,
-                        color: "black",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      Địa chỉ phòng khám
-                    </Text>
-                  </View>
-                  {item.doctorInfo.addressclinicid ? (
-                    <View style={{ flexDirection: "column" }}>
-                      <Text style={{ padding: 10 }}>
-                        {item.doctorInfo.nameclinic}
-                      </Text>
-                      <Text style={{ paddingTop: 5, paddingLeft: 10 }}>
-                        {item.doctorInfo.addressclinicid}
-                      </Text>
-                    </View>
-                  ) : (
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        fontWeight: "300",
-                        width: 200,
-                        padding: 15,
-                      }}
-                    >
-                      Không có dữ liệu về địa chỉ phòng khám
-                    </Text>
-                  )}
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginLeft: 10,
-                    marginTop: 20,
-                  }}
-                >
-                  {!checkOpenPrice[`${key}`] ? (
-                    <>
-                      <FontAwesome5 name="money-bill" size={20} color="black" />
-
                       <Text
                         style={{
                           fontWeight: "500",
@@ -501,28 +370,47 @@ const [specialty, setspecialty] = useState({})
                           textTransform: "uppercase",
                         }}
                       >
-                        Giá khám:
+                        Địa chỉ phòng khám
                       </Text>
-                      <Text style={{ paddingLeft: 15 }}>
-                        {item.doctorInfo.allCodePrice
-                          ? `${item.doctorInfo.allCodePrice.valuevi} VNĐ`
-                          : "Không có dữ liệu"}
-                        {""}
-                      </Text>
-                      <TouchableOpacity onPress={() => previewPriceOpen(key)}>
-                        <Text style={{ paddingLeft: 10, color: "#0092c5" }}>
-                          Xem chi tiết
+                    </View>
+                    {item.doctorInfo.addressclinicid ? (
+                      <View style={{ flexDirection: "column" }}>
+                        <Text style={{ padding: 10 }}>
+                          {item.doctorInfo.nameclinic}
                         </Text>
-                      </TouchableOpacity>
-                    </>
-                  ) : (
-                    <View>
-                      <View style={{ width: "100%", flexDirection: "row" }}>
+                        <Text style={{ paddingTop: 5, paddingLeft: 10 }}>
+                          {item.doctorInfo.addressclinicid}
+                        </Text>
+                      </View>
+                    ) : (
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: "300",
+                          width: 200,
+                          padding: 15,
+                        }}
+                      >
+                        Không có dữ liệu về địa chỉ phòng khám
+                      </Text>
+                    )}
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginLeft: 10,
+                      marginTop: 20,
+                    }}
+                  >
+                    {!checkOpenPrice[`${key}`] ? (
+                      <>
                         <FontAwesome5
                           name="money-bill"
                           size={20}
                           color="black"
                         />
+
                         <Text
                           style={{
                             fontWeight: "500",
@@ -534,86 +422,125 @@ const [specialty, setspecialty] = useState({})
                         >
                           Giá khám:
                         </Text>
-                      </View>
-                      <View
-                        style={{
-                          width: "auto",
-                          height: "auto",
-                          backgroundColor: "#eee",
-                          borderWidth: 0.3,
-                        }}
-                      >
-                        <View style={{ flexDirection: "row" }}>
-                          <Text style={{ fontSize: 14, paddingLeft: 7 }}>
-                            {" "}
-                            Giá khám:
-                          </Text>
-                          <Text
-                            style={{
-                              paddingLeft: "40%",
-                              fontWeight: "500",
-                              fontSize: 15,
-                              paddingRight: 5,
-                            }}
-                          >
-                            {item.doctorInfo.allCodePrice
-                              ? `${item.doctorInfo.allCodePrice.valuevi} VNĐ`
-                              : null}
-                          </Text>
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 13,
-                            fontWeight: "300",
-                            paddingLeft: 8,
-                          }}
-                        >
-                          {item.doctorInfo ? item.doctorInfo.note : null}
+                        <Text style={{ paddingLeft: 15 }}>
+                          {item.doctorInfo.allCodePrice
+                            ? `${item.doctorInfo.allCodePrice.valuevi} VNĐ`
+                            : "Không có dữ liệu"}
+                          {""}
                         </Text>
-                        <View style={{ marginTop: 10 }}>
-                          <Text style={{ paddingLeft: 8 }}>
-                            Người bệnh có thể thanh toán chi phí bằng hình thức{" "}
-                            {
-                              <Text style={{ fontWeight: "bold" }}>
-                                {formatPayment(
-                                  !item.doctorInfo.allCodePayment
-                                    ? null
-                                    : item.doctorInfo.allCodePayment.key
-                                )}
-                              </Text>
-                            }
-                          </Text>
-                        </View>
                         <TouchableOpacity
-                          onPress={() => previewPriceClose(key)}
+                          onPress={() => previewPriceOpen(key)}
                         >
-                          <Text style={{ color: "#0092c5", marginTop: 10 }}>
-                            Ẩn bảng giá
+                          <Text style={{ paddingLeft: 10, color: "#0092c5" }}>
+                            Xem chi tiết
                           </Text>
                         </TouchableOpacity>
+                      </>
+                    ) : (
+                      <View>
+                        <View style={{ width: "100%", flexDirection: "row" }}>
+                          <FontAwesome5
+                            name="money-bill"
+                            size={20}
+                            color="black"
+                          />
+                          <Text
+                            style={{
+                              fontWeight: "500",
+                              paddingLeft: 10,
+                              fontSize: 14,
+                              color: "black",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            Giá khám:
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            width: "auto",
+                            height: "auto",
+                            backgroundColor: "#eee",
+                            borderWidth: 0.3,
+                          }}
+                        >
+                          <View style={{ flexDirection: "row" }}>
+                            <Text style={{ fontSize: 14, paddingLeft: 7 }}>
+                              {" "}
+                              Giá khám:
+                            </Text>
+                            <Text
+                              style={{
+                                paddingLeft: "40%",
+                                fontWeight: "500",
+                                fontSize: 15,
+                                paddingRight: 5,
+                              }}
+                            >
+                              {item.doctorInfo.allCodePrice
+                                ? `${item.doctorInfo.allCodePrice.valuevi} VNĐ`
+                                : null}
+                            </Text>
+                          </View>
+                          <Text
+                            style={{
+                              fontSize: 13,
+                              fontWeight: "300",
+                              paddingLeft: 8,
+                            }}
+                          >
+                            {item.doctorInfo ? item.doctorInfo.note : null}
+                          </Text>
+                          <View style={{ marginTop: 10 }}>
+                            <Text style={{ paddingLeft: 8 }}>
+                              Người bệnh có thể thanh toán chi phí bằng hình
+                              thức{" "}
+                              {
+                                <Text style={{ fontWeight: "bold" }}>
+                                  {formatPayment(
+                                    !item.doctorInfo.allCodePayment
+                                      ? null
+                                      : item.doctorInfo.allCodePayment.key
+                                  )}
+                                </Text>
+                              }
+                            </Text>
+                          </View>
+                          <TouchableOpacity
+                            onPress={() => previewPriceClose(key)}
+                          >
+                            <Text style={{ color: "#0092c5", marginTop: 10 }}>
+                              Ẩn bảng giá
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  )}
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    margin: 20,
-                  }}
-                >
-                  <FontAwesome5 name="hand-point-up" size={13} color="black" />
-                  <Text
+                    )}
+                  </View>
+                  <View
                     style={{
-                      paddingLeft: 10,
-                      fontWeight: "200",
-                      fontSize: 12,
+                      flexDirection: "row",
+                      margin: 20,
                     }}
                   >
-                    Chọn và đặt lịch miễn phí
-                  </Text>
+                    <FontAwesome5
+                      name="hand-point-up"
+                      size={13}
+                      color="black"
+                    />
+                    <Text
+                      style={{
+                        paddingLeft: 10,
+                        fontWeight: "200",
+                        fontSize: 12,
+                      }}
+                    >
+                      Chọn và đặt lịch miễn phí
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))}
+          </>
         </View>
       </ScrollView>
     </View>

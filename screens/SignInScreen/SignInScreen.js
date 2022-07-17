@@ -132,8 +132,8 @@ const SignInScreen = () => {
     fetch(`${url_email}${id}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        console.log("email",`${url_email}${id}`);
-          console.log("GEt by email",result);
+        // console.log("email",`${url_email}${id}`);
+          // console.log("GEt by email",result);
 
         dispatch(allAction.userAction.addSignIn(JSON.parse(result)));        
       })
