@@ -31,7 +31,7 @@ const Chitietchuyenkhoa = () => {
   const [markdownByCK, setmarkdownByCK] = useState([]);
   const [selectedTimeType, setselectedTimeType] = useState("");
   const [selectedDoctor, setselectedDoctor] = useState(0);
-  const [checkOpenPrice, setcheckOpenPrice] = useState(false);
+  const [checkOpenPrice, setcheckOpenPrice] = useState({});
   const [dropdownValue, setdropdownValue] = useState("PROA");
   const [loading, setloading] = useState("");
   const [itemMarkdownGet, setitemMarkdownGet] = useState({});
@@ -162,8 +162,25 @@ const Chitietchuyenkhoa = () => {
     };
   }, [bookingInfo]);
 
-  const previewPrice = () => {
-    setcheckOpenPrice(!checkOpenPrice);
+  
+  const previewPriceOpen = (value) => {
+    checkOpenPrice[`${value}`] = true 
+    let checkOpenPriceC = {
+      checkOpenPrice
+    }
+    checkOpenPriceC ={...checkOpenPrice,checkOpenPrice}
+    setcheckOpenPrice(checkOpenPriceC)
+  };
+  console.log("open price check la ",checkOpenPrice);
+
+ 
+  const previewPriceClose = (value) => {
+    checkOpenPrice[`${value}`] = false 
+    let checkOpenPriceC = {
+      checkOpenPrice
+    }
+    checkOpenPriceC ={...checkOpenPrice,checkOpenPrice}
+    setcheckOpenPrice(checkOpenPriceC)
   };
   const formatPayment = (input) => {
     if (input === "PAY1") {
@@ -201,6 +218,7 @@ const Chitietchuyenkhoa = () => {
     }
   }, [itemMarkdownGet])
   
+  console.log("gia tri index ",selectedIndex);
 
   return (
     <View style={{ flex: 1 }}>
@@ -287,6 +305,7 @@ const Chitietchuyenkhoa = () => {
                   borderColor: "gray",
                   borderRadius: 10,
                   height: 680,
+                  // flexGrow:1,
                   marginTop: 20,
                 }}
               >
@@ -544,7 +563,7 @@ const Chitietchuyenkhoa = () => {
                       marginTop: 20,
                     }}
                   >
-                    {!checkOpenPrice ? (
+                    {!checkOpenPrice[`${key}`] ? (
                       <>
                         <FontAwesome5
                           name="money-bill"
@@ -569,7 +588,7 @@ const Chitietchuyenkhoa = () => {
                             : "Không có dữ liệu"}
                           {""}
                         </Text>
-                        <TouchableOpacity onPress={previewPrice}>
+                        <TouchableOpacity onPress={() => previewPriceOpen(key)}>
                           <Text style={{ paddingLeft: 10, color: "#0092c5" }}>
                             Xem chi tiết
                           </Text>
@@ -645,7 +664,7 @@ const Chitietchuyenkhoa = () => {
                               }
                             </Text>
                           </View>
-                          <TouchableOpacity onPress={previewPrice}>
+                          <TouchableOpacity onPress={() => previewPriceClose(key)}>
                             <Text style={{ color: "#0092c5", marginTop: 10 }}>
                               Ẩn bảng giá
                             </Text>
