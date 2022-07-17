@@ -29,10 +29,7 @@ const Chitietbacsi = () => {
   const [selectedDate, setselectedDate] = useState("");
   const [checkOpenPrice, setcheckOpenPrice] = useState(false);
 
-  const [initialDate, setinitialDate] = useState({
-    label: "Chọn ngày đăng ký",
-    value: null,
-  });
+ 
   const [bookingInfo, setbookingInfo] = useState({
     statusId: "S1",
     doctorid: "",
