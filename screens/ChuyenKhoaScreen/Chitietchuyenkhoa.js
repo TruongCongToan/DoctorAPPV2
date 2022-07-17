@@ -179,6 +179,7 @@ const Chitietchuyenkhoa = () => {
     let checkOpenPriceC = {
       checkOpenPrice
     }
+    
     checkOpenPriceC ={...checkOpenPrice,checkOpenPrice}
     setcheckOpenPrice(checkOpenPriceC)
   };
