@@ -39,7 +39,7 @@ const ListAllDoctorScreen = () => {
   var checkLoadingPage = useSelector((state) => state.user);
 
   useEffect(() => {
-    fetch(url_User_Doctor)
+    fetch(url_Info)
       .then((response) => response.json())
       .then((responseJson) => {
         setFilteredDataSource(responseJson);
@@ -54,8 +54,8 @@ const ListAllDoctorScreen = () => {
     // Check if searched text is not blank
     if (text) {
       const newData = masterDataSource.filter(function (item) {
-        const itemData = item.full_name
-          ? item.full_name.toUpperCase()
+        const itemData = item.user.full_name
+          ? item.user.full_name.toUpperCase()
           : "".toUpperCase();
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
@@ -73,7 +73,7 @@ const ListAllDoctorScreen = () => {
     return (
       <TouchableOpacity onPress={() => getItem(item)}>
         <View style={{ flex: 1, flexDirection: "row", height: 80 }}>
-          {item.image ? (
+          {item.user.image ? (
             <Image
               style={{
                 width: 50,
@@ -84,15 +84,15 @@ const ListAllDoctorScreen = () => {
                 borderWidth: 0.3,
                 borderColor: "black",
               }}
-              source={{ uri: item.image }}
+              source={{ uri: item.user.image }}
             />
           ) : (
             <EvilIcons name="user" size={70} color="black" />
           )}
 
           <View style={{ flexDirection: "column", marginLeft: 15 }}>
-            <Text style={styles.itemStyle}>Bác sĩ {item.full_name}</Text>
-            <Text style={{ paddingLeft: 10 }}>Khoa thần kinh</Text>
+            <Text style={styles.itemStyle}>Bác sĩ {item.user.full_name}</Text>
+            <Text style={{ paddingLeft: 10 }}>{item && item.specialties ? "Chuyên khoa "+item.specialties.name : "Không có dữ liệu về chuyên khoa của bác sĩ"}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -159,7 +159,8 @@ const ListAllDoctorScreen = () => {
         renderItem={ItemView}
       />
 
-      {/* {!dataUser ? <AppLoader /> : null} */}
+
+      {masterDataSource.length === 0 ? <AppLoader /> : null}
     </SafeAreaView>
   );
 };

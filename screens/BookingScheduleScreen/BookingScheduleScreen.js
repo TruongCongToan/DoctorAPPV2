@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+
 import React, { useState, useEffect } from "react";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
 import { useSelector } from "react-redux";
@@ -16,8 +17,9 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import moment from "moment";
 import "moment/locale/vi";
-import RadioGroup from "react-native-radio-buttons-group";
 import Toast from "react-native-toast-message";
+import RNPickerSelect from "react-native-picker-select";
+import AppLoader from "../AppLoader/AppLoader";
 
 const BookingScheduleScreen = () => {
   var bookingInfoGet = useSelector((state) => state.user.bookingInfo);
@@ -53,12 +55,7 @@ const BookingScheduleScreen = () => {
       check = true;
     };
   }, [doctorInfo]);
-  console.log(
-    "markdwon suere ",
-    markdown && markdown.doctorInfo && markdown.doctorInfo.user
-      ? markdown.doctorInfo.user.full_name
-      : null
-  );
+
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -95,39 +92,6 @@ const BookingScheduleScreen = () => {
   const [error, seterror] = useState({});
   const url_Email = "https://api-truongcongtoan.herokuapp.com/api/sendEmail";
   const url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings";
-  const radioButtonsData = [
-    {
-      id: "1",
-      label: "Nam",
-      value: "M",
-    },
-    {
-      id: "2",
-      label: "Nữ",
-      value: "F",
-    },
-  ];
-
-  const [radioButtons, setRadioButtons] = useState(radioButtonsData);
-
-  function onPressRadioButton(radioButtonsArray) {
-    setRadioButtons(radioButtonsArray);
-  }
-
-  useEffect(() => {
-    // console.log(radioButtons);
-    let check = false;
-    if (!check) {
-      radioButtons.map((item) => {
-        if (item.selected) {
-          setgender(item.label);
-        }
-      });
-    }
-    return () => {
-      check = true;
-    };
-  }, [radioButtons]);
 
   useEffect(() => {
     let check = false;
@@ -146,9 +110,16 @@ const BookingScheduleScreen = () => {
         } , ${moment(new Date(bookingInfoGet.date))
           .locale("vi")
           .format("dddd - DD/MM/YYYY")}`,
-        doctor_name: dataOneUser ? dataOneUser.full_name:null,
-        price: `${doctorInfo && doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi :null} VNĐ`,
-        doctorid: doctorInfo && doctorInfo.user ? doctorInfo.user.user_id.toString():null,
+        doctor_name: dataOneUser ? dataOneUser.full_name : null,
+        price: `${
+          doctorInfo && doctorInfo.allCodePrice
+            ? doctorInfo.allCodePrice.valuevi
+            : null
+        } VNĐ`,
+        doctorid:
+          doctorInfo && doctorInfo.user
+            ? doctorInfo.user.user_id.toString()
+            : null,
         patientid: signInPerson.user_id.toString(),
         date: bookingInfoGet.date,
         timetype: bookingInfoGet.timetype,
@@ -442,6 +413,7 @@ const BookingScheduleScreen = () => {
   };
   return (
     <View style={{ flex: 1 }}>
+      {dataOneUser ? null : <AppLoader />}
       <HeaderLogo />
       <ScrollView>
         <View style={{ flexDirection: "row" }}>
@@ -500,7 +472,9 @@ const BookingScheduleScreen = () => {
           <Ionicons name="radio-button-on" size={20} color="green" />
           <Text>
             Giá khám:{" "}
-            { doctorInfo &&doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
+            {doctorInfo && doctorInfo.allCodePrice
+              ? doctorInfo.allCodePrice.valuevi
+              : null}{" "}
             VNĐ
           </Text>
         </View>
@@ -510,7 +484,7 @@ const BookingScheduleScreen = () => {
             error["full_name"] ? styles.errorBorder : styles.nonErrorBorder,
           ]}
         >
-          Họ và tên
+          Họ và tên bệnh nhân
         </Text>
         <View
           style={[
@@ -543,7 +517,7 @@ const BookingScheduleScreen = () => {
         </View>
         <View
           style={[
-            { flexDirection: "row" },
+            { flexDirection: "column" },
             error["gender"] ? styles.errorBorder : styles.nonErrorBorder,
           ]}
         >
@@ -555,11 +529,50 @@ const BookingScheduleScreen = () => {
           >
             Giới tính
           </Text>
-          <RadioGroup
-            radioButtons={radioButtons}
-            onPress={onPressRadioButton}
-            style={{ marginLeft: 20 }}
-          />
+          <View style={{ 
+             width: "auto",
+              height: 40,
+              borderWidth: 0.3,
+              borderColor: "gray",
+              margin: 20,
+              flexDirection:'row'
+              }}>
+            <FontAwesome5
+              style={{ marginLeft: 10, marginTop: 10 }}
+              name="transgender-alt"
+              size={17}
+              color="black"
+            />
+            <View
+              style={{
+                backgroundColor: "transparent",
+                height: 39,
+                marginLeft: 12,
+                width: "88%",
+                borderColor: "gray",
+                borderTopColor:'transparent',
+                borderRightColor:'transparent',
+                borderBottomColor:'transparent',
+                borderWidth: 0.3,
+                paddingLeft: 10,
+                paddingHorizontal: 0,
+                borderRightColor:'transparent',
+                // marginVertical: 10,
+              }}
+            >
+              <RNPickerSelect
+                onValueChange={setgender}
+                placeholder={{
+                  label: "Chọn giới tính",
+                  value: null,
+                }}
+                items={[
+                  { label: "Nam", value: "Nam" },
+                  { label: "Nữ", value: "Nữ" },
+                ]}
+              />
+            </View>
+          </View>
         </View>
         <>
           <Text
@@ -796,7 +809,9 @@ const BookingScheduleScreen = () => {
                 fontWeight: "400",
               }}
             >
-              {doctorInfo && doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
+              {doctorInfo && doctorInfo.allCodePrice
+                ? doctorInfo.allCodePrice.valuevi
+                : null}{" "}
               VNĐ
             </Text>
           </View>
@@ -856,7 +871,9 @@ const BookingScheduleScreen = () => {
                 color: "red",
               }}
             >
-              {doctorInfo && doctorInfo.allCodePrice ? doctorInfo.allCodePrice.valuevi : null}{" "}
+              {doctorInfo && doctorInfo.allCodePrice
+                ? doctorInfo.allCodePrice.valuevi
+                : null}{" "}
               VNĐ
             </Text>
           </View>
@@ -921,16 +938,20 @@ const BookingScheduleScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
+{
+  console.log("giua tri gender ",gender)
+}
       </ScrollView>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   inputColor: {
+    // backgroundColor: "white",
     height: 40,
     marginLeft: 12,
     width: "100%",
-    // borderWidth: 0.5,
     padding: 10,
   },
   inputColorEmail: {

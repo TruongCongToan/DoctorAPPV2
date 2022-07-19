@@ -14,17 +14,23 @@ import {
 import { SearchBar } from "react-native-elements";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
 import ModalPopup from "../../components/TableTwo/ModalPopup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AppLoader from "../AppLoader/AppLoader";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+import allAction from "../../components/redux/action/allAction";
+import { useNavigation } from "@react-navigation/native";
 
 const SearchScreen = () => {
   const [search, setSearch] = useState("");
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
   const [visible, setvisible] = useState(false);
-  var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/";
 
+  const signInPerson = useSelector((state) => state.user.signInPerson);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/";
+  var url_Special = "http://api-truongcongtoan.herokuapp.com/api/specialties/"
   var checkLoadingPage = useSelector((state) => state.user);
 
   const [refreshing, setRefreshing] = React.useState(false);
@@ -39,7 +45,8 @@ const SearchScreen = () => {
   useEffect(() => {
     let check = false;
     if (!check) {
-      fetch(url_User)
+      if (signInPerson && signInPerson.role === "R1") {
+        fetch(url_User)
         .then((response) => response.json())
         .then((responseJson) => {
           setFilteredDataSource(responseJson);
@@ -48,6 +55,17 @@ const SearchScreen = () => {
         .catch((error) => {
           console.error(error);
         });
+      }else{
+        fetch(url_Special)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          setFilteredDataSource(responseJson);
+          setMasterDataSource(responseJson);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      }
     }
     return () => {
       check = true;
@@ -57,6 +75,7 @@ const SearchScreen = () => {
   const searchFilterFunction = (text) => {
     // Check if searched text is not blank
     if (text) {
+     if (signInPerson && signInPerson.role === "R1") {
       const newData = masterDataSource.filter(function (item) {
         const itemData = item.full_name
           ? item.full_name.toUpperCase()
@@ -66,6 +85,17 @@ const SearchScreen = () => {
       });
       setFilteredDataSource(newData);
       setSearch(text);
+     }else{
+      const newData = masterDataSource.filter(function (item) {
+        const itemData = item.name
+          ? item.name.toUpperCase()
+          : "".toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredDataSource(newData);
+      setSearch(text);
+     }
     } else {
       setFilteredDataSource(masterDataSource);
       setSearch(text);
@@ -74,7 +104,9 @@ const SearchScreen = () => {
 
   const ItemView = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => getItem(item)}>
+      <>
+      { signInPerson && signInPerson.role === "R1" ?
+      <TouchableOpacity  onPress={() => getItem(item)}>
         <View style={{ flex: 1, flexDirection: "row", height: 80 }}>
           {item.image ? (
             <Image
@@ -102,6 +134,42 @@ const SearchScreen = () => {
           </View>
         </View>
       </TouchableOpacity>
+      :
+      <>
+      <TouchableOpacity onPress={() => getItem(item)}> 
+    <View style={{ flex: 1, flexDirection: "row",height:120 ,marginLeft:20}}>
+      {item.image ?
+      <Image
+        style={{
+          width: 100,
+          height: 110,
+          borderRadius: 5,
+          marginTop: 20,
+          marginLeft: 10,
+          borderWidth: 0.3,
+          borderColor: "black",
+        }}
+        source={{ uri: item.image }}
+      />
+      :
+      <EvilIcons name="user" size={100} color="black" />}
+
+      <View style={{ flexDirection: "column", marginLeft: 20 }}>
+        <Text style={[styles.itemStyle,{padding:25,}]}>
+           {item.name}
+        </Text>
+      </View>
+    </View>
+    </TouchableOpacity>
+    <View style={{height:20}}>
+
+    </View>
+     </>
+      }
+      <View style={{height:20}}>
+
+      </View>
+    </>
     );
   };
 
@@ -119,16 +187,16 @@ const SearchScreen = () => {
   const [dataUser, setdataUser] = useState([]);
 
   const getItem = (item) => {
-    // Function for click on an item
-    setvisible(true);
-    // alert('Id : ' + item.id + ' full_name : ' + item.email);
-    fetchData(`${url_User}${item.user_id}`, setdataUser);
+    if (signInPerson && signInPerson.role === "R1") {
+      setvisible(true);
+      fetchData(`${url_User}${item.user_id}`, setdataUser);
+    }else{
+      dispatch(allAction.specialtiesAction.addOneSpecialties(item.id))
+      navigation.navigate("Chitietchuyenkhoa")
+    }
   };
-  //   console.log("gia tri lay duoc la ",dataUser.len);
 
   const fetchData = (url, setData) => {
-    // console.log("calling data ...");
-
     var requestOptions = {
       method: "GET",
       transparentirect: "follow",
@@ -186,7 +254,7 @@ const SearchScreen = () => {
             renderItem={ItemView}
             contentContainerStyle={{ flexGrow: 1 }}
           />
-      {filteredDataSource.length === 0 ? <AppLoader /> : null}
+      {masterDataSource.length === 0 ? <AppLoader /> : null}
     </>
   );
 };

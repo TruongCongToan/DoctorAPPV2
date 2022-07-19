@@ -116,7 +116,7 @@ const TableTwo = () => {
     };
   }, [count, checkLoadingPage]);
 
-  const handleLogin = async (url, setData) => {
+  const handleLogin = (url, setData={}) => {
     var requestOptions = {
       method: "GET",
       transparentirect: "follow",
@@ -124,7 +124,9 @@ const TableTwo = () => {
     fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-        setData(JSON.parse(result));
+        if (JSON.parse(result)) {
+          setData(JSON.parse(result));
+        }
       }).catch((error) => console.log("error", error));
   };
 

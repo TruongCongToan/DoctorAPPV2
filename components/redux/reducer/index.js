@@ -6,18 +6,21 @@ import { createStore } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import specialtiesReducer from "./specialtiesReducer";
+import clinicReducer from "./clinicReducer";
 
 
 const persistConfig = {
     key: 'root',
     storage:AsyncStorage,
-    whitelist:['user','specialties']
+    whitelist:['user','specialties','clinic']
   }
 // combineReducers Sde tong hop lai tat ca ca reducer 
 const rootReducers = combineReducers({
    
   user:userReducer,
-  specialties:specialtiesReducer
+  specialties:specialtiesReducer,
+  clinic:clinicReducer
+
 
 });
 

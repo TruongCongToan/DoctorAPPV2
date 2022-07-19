@@ -19,8 +19,11 @@ import allAction from "../redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
 
 const Chitietbacsi = () => {
- 
-  
+  var url_DoctorInfo ="http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
+  var url_MarkDown = "http://api-truongcongtoan.herokuapp.com/api/markdowns/";
+  var url_User ="http://api-truongcongtoan.herokuapp.com/api/users/";
+
+
   const signInPerson = useSelector((state) => state.user.signInPerson);
 
   const [alldays, setalldays] = useState([]);
@@ -29,7 +32,7 @@ const Chitietbacsi = () => {
   const [selectedDate, setselectedDate] = useState("");
   const [checkOpenPrice, setcheckOpenPrice] = useState(false);
 
- 
+  const [User, setUser] = useState({})
   const [bookingInfo, setbookingInfo] = useState({
     statusId: "S1",
     doctorid: "",
@@ -70,58 +73,64 @@ const Chitietbacsi = () => {
   }
 
   // let date = alldays && alldays.length > 0 && alldays[0].value;
-const [dataOneUser, setdataOneUser] = useState({});
-const [doctorInfo, setdoctorInfo] = useState({});
-const [markdown, setmarkdown] = useState({});
-const [doctoIDGet, setdoctoIDGet] = useState(0);
-
+  const [dataOneUser, setdataOneUser] = useState({});
+  const [doctorInfo, setdoctorInfo] = useState({});
+  const [markdown, setmarkdown] = useState({});
+  const [doctoIDGet, setdoctoIDGet] = useState(0);
 
   const dataOneUser_id = useSelector((state) => state.user.getoneuser);
 
+  console.log("dataOneUser_id ",dataOneUser_id);
   useEffect(() => {
-    let check = false
-  if(!check){
-    fetchData(url_DoctorInfo,dataOneUser_id,setdoctorInfo);
-  }
-    return () => {
-      check = true
+    let check = false;
+    if (!check) {
+      fetchData(url_DoctorInfo, dataOneUser_id, setdoctorInfo);
+      fetchData(url_User, dataOneUser_id, setUser);
     }
-  }, [dataOneUser_id])
+    return () => {
+      check = true;
+    };
+  }, [dataOneUser_id]);
 
   useEffect(() => {
-    let check = false
-  if(!check){
-    fetchData(url_MarkDown,doctorInfo.id,setmarkdown);
-  }
-    return () => {
-      check = true
+    let check = false;
+    if (!check) {
+      fetchData(url_MarkDown, doctorInfo.id, setmarkdown);
     }
-  }, [doctorInfo]);
-console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.doctorInfo.user ? markdown.doctorInfo.user.full_name : null);
-  useEffect(() => {
-    let check = false
-  if(!check){
-   if (markdown  && markdown.doctorInfo && markdown.doctorInfo.user ) {
-    setdataOneUser(markdown.doctorInfo.user)
-   }
-  }
     return () => {
-      check = true
-    }
-  }, [markdown])
-  
-  const fetchData = (url,user_id,setData) =>{
-    console.log("get data ...",`${url}${user_id}`);
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow'  
+      check = true;
     };
-    
+  }, [doctorInfo]);
+  console.log(
+    "markdwon suere ",
+    markdown && markdown.doctorInfo && markdown.doctorInfo.user
+      ? markdown.doctorInfo.user.full_name
+      : null
+  );
+  useEffect(() => {
+    let check = false;
+    if (!check) {
+      if (markdown && markdown.doctorInfo && markdown.doctorInfo.user) {
+        setdataOneUser(markdown.doctorInfo.user);
+      }
+    }
+    return () => {
+      check = true;
+    };
+  }, [markdown]);
+
+  const fetchData = (url, user_id, setData) => {
+    console.log("get data ...", `${url}${user_id}`);
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
     fetch(`${url}${user_id}`, requestOptions)
-      .then(response => response.text())
-      .then(result => setData(JSON.parse(result)))
-      .catch(error => console.log('error', error));
-  }
+      .then((response) => response.text())
+      .then((result) => setData(JSON.parse(result)))
+      .catch((error) => console.log("error", error));
+  };
 
   const fetchDataSchedule = (url, user_id, date, setData) => {
     console.log(`${url}${user_id}/${date}`);
@@ -142,7 +151,12 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
   }, [dataOneUser]);
 
   useEffect(() => {
-    fetchDataSchedule(url_Schedule, doctoIDGet, selectedDate, setallAvaiableTime);
+    fetchDataSchedule(
+      url_Schedule,
+      doctoIDGet,
+      selectedDate,
+      setallAvaiableTime
+    );
   }, [dataOneUser.user_id]);
 
   const handleOnchangeDate = (date) => {
@@ -199,7 +213,7 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
     <View style={{ flex: 1 }}>
       <HeaderLogo />
 
-     {/* {!doctorInfo.addressclinicid  ? <AppLoader /> : null} */}
+      {/* {!doctorInfo.addressclinicid  ? <AppLoader /> : null} */}
       <ScrollView>
         <View style={{ flex: 1 }}>
           <ScrollView
@@ -234,8 +248,9 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
               )}
               <View style={{ flexDirection: "column", margin: 20 }}>
                 <Text style={{ fontSize: 15, fontWeight: "600" }}>
-                  Bác sĩ {`${dataOneUser.full_name}`}
+                  Bác sĩ {dataOneUser.full_name ? dataOneUser.full_name : User.full_name}
                 </Text>
+                
                 {!markdown ? (
                   <ScrollView horizontal>
                     <Text
@@ -329,7 +344,6 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
                   justifyContent: "center",
                 }}
               >
-             
                 {allAvaiableTime.length > 0 ? (
                   <>
                     {allAvaiableTime &&
@@ -345,9 +359,10 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
                           key={index}
                           onPress={() => timeBookingPress(item)}
                         >
-                          {
-                             console.log("gia tri item , " ,item.allCode ? item.allCode.valuevi:"khong co")
-                          }
+                          {console.log(
+                            "gia tri item , ",
+                            item.allCode ? item.allCode.valuevi : "khong co"
+                          )}
                           <Text
                             style={{
                               padding: 10,
@@ -356,7 +371,7 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
                               fontWeight: "500",
                             }}
                           >
-                            {item.allCode ? item.allCode.valuevi :null}
+                            {item.allCode ? item.allCode.valuevi : null}
                           </Text>
                         </TouchableOpacity>
                       ))}
@@ -457,7 +472,7 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
                 >
                   Giá khám:
                 </Text>
-              
+
                 <Text style={{ paddingLeft: 15 }}>
                   {doctorInfo && doctorInfo.allCodePrice
                     ? `${doctorInfo.allCodePrice.valuevi} VNĐ`
@@ -550,9 +565,7 @@ console.log("markdwon suere ",markdown  && markdown.doctorInfo && markdown.docto
           />
 
           <View style={{ marginLeft: 15 }}>
-            { markdown ? (
-              <Text> {markdown.contentMarkDown}</Text>
-            ) : null}
+            {markdown ? <Text> {markdown.contentMarkDown}</Text> : null}
           </View>
         </View>
       </ScrollView>

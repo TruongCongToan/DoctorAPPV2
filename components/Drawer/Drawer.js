@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import ScheduleManage from '../../screens/ScheduleManage/ScheduleManage';
 import MarkdownScreen from '../../screens/MarkdownScreen/MarkdownScreen';
 import ChuyenKhoaScreen from '../../screens/ChuyenKhoaScreen/ChuyenKhoaScreen';
+import CoSoYTeAdminScreen from '../../screens/CoSoYTeScreen/CoSoYTeAdminScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -47,37 +48,46 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Trang chủ" component={BottomTabNavigator} />
       {
-        signInPerson && signInPerson.role && (signInPerson.role === "R1" || signInPerson.role === "R2")
+        signInPerson && signInPerson.role && (signInPerson.role === "R3")
           ?
-          <>
-            <Drawer.Screen name="Quản lý lịch khám bệnh" component={ScheduleManage} />
-            <Drawer.Screen name="Quản lý thông tin của bác sĩ" component={MarkdownScreen} />
-            <Drawer.Screen name="Quản lý chuyên khoa" component={ChuyenKhoaScreen} />
-            <Drawer.Screen name="Đăng xuất" component={Logout} />
-          </>
+        <>
+        {
+          personDataLogin ?
+        <>
+        <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
+        <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
+        <Drawer.Screen name="Liên hệ" component={ContactUs} />
+        <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
+        <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
+        <Drawer.Screen name="Đăng xuất" component={Logout} />
+        </>
+        : 
+        <>
+        <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
+        <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
+        <Drawer.Screen name="Liên hệ" component={ContactUs} />
+        <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
+        <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
+        </>
+}
+        </>
           :
-         
-          <>
-          {
-            personDataLogin ?
          <>
-          <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
-          <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
-          <Drawer.Screen name="Liên hệ" component={ContactUs} />
-          <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
-          <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
+         {
+          signInPerson && signInPerson.role && (signInPerson.role === "R1")
+          ?
+        <>
+          <Drawer.Screen name="Quản lý lịch khám bệnh" component={ScheduleManage} />
+          <Drawer.Screen name="Quản lý thông tin của bác sĩ" component={MarkdownScreen} />
+          <Drawer.Screen name="Quản lý chuyên khoa" component={ChuyenKhoaScreen} />
+          <Drawer.Screen name="Quản lý cơ sở y tế" component={CoSoYTeAdminScreen} />
           <Drawer.Screen name="Đăng xuất" component={Logout} />
+        </>
+          :
+          null
+         }
          </>
-         : 
-         <>
-         <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
-         <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
-         <Drawer.Screen name="Liên hệ" component={ContactUs} />
-         <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
-         <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
-        </>
-          }
-        </>
+         
          
       }
 

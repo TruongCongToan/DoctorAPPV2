@@ -13,6 +13,7 @@ const HEIGHT = Dimensions.get('window').height
 const BacSiNoiBat = (props) => {
 
   let listUsers = props.listUsers
+  console.log("listuser ",listUsers);
   const navigation = useNavigation();
 
   const dispatch = useDispatch();
@@ -39,16 +40,16 @@ const BacSiNoiBat = (props) => {
         >
          {
            listUsers&&listUsers.length >0 && listUsers.map((item, index) =>
-              <TouchableOpacity key={index} onPress={() => onPressImg(item)}>
+              <TouchableOpacity key={index} onPress={() => onPressImg(item.user)}>
                 <View style={{width:150,height:200,alignItems:'center',borderColor:'gray',backgroundColor:'white',marginTop:10,borderRadius:10,borderWidth:0.5, marginLeft: 20}}>
                 <Image
                   key={index}
-                  source={ {uri: item.image}}
+                  source={ {uri: item.user.image}}
                   resizeMethod='auto'
                   // HEIGHT * 0.15
                   style={{ width: 100, borderRadius:100,marginTop: 10, height: 100 }}
                 />
-                <Text style={{width:100,textAlign:'center',marginTop:20}}>Bác sĩ {`${item.full_name}`}</Text>
+                <Text style={{width:100,textAlign:'center',marginTop:20}}>Bác sĩ {`${item.user.full_name}`}</Text>
                 </View>
               </TouchableOpacity>
             )

@@ -22,6 +22,8 @@ import ListAllDoctorScreen from "./screens/SearchScreen/ListAllDoctorScreen";
 import BookingScheduleScreen from "./screens/BookingScheduleScreen/BookingScheduleScreen";
 import ListSpecialtiesScreen from "./screens/SearchScreen/ListSpecialtiesScreen";
 import Chitietchuyenkhoa from "./screens/ChuyenKhoaScreen/Chitietchuyenkhoa";
+import ListClinicScreen from "./screens/SearchScreen/ListClinicScreen";
+import ChiTietCSYT from "./screens/CoSoYTeScreen/ChiTietCSYT";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -54,11 +56,9 @@ export default function App() {
                 <Stack.Screen name="Chitietbacsi" component={Chitietbacsi} />
                 <Stack.Screen name="Chitietchuyenkhoa" component={Chitietchuyenkhoa} />
                 <Stack.Screen name="Datlich" component={BookingScheduleScreen} />
+                <Stack.Screen name="Clinic" component={ListClinicScreen} />
+                <Stack.Screen name="ChitietCSYT" component={ChiTietCSYT} />
               </Stack.Navigator>
-              {/* <DrawerNavigator/> */}
-              {/* <DatePickerCustom/> */}
-              {/* <AppLoader/> */}
-              {/* <DrawerNavigator/> */}
 
             </NavigationContainer>
           </SafeAreaView>

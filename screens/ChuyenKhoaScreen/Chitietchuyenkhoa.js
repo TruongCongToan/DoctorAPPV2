@@ -32,7 +32,6 @@ const Chitietchuyenkhoa = () => {
   const [checkOpenPrice, setcheckOpenPrice] = useState({});
   const [dropdownValue, setdropdownValue] = useState("PROA");
   const [loading, setloading] = useState("");
-  const [itemMarkdownGet, setitemMarkdownGet] = useState({});
   const [specialty, setspecialty] = useState({});
 
 
@@ -130,7 +129,7 @@ const Chitietchuyenkhoa = () => {
     let check = false;
     if (!check) {
       setspecialty(OneSpecialties);
-      getMarkdownItemData();
+      getMarkdownItemData(OneSpecialties.id);
     }
     return () => {
       check = true;

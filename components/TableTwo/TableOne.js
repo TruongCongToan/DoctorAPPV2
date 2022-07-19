@@ -5,6 +5,7 @@ import BannerScreen from './BannerScreen'
 import { useNavigation } from '@react-navigation/native'
 import ChuyenKhoaUserScreen from '../../screens/ChuyenKhoaScreen/ChuyenKhoaUserScreen'
 import PropTypes from 'prop-types';
+import ListClinicScreen from '../../screens/CoSoYTeScreen/ListClinicScreen'
 
 
 
@@ -14,6 +15,7 @@ const TableOne = (props) => {
 
     let listUsers = props.listUsers
     let listSpecialties = props.listSpecialties
+    let listClinic = props.listClinic
 
     const [refreshing, setRefreshing] = React.useState(false);
 
@@ -30,6 +32,8 @@ const TableOne = (props) => {
             navigation.navigate("SeeMore")
         }else if (flag === "specialties") {
             navigation.navigate("SeeMoreSpecialties")
+        }else if (flag === "clinic"){
+            navigation.navigate("Clinic")
         }
        
     }
@@ -63,6 +67,17 @@ const TableOne = (props) => {
                         <Text style={{ fontSize: 15, fontWeight: "600", margin: 10, color: '#2584ff', marginLeft: '40%' }} onPress={() => onPressViewMore("doctor")}>Xem thêm</Text>
                     </View>
                     <BacSiNoiBat listUsers={listUsers} />
+                </View>
+
+                <View style={{ borderWidth: 0.3, borderColor: 'gray', height: 300, marginTop: 50 }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontSize: 15, fontWeight: "600", margin: 10 }}>Cơ sở y tế nổi bật</Text>
+                        <Text style={{ fontSize: 15, fontWeight: "600", margin: 10, color: '#2584ff', marginLeft: '40%' }} onPress={() => onPressViewMore("clinic")}>Xem thêm</Text>
+                    </View>
+                    <ListClinicScreen listClinic={listClinic} />
+                </View>
+                <View style={{  height: 30, marginTop: 50 }}>
+                       
                 </View>
               
             </ScrollView>

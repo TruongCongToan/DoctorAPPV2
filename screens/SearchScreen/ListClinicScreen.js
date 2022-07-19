@@ -19,15 +19,15 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import allAction from "../../components/redux/action/allAction";
 
-const ListSpecialtiesScreen = () => {
+const ListClinicScreen = () => {
   const navigation = useNavigation();
 
   const [search, setSearch] = useState("");
   const [filteredDataSource, setFilteredDataSource] = useState([]);
   const [masterDataSource, setMasterDataSource] = useState([]);
 
-  const url_Specialties =
-    "https://api-truongcongtoan.herokuapp.com/api/specialties/";
+  const url_Clinic =
+    "https://api-truongcongtoan.herokuapp.com/api/Clinic/";
 
   const dispatch = useDispatch();
 
@@ -36,7 +36,7 @@ const ListSpecialtiesScreen = () => {
   useEffect(() => {
     let check = false;
     if (!check) {
-      fetch(url_Specialties)
+      fetch(url_Clinic)
         .then((response) => response.json())
         .then((responseJson) => {
           setFilteredDataSource(responseJson);
@@ -97,7 +97,7 @@ const ListSpecialtiesScreen = () => {
             )}
 
             <View style={{ flexDirection: "column", marginLeft: 20 }}>
-              <Text style={[styles.itemStyle, { padding: 25 }]}>
+              <Text style={[styles.itemStyle, { paddingLeft:10,paddingTop:20 }]}>
                 {item.name}
               </Text>
             </View>
@@ -121,8 +121,8 @@ const ListSpecialtiesScreen = () => {
   };
   const getItem = (item) => {
     console.log("item ", item.id);
-    dispatch(allAction.specialtiesAction.addOneSpecialties(item.id));
-    navigation.navigate("Chitietchuyenkhoa");
+    dispatch(allAction.clinicAction.addOneClinic(item.id));
+    navigation.navigate("ChitietCSYT");
   };
 
   return (
@@ -157,7 +157,7 @@ const ListSpecialtiesScreen = () => {
             padding: 10,
           }}
         >
-          Chuyên khoa nổi bật
+           Cơ sở y tế nổi bật
         </Text>
       </View>
       <FlatList
@@ -183,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListSpecialtiesScreen;
+export default ListClinicScreen;
