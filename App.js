@@ -24,6 +24,7 @@ import ListSpecialtiesScreen from "./screens/SearchScreen/ListSpecialtiesScreen"
 import Chitietchuyenkhoa from "./screens/ChuyenKhoaScreen/Chitietchuyenkhoa";
 import ListClinicScreen from "./screens/SearchScreen/ListClinicScreen";
 import ChiTietCSYT from "./screens/CoSoYTeScreen/ChiTietCSYT";
+import MultipleSelect from "./components/MultipleSelect/MultipleSelect";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -59,7 +60,7 @@ export default function App() {
                 <Stack.Screen name="Clinic" component={ListClinicScreen} />
                 <Stack.Screen name="ChitietCSYT" component={ChiTietCSYT} />
               </Stack.Navigator>
-
+            {/* <MultipleSelect /> */}
             </NavigationContainer>
           </SafeAreaView>
           <Toast />

@@ -34,7 +34,8 @@ const MarkdownScreen = () => {
   const [selectedPayment, setselectedPayment] = useState("");
   const [selectedProvince, setselectedProvince] = useState("");
   const [selectedSpecialties, setselectedSpecialties] = useState("");
-  const [nameClinic, setnameClinic] = useState("");
+  const [selectedClinic, setselectedClinic] = useState('');
+
   const [addressClinic, setaddressClinic] = useState("");
   const [note, setnote] = useState("");
 
@@ -42,11 +43,13 @@ const MarkdownScreen = () => {
   const [listPayment, setlistPayment] = useState([]);
   const [listProvince, setlistProvince] = useState([]);
   const [listSpecialties, setlistSpecialties] = useState([]);
+  const [listClincs, setlistClincs] = useState([])
 
   const [listPriceData, setlistPriceData] = useState([]);
   const [listPaymentData, setlistPaymentData] = useState([]);
   const [listProvinceData, setlistProvinceData] = useState([]);
   const [listSpecialtiesData, setlistSpecialtiesData] = useState([]);
+  const [listClinicData, setlistClinicData] = useState([])
 
   const [doctorInfo, setdoctorInfo] = useState({});
   const [check, setcheck] = useState("");
@@ -62,7 +65,7 @@ const MarkdownScreen = () => {
     priceid: selectedPrice,
     provinceid: selectedProvince,
     addressclinicid: addressClinic,
-    nameclinic: nameClinic,
+    clinic_id: selectedClinic,
     note: note,
     payment: selectedPayment,
     specialty_id: selectedSpecialties,
@@ -83,6 +86,8 @@ const MarkdownScreen = () => {
   var url_MarkDown = "http://api-truongcongtoan.herokuapp.com/api/markdowns/";
   var url_Specialties =
     "https://api-truongcongtoan.herokuapp.com/api/specialties/";
+    var url_Clinic =
+    "https://api-truongcongtoan.herokuapp.com/api/Clinic/";
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -197,6 +202,8 @@ const MarkdownScreen = () => {
     let listPayment = [];
     let listProvince = [];
     let listSpecialties = [];
+    let listClincs = []
+
     if (listUsersData && listUsersData.length > 0) {
       listUsersData.map((item) => {
         listdoctor.push(buildDataInput(item, "doctor"));
@@ -225,11 +232,19 @@ const MarkdownScreen = () => {
         listSpecialties.push(buildDataInput(item, "specialties"));
       });
     }
+
+    if (listClinicData && listClinicData.length > 0) {
+      listClinicData.map((item) => {
+        listClincs.push(buildDataInput(item, "clinic"));
+      });
+    }
+
     setlistDoctors(listdoctor);
     setlistPrices(listPrice);
     setlistPayment(listPayment);
     setlistProvince(listProvince);
     setlistSpecialties(listSpecialties);
+    setlistClincs(listClincs);
   }, [
     listUsersData,
     listPriceData,
@@ -360,6 +375,7 @@ const MarkdownScreen = () => {
     fetchData(url_Payment, setlistPaymentData);
     fetchData(url_Province, setlistProvinceData);
     fetchData(url_Specialties, setlistSpecialtiesData);
+    fetchData(url_Clinic,setlistClinicData)
   }, []);
 
   useEffect(() => {
@@ -391,9 +407,9 @@ const MarkdownScreen = () => {
       setselectedPayment(doctorInfo && doctorInfo.payment ? doctorInfo.payment : "" )
       setselectedProvince(doctorInfo && doctorInfo.provinceid ? doctorInfo.provinceid : "" )
 
-      setnameClinic(doctorInfo? doctorInfo.nameclinic :"")
+      setselectedClinic(doctorInfo && doctorInfo.clinic ? doctorInfo.clinic.id : "")
       setnote(doctorInfo ? doctorInfo.note : "")
-      setaddressClinic(doctorInfo ? doctorInfo.addressclinicid : "")
+      setaddressClinic(doctorInfo && doctorInfo.clinic && doctorInfo.clinic.address ? doctorInfo.clinic.address : "")
 
       setContentMarkDown(markdownInfo ? markdownInfo.contentMarkDown : "")
       setdescription(markdownInfo ? markdownInfo.description:"")
@@ -411,7 +427,7 @@ const MarkdownScreen = () => {
     let check = false;
     if(
       !doctorInfo.specialties 
-      && !doctorInfo.nameclinic 
+      && !doctorInfo.clinic.id 
       && !doctorInfo.note 
       && !doctorInfo.priceid 
       && !doctorInfo.provinceid 
@@ -464,6 +480,12 @@ const MarkdownScreen = () => {
         object.label = `${inputData.valuevi}`;
       }
     }
+    if (flag === "clinic") {
+      if (inputData) {
+        object.value = inputData.id;
+        object.label = `${inputData.name}`;
+      }
+    }
 
     return object;
   };
@@ -475,11 +497,11 @@ const MarkdownScreen = () => {
     selectedPrice,
     selectedPayment,
     selectedProvince,
-    nameClinic,
     addressClinic,
     description,
     contentMarkDown,
     selectedSpecialties,
+    selectedClinic
   ]);
 
   // console.log("eroor",error["specialties"]);
@@ -506,9 +528,9 @@ const MarkdownScreen = () => {
               formIsValid = false;
               errors["province"] = "Bạn cần phải chọn tỉnh thành!";
             } else {
-              if (!nameClinic) {
+              if (!selectedClinic) {
                 formIsValid = false;
-                errors["nameclinic"] = "Bạn cần phải nhập tên phòng khám!";
+                errors["clinic"] = "Bạn cần phải nhập tên phòng khám!";
               } else {
                 if (!addressClinic) {
                   formIsValid = false;
@@ -561,8 +583,8 @@ const MarkdownScreen = () => {
               if (error["province"]) {
                 pushError(error["province"]);
               } else {
-                if (error["nameclinic"]) {
-                  pushError(error["nameclinic"]);
+                if (error["clinic"]) {
+                  pushError(error["clinic"]);
                 } else {
                   if (error["address"]) {
                     pushError(error["address"]);
@@ -655,7 +677,7 @@ const MarkdownScreen = () => {
           }}
           items={listDoctors}
         />
-      {listDoctors.length === 0 ? <AppLoader /> : null}
+      {listDoctors.length === 0 && listClincs.length === 0 &&listSpecialties.length ===0 ? <AppLoader /> : null}
         <View>
           <Text
             style={{
@@ -753,28 +775,20 @@ const MarkdownScreen = () => {
               fontWeight: "bold",
               marginLeft: 10,
               marginTop: 10,
-              color: error["nameclinic"] ? "red" : "black",
+              color: error["clinic"] ? "red" : "black",
             }}
           >
-            6. Nhập tên phòng khám
+            6. Chọn đơn vị công tác
           </Text>
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <TextInput
-              style={{
-                height: 40,
-                textAlignVertical: "top",
-                borderWidth: 0.3,
-                borderRadius: 10,
-                padding: 10,
-                borderColor: "gray",
-                marginTop: 15,
-                width: "90%",
-              }}
-              placeholder="Nhập tên phòng khám"
-              onChangeText={setnameClinic}
-              value={nameClinic}
-            />
-          </View>
+          <RNPickerSelect
+            onValueChange={handleChangeProvince}
+            value={doctorInfo && doctorInfo.clinic && selectedClinic ? selectedClinic : ""}
+            placeholder={{
+              label: "Chọn cơ sở... ",
+              value: null,
+            }}
+            items={listClincs}
+          />
         </View>
         <View>
           <Text

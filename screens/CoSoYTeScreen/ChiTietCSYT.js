@@ -12,6 +12,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const ChiTietCSYT = () => {
   const clinic_id = useSelector((state) => state.clinic.oneClinic);
@@ -111,7 +112,8 @@ const ChiTietCSYT = () => {
             <View style={{ flexDirection: "row", marginTop: 10 }}>
               <EvilIcons name="location" size={25} color="black" />
               <Text style={{ fontSize: 12, fontWeight: "300" }}>
-               <Text style={{fontWeight:'bold'}}>Địa chỉ:</Text> 679 đường láng,láng hạ dodonsgd đa hà nội
+                <Text style={{ fontWeight: "bold" }}>Địa chỉ:</Text> 679 đường
+                láng,láng hạ dodonsgd đa hà nội
               </Text>
             </View>
           </View>
@@ -136,10 +138,23 @@ const ChiTietCSYT = () => {
             }}
             // onPress={handleSave}
           >
-            <Text style={{ color: "white" ,fontSize:16}}>Đặt lịch khám ngay</Text>
+            <Text style={{ color: "white", fontSize: 16 }}>
+              Đặt lịch khám ngay
+            </Text>
           </TouchableOpacity>
         </View>
-        <Text style={{fontSize:12,fontWeight:"300",paddingBottom:20,paddingLeft:10}}> Xin mời quý khách hàng tham khảo các thông tin giới thiệu cũng như chuyên môn của cơ sở y tế</Text>
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: "300",
+            paddingBottom: 20,
+            paddingLeft: 10,
+          }}
+        >
+          {" "}
+          Xin mời quý khách hàng tham khảo các thông tin giới thiệu cũng như
+          chuyên môn của cơ sở y tế
+        </Text>
         <View>
           <Text
             style={{
@@ -154,16 +169,18 @@ const ChiTietCSYT = () => {
           </Text>
           <View
             style={{
-                marginTop:10,
+              marginTop: 10,
               borderBottomColor: "gray",
               borderBottomWidth: StyleSheet.hairlineWidth,
             }}
           />
-          <Text style={{padding:10}}>
-            {oneClinic ? oneClinic.contentMarkDown :"Không có thông tin giới thiệu "}
+          <Text style={{ padding: 10 }}>
+            {oneClinic
+              ? oneClinic.contentMarkDown
+              : "Không có thông tin giới thiệu "}
           </Text>
         </View>
-        <View style={{marginTop:20}}>
+        <View style={{ marginTop: 20 }}>
           <Text
             style={{
               textTransform: "uppercase",
@@ -177,14 +194,59 @@ const ChiTietCSYT = () => {
           </Text>
           <View
             style={{
-                marginTop:10,
+              marginTop: 10,
               borderBottomColor: "gray",
               borderBottomWidth: StyleSheet.hairlineWidth,
             }}
           />
-          <Text style={{padding:10}}>
-            {oneClinic ? oneClinic.themanhchuyenkhoa :"Không có thông tin giới thiệu "}
-          </Text>
+
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "white",
+            }}
+          >
+            <ImageBackground
+              source={{
+                // uri: specialty.image,
+                uri: "https://cdn.pixabay.com/photo/2016/11/08/05/29/operation-1807543_960_720.jpg",
+              }}
+              resizeMethod="resize"
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                width: "100%",
+                height: 1470,
+              }}
+            >
+              <LinearGradient
+                colors={[
+                  "rgba(255, 255, 255, 0.9)",
+                  "rgba(255, 255, 255, 0.8)",
+                  "rgba(255, 255, 255, 0.7)",
+                ]}
+                start={[0.1, 0.6]}
+                end={[0.1, 0.2]}
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  height: 'auto',
+                  backgroundColor: "rgba(0,0,0,0.1)",
+                }}
+              >
+                <Text style={{ padding: 10 }}>
+                  {oneClinic
+                    ? oneClinic.themanhchuyenkhoa
+                    : "Không có thông tin giới thiệu "}
+                </Text>
+               
+              </LinearGradient>
+            </ImageBackground>
+          </View>
         </View>
       </ScrollView>
 

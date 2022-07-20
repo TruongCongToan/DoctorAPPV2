@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
@@ -15,6 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
 import AppLoader from "../AppLoader/AppLoader";
+import MultipleSelect from "../../components/MultipleSelect/MultipleSelect";
 
 const CoSoYTeAdminScreen = () => {
   const wait = (timeout) => {
@@ -34,6 +36,7 @@ const CoSoYTeAdminScreen = () => {
   const [themanhchuyenkhoa, setthemanhchuyenkhoa] = useState("");
   const [address, setaddress] = useState("");
 
+  const [listSpecialtiesClinic, setlistSpecialtiesClinic] = useState([])
   const [CKData, setCKData] = useState({
     name: "",
     image: "",
@@ -41,9 +44,12 @@ const CoSoYTeAdminScreen = () => {
   });
 
   const [error, seterror] = useState({});
-  const url_Clinic = "https://api-truongcongtoan.herokuapp.com/api/Clinic";
+  const url_Clinic = "https://api-truongcongtoan.herokuapp.com/api/Clinic/";
+  const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties"
 
   const [listSpecialies, setlistSpecialies] = useState([]);
+  const [listSpecialtiesClinicData, setlistSpecialtiesClinicData] = useState([])
+
   const handleEditorChange = (value) => {
     setContentMarkDown(value);
   };
@@ -74,7 +80,6 @@ const CoSoYTeAdminScreen = () => {
       setImage(`data:image/jpeg;base64, ${result.base64}`);
     }
   };
-
   const [dataSpecialties, setdataSpecialties] = useState({
     name: "",
     image: "",
@@ -116,7 +121,7 @@ const CoSoYTeAdminScreen = () => {
         {
           text: "Có",
           onPress: () => {
-            addCK(url_Clinic, dataSpecialties);
+            addCK(url_Clinic, dataSpecialties,selectedCSYT);
             setcheck("loading");
           },
         },
@@ -154,11 +159,13 @@ const CoSoYTeAdminScreen = () => {
   };
 
   const [check, setcheck] = useState("");
+  const [selectedCSYT, setselectedCSYT] = useState([])
 
-  const addCK = (url, data) => {
+  const addCK = (url, data,listSpecialiesId) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
+    
     var raw = JSON.stringify(data);
 
     var requestOptions = {
@@ -167,12 +174,10 @@ const CoSoYTeAdminScreen = () => {
       body: raw,
       redirect: "follow",
     };
-
-    fetch(url, requestOptions)
+    fetch(`${url}${listSpecialiesId}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (JSON.parse(result).errorCode) {
-          console.log("ket qua thu duoc", result);
 
           return Alert.alert(
             "Thông báo",
@@ -190,21 +195,27 @@ const CoSoYTeAdminScreen = () => {
           //   text1: "Thông báo",
           //   text2: 'Đã thêm thông tin cơ sở y tế thành công !',
           // });
-          setcheck("ok");
+          setcheck("done");
           setname("");
           setContentMarkDown("");
           setImage(null);
           setthemanhchuyenkhoa("");
-
-          return Alert.alert(
-            "Thông báo",
-            `Đã thêm thông tin cơ sở y tế thành công !`,
-            [
-              {
-                text: "OK",
-              },
-            ]
-          );
+          setlistSpecialtiesClinic([])
+          setaddress('')
+          Toast.show({
+            type: "success",
+            text1: "Thông báo",
+            text2: "Đã thêm thông tin cơ sở y tế thành công !",
+          });
+          // return Alert.alert(
+          //   "Thông báo",
+          //   `Đã thêm thông tin cơ sở y tế thành công !`,
+          //   [
+          //     {
+          //       text: "OK",
+          //     },
+          //   ]
+          // );
         }
       })
       .catch((error) => {
@@ -220,11 +231,37 @@ const CoSoYTeAdminScreen = () => {
     let check = false;
     if (!check) {
       fetchData(url_Clinic, setlistSpecialies);
+      fetchData(url_Specialties,setlistSpecialtiesClinicData)
     }
     return () => {
       check = true;
     };
   }, [check]);
+  useEffect(() => {
+    let check = false;
+    let listSpecialies= []
+    if (!check) {
+      if (listSpecialtiesClinicData && listSpecialtiesClinicData.length > 0) {
+        listSpecialtiesClinicData.map((item) => {
+          listSpecialies.push(buildDataInput(item));
+        });
+      }
+      setlistSpecialtiesClinic(listSpecialies);
+    }
+    return () => {
+      check = true;
+    };
+  }, [listSpecialtiesClinicData]);
+
+  const buildDataInput = (inputData) => {
+    let object = {};
+      if (inputData) {
+        object.value = inputData.id;
+        object.label = `${inputData.name}`;
+      }
+
+    return object;
+  };
 
   const validateBlank = () => {
     let errors = {};
@@ -245,11 +282,11 @@ const CoSoYTeAdminScreen = () => {
           }
         }
       } else {
+        
         listSpecialies.length > 0 &&
           listSpecialies.map((item, index) => {
             if (
-              item.name.toUpperCase() === name.toUpperCase() ||
-              name.endsWith(" ")
+              item && item.name.toUpperCase().replace(/ /g,'') === name.toUpperCase().replace(/ /g,'')
             ) {
               formIsValid = false;
               errors["name"] =
@@ -281,7 +318,15 @@ const CoSoYTeAdminScreen = () => {
     seterror(errors);
     return formIsValid;
   };
-  console.log("check la ", check);
+const onchangeSelectedItem = (item) =>{
+  let itemList = []
+  if (item.length > 0) {
+    item.map( eachitem =>{
+      itemList.push(eachitem.value)
+    })
+    setselectedCSYT(itemList)
+  }
+}
   return (
     <View>
       {check === "loading" ? <AppLoader /> : null}
@@ -292,7 +337,7 @@ const CoSoYTeAdminScreen = () => {
       >
         <HeaderLogo />
       </ScrollView>
-      <ScrollView>
+      <ScrollView  >
         <Text
           style={{
             fontSize: 20,
@@ -439,6 +484,22 @@ const CoSoYTeAdminScreen = () => {
               value={themanhchuyenkhoa}
             />
           </View>
+
+          <Text
+            style={[
+              styles.text,
+              { marginTop: 30 },
+              error["themanhchuyenkhoa"]
+                ? styles.errorBorder
+                : styles.nonErrorBorder,
+            ]}
+          >
+            5. Chọn chuyên khoa 
+          </Text>
+          <SafeAreaView style={{flex: 1}}>
+             
+              <MultipleSelect listSpecialies = {listSpecialtiesClinic} onchangeSelectedItem = {onchangeSelectedItem}/>
+         </SafeAreaView>
           <Text
             style={[
               styles.text,
@@ -446,7 +507,7 @@ const CoSoYTeAdminScreen = () => {
               error["address"] ? styles.errorBorder : styles.nonErrorBorder,
             ]}
           >
-            4. Địa chỉ
+            6. Địa chỉ cơ sở y tế
           </Text>
           <TextInput
             value={address ? address : null}
