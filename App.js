@@ -25,6 +25,7 @@ import Chitietchuyenkhoa from "./screens/ChuyenKhoaScreen/Chitietchuyenkhoa";
 import ListClinicScreen from "./screens/SearchScreen/ListClinicScreen";
 import ChiTietCSYT from "./screens/CoSoYTeScreen/ChiTietCSYT";
 import MultipleSelect from "./components/MultipleSelect/MultipleSelect";
+import SpecialtiesClinicList from "./screens/CoSoYTeScreen/SpecialtiesClinicList";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -59,6 +60,8 @@ export default function App() {
                 <Stack.Screen name="Datlich" component={BookingScheduleScreen} />
                 <Stack.Screen name="Clinic" component={ListClinicScreen} />
                 <Stack.Screen name="ChitietCSYT" component={ChiTietCSYT} />
+                <Stack.Screen name="ChuyenkhoaCSYT" component={SpecialtiesClinicList} />
+                
               </Stack.Navigator>
             {/* <MultipleSelect /> */}
             </NavigationContainer>

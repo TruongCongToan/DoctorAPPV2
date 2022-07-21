@@ -17,6 +17,7 @@ import "moment/locale/vi";
 import RNPickerSelect from "react-native-picker-select";
 import allAction from "../redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Chitietbacsi = () => {
   var url_DoctorInfo ="http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
@@ -429,10 +430,13 @@ const Chitietbacsi = () => {
             {/* {console.log("gia tri check ", doctorInfo.addressclinicid)} */}
             {doctorInfo.addressclinicid ? (
               <View style={{ flexDirection: "column" }}>
-                <Text style={{ padding: 10 }}>{doctorInfo.nameclinic}</Text>
-                <Text style={{ paddingTop: 5, paddingLeft: 10 }}>
+                <Text style={{ padding: 10 }}>{doctorInfo && doctorInfo.clinic && doctorInfo.clinic.name?doctorInfo.clinic.name : 'Không có dữ liệu về tên đơn vị công tác'}</Text>
+               <View style={{flexDirection:'row',marginLeft:5}}>
+               <Ionicons name="location" size={20} color="orange" />
+               <Text style={{  paddingLeft: 5 }}>
                   {doctorInfo.addressclinicid}
                 </Text>
+                </View>
               </View>
             ) : (
               <Text

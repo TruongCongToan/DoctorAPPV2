@@ -1,9 +1,10 @@
 
 
-import {ADD_ONE_CLINIC} from '../constant'
+import {ADD_ONE_CLINIC,ADD_CLINIC_SPECIALTIES_CHECK} from '../constant'
 
 const initialState = {
-    oneClinic:{}
+    oneClinic:{},
+    ClinicSpecialtiesCheck:{}
 }
 const clinicReducer =(state= initialState,action)=>{
     switch(action.type){
@@ -12,7 +13,11 @@ const clinicReducer =(state= initialState,action)=>{
             ...state,
             oneClinic:action.payload,
         }
-  
+    case ADD_CLINIC_SPECIALTIES_CHECK:
+            return {
+                ...state,
+                ClinicSpecialtiesCheck:action.payload,
+            }
     default: return state
     }
     

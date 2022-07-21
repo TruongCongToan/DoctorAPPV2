@@ -13,6 +13,7 @@ import "moment/locale/vi";
 import React, { useState, useEffect } from "react";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
 import { LinearGradient } from "expo-linear-gradient";
+
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import RNPickerSelect from "react-native-picker-select";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -25,7 +26,8 @@ const Chitietchuyenkhoa = () => {
   const [OneSpecialties, setOneSpecialties] = useState({});
 
   const specialty_id = useSelector((state) => state.specialties.oneSpecialties);
-
+  const clinic_id = useSelector((state) => state.clinic.oneClinic);
+  const ClinicSpecialtiesCheck = useSelector((state) => state.clinic.ClinicSpecialtiesCheck)
   const [alldays, setalldays] = useState([]);
   const [markdownByCK, setmarkdownByCK] = useState([]);
 
@@ -40,6 +42,8 @@ const Chitietchuyenkhoa = () => {
   const url_doctorinfo =
     "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/specialties/";
 
+    const url_doctorinfo_clinic =
+    "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/clinics/";
 
   const url_Specialties =
     "https://api-truongcongtoan.herokuapp.com/api/specialties/";
@@ -56,7 +60,6 @@ const Chitietchuyenkhoa = () => {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  const [selectedIndex, setselectedIndex] = useState(0);
   let arrDate = [];
   for (let i = 0; i < 7; i++) {
     let object = {};
@@ -115,7 +118,7 @@ const Chitietchuyenkhoa = () => {
       .then((response) => response.text())
       .then((result) => {
         if (JSON.parse(result)) {
-          // console.log("result la ",result.doctorInfo);
+          console.log("result la ",result.doctorInfo);
           setData(JSON.parse(result));
         } else {
           setData(null);
@@ -124,19 +127,26 @@ const Chitietchuyenkhoa = () => {
       })
       .catch((error) => console.log("error", error));
   };
-
   useEffect(() => {
     let check = false;
     if (!check) {
       setspecialty(OneSpecialties);
-      getMarkdownItemData(OneSpecialties.id);
+      if (ClinicSpecialtiesCheck === "clinic") {
+        getMarkdownItemDataClinic()
+      }else if (ClinicSpecialtiesCheck === "specialties") {
+        getMarkdownItemData(OneSpecialties.id);
+      }
+    
     }
     return () => {
       check = true;
     };
   }, [OneSpecialties.id]);
+  console.log("ClinicSpecialtiesCheck ",ClinicSpecialtiesCheck);
 
-  console.log("gi tri chuyen khoa", OneSpecialties.id);
+  console.log("gi tri chuyen khoa", specialty_id);
+  console.log("gi tri clinic_id ", clinic_id);
+  console.log("markddonw clinic ",markdownByCK.length);
 
   const getMarkdownItemData = (id) => {
     if (dropdownValue === "PROA") {
@@ -145,10 +155,21 @@ const Chitietchuyenkhoa = () => {
       fetchData(url_doctorinfo, id, dropdownValue, setmarkdownByCK);
     }
   };
+  const getMarkdownItemDataClinic = () => {
+    if (dropdownValue === "PROA") {
+      fetchData(url_doctorinfo_clinic,clinic_id , specialty_id, setmarkdownByCK);
+    }else{
+      fetchData(url_doctorinfo_clinic,clinic_id , specialty_id, setmarkdownByCK,dropdownValue);
+    }
+  };
   useEffect(() => {
     let check = false;
     if (!check) {
-      getMarkdownItemData(OneSpecialties.id);
+ if (ClinicSpecialtiesCheck === "clinic") {
+        getMarkdownItemDataClinic()
+      }else if (ClinicSpecialtiesCheck === "specialties") {
+        getMarkdownItemData(OneSpecialties.id);
+      }
     }
     return () => {
       check = true;
@@ -288,10 +309,7 @@ const Chitietchuyenkhoa = () => {
                     marginTop: 20,
                   }}
                 >
-                  {console.log(
-                    "item thu duoc la ",
-                    item.doctorInfo.user.full_name
-                  )}
+                 
                   <View
                     style={{
                       flexDirection: "row",
@@ -374,9 +392,8 @@ const Chitietchuyenkhoa = () => {
                     </View>
                     {item.doctorInfo.addressclinicid ? (
                       <View style={{ flexDirection: "column" }}>
-                        <Text style={{ padding: 10 }}>
-                          {item.doctorInfo.nameclinic}
-                        </Text>
+                        <Text style={{ padding: 10 }}>{item.doctorInfo && item.doctorInfo.clinic && item.doctorInfo.clinic.name?item.doctorInfo.clinic.name : 'Không có dữ liệu về tên đơn vị công tác'}</Text>
+
                         <Text style={{ paddingTop: 5, paddingLeft: 10 }}>
                           {item.doctorInfo.addressclinicid}
                         </Text>

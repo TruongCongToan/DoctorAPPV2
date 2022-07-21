@@ -1,4 +1,4 @@
-import {ADD_ONE_CLINIC} from '../constant'
+import {ADD_ONE_CLINIC,ADD_CLINIC_SPECIALTIES_CHECK} from '../constant'
 
 const addOneClinic = ( obj) =>{
     console.log("Object Redux Action ",obj);
@@ -8,4 +8,11 @@ const addOneClinic = ( obj) =>{
     }
 }
 
- export default{addOneClinic}
+const addClinicSpecialtiesCheck = ( obj) =>{
+    console.log("Object Redux Action ",obj);
+    return{
+        type:ADD_CLINIC_SPECIALTIES_CHECK,
+        payload:obj
+    }
+}
+ export default{addOneClinic,addClinicSpecialtiesCheck}

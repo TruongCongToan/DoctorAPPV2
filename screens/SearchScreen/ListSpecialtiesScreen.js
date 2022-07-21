@@ -122,6 +122,7 @@ const ListSpecialtiesScreen = () => {
   const getItem = (item) => {
     console.log("item ", item.id);
     dispatch(allAction.specialtiesAction.addOneSpecialties(item.id));
+    dispatch(allAction.clinicAction.addClinicSpecialtiesCheck("specialties"))
     navigation.navigate("Chitietchuyenkhoa");
   };
 

@@ -6,13 +6,15 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  RefreshControl,
+
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import allAction from "../../components/redux/action/allAction";
 
 const ChiTietCSYT = () => {
   const clinic_id = useSelector((state) => state.clinic.oneClinic);
@@ -21,6 +23,8 @@ const ChiTietCSYT = () => {
 
   const url_Clinic = "https://api-truongcongtoan.herokuapp.com/api/Clinic/";
 
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -72,10 +76,14 @@ const ChiTietCSYT = () => {
       .then((result) => setData(JSON.parse(result)))
       .catch((error) => console.log("error", error));
   };
+
+  const bookingPress = () => {
+    navigation.navigate("ChuyenkhoaCSYT")
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <HeaderLogo />
-
       <ScrollView stickyHeaderIndices={[1]}>
         <View style={{ backgroundColor: "transparent" }}>
           {oneClinic.image && (
@@ -109,13 +117,15 @@ const ChiTietCSYT = () => {
               {" "}
               {oneClinic ? oneClinic.name : null}{" "}
             </Text>
-            <View style={{ flexDirection: "row", marginTop: 10 }}>
-              <EvilIcons name="location" size={25} color="black" />
-              <Text style={{ fontSize: 12, fontWeight: "300" }}>
-                <Text style={{ fontWeight: "bold" }}>Địa chỉ:</Text> 679 đường
-                láng,láng hạ dodonsgd đa hà nội
-              </Text>
-            </View>
+            {oneClinic.address ? (
+              <View style={{ flexDirection: "row", marginTop: 10 }}>
+                <Ionicons name="location-sharp" size={20} color="orange" />
+                <Text style={{ fontSize: 12, fontWeight: "300" }}>
+                  <Text style={{ fontWeight: "bold" }}>Địa chỉ:</Text>{" "}
+                  {oneClinic.address}
+                </Text>
+              </View>
+            ) : null}
           </View>
         </View>
         <View
@@ -130,13 +140,13 @@ const ChiTietCSYT = () => {
             style={{
               width: 350,
               height: 40,
-              backgroundColor: "blue",
+              backgroundColor: "#FFB52E",
               borderRadius: 5,
               justifyContent: "center",
               alignItems: "center",
               marginBottom: 20,
             }}
-            // onPress={handleSave}
+            onPress={bookingPress}
           >
             <Text style={{ color: "white", fontSize: 16 }}>
               Đặt lịch khám ngay
@@ -234,7 +244,7 @@ const ChiTietCSYT = () => {
                   left: 0,
                   right: 0,
                   top: 0,
-                  height: 'auto',
+                  height: "auto",
                   backgroundColor: "rgba(0,0,0,0.1)",
                 }}
               >
@@ -243,14 +253,11 @@ const ChiTietCSYT = () => {
                     ? oneClinic.themanhchuyenkhoa
                     : "Không có thông tin giới thiệu "}
                 </Text>
-               
               </LinearGradient>
             </ImageBackground>
           </View>
         </View>
       </ScrollView>
-
-      {/* <View><Text>footer</Text></View> */}
     </View>
   );
 };

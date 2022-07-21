@@ -33,7 +33,6 @@ const ListAllDoctorScreen = () => {
     "https://api-truongcongtoan.herokuapp.com/api/markdowns/";
   const url_Info = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
 
-  const [doctorInfo, setdoctorInfo] = useState({});
   const dispatch = useDispatch();
 
   var checkLoadingPage = useSelector((state) => state.user);

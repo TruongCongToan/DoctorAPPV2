@@ -172,7 +172,7 @@ const ChuyenKhoaScreen = () => {
             ]
           );
         } else {
-          console.log(result);
+          // console.log(result);
           // Toast.show({
           //   type: "success",
           //   text1: "Thông báo",

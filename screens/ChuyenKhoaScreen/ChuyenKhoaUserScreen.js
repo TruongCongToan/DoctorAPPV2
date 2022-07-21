@@ -20,7 +20,7 @@ const ChuyenKhoaUserScreen = (props) => {
   }
   const onPressImg = (value) => {
     dispatch(allAction.specialtiesAction.addOneSpecialties(value.id))
-
+    dispatch(allAction.clinicAction.addClinicSpecialtiesCheck("specialties"))
     navigation.navigate("Chitietchuyenkhoa")
   }
 

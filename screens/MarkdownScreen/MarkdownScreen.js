@@ -119,6 +119,9 @@ const MarkdownScreen = () => {
   const handleChangeProvince = (value) => {
     setselectedProvince(value);
   };
+  const handleChangeClinic = (value) => {
+    setselectedClinic(value);
+  };
 
   const addDataMarkDown = (url, data) => {
     console.log("calling data ...");
@@ -252,9 +255,8 @@ const MarkdownScreen = () => {
     listProvinceData,
     listSpecialtiesData,
   ]);
-  const [dataUserGet, setdataUserGet] = useState({})
 
- 
+ console.log("listClic",listClincs);
   const updateData = (url,id, data) => {
   
     var myHeaders = new Headers();
@@ -391,7 +393,6 @@ const MarkdownScreen = () => {
   useEffect(() => {
     let check = false;
     if (!check) {
-      // fetchDataById(url_DoctorInfo, setdoctorInfo, selectedDoctorId);
       fetchDataById(url_MarkDown, setmarkdownInfo, doctorInfo ? doctorInfo.id : 0);
     }
     return () => {
@@ -407,19 +408,44 @@ const MarkdownScreen = () => {
       setselectedPayment(doctorInfo && doctorInfo.payment ? doctorInfo.payment : "" )
       setselectedProvince(doctorInfo && doctorInfo.provinceid ? doctorInfo.provinceid : "" )
 
-      setselectedClinic(doctorInfo && doctorInfo.clinic ? doctorInfo.clinic.id : "")
+      setselectedClinic(doctorInfo && doctorInfo.clinic &&doctorInfo.clinic.id ? doctorInfo.clinic.id : "")
       setnote(doctorInfo ? doctorInfo.note : "")
-      setaddressClinic(doctorInfo && doctorInfo.clinic && doctorInfo.clinic.address ? doctorInfo.clinic.address : "")
 
       setContentMarkDown(markdownInfo ? markdownInfo.contentMarkDown : "")
       setdescription(markdownInfo ? markdownInfo.description:"")
-
+      setaddressClinic(doctorInfo && doctorInfo.clinic && doctorInfo.clinic.address && doctorInfo.clinic.address ? doctorInfo.clinic.address : "")
   
     }
     return () => {
       check = true;
     };
-  }, [doctorInfo,markdownInfo,dataUserGet]);
+  }, [doctorInfo,markdownInfo,]);
+
+  const [clinicInfo, setclinicInfo] = useState({})
+  useEffect(() => {
+    let check = false
+  if (!check) {
+    fetchDataById(url_Clinic, setclinicInfo, selectedClinic);
+  }
+    return () => {
+      check = true
+    }
+  }, [selectedClinic])
+  useEffect(() => {
+    let check = false
+    if (!check) {
+      if (clinicInfo && clinicInfo.address) {
+        setaddressClinic(clinicInfo.address)
+      }
+
+    }
+    return () => {
+      check = true
+    }
+  }, [clinicInfo])
+  
+  
+  // console.log("selec clinic info ",clinicInfo.address);
 
   // console.log("markdownInfo " ,markdownInfo ? markdownInfo.description : markdownInfo.description );
 
@@ -427,7 +453,7 @@ const MarkdownScreen = () => {
     let check = false;
     if(
       !doctorInfo.specialties 
-      && !doctorInfo.clinic.id 
+      // && !doctorInfo.clinic.id 
       && !doctorInfo.note 
       && !doctorInfo.priceid 
       && !doctorInfo.provinceid 
@@ -604,25 +630,41 @@ const MarkdownScreen = () => {
         }
       }
     } else {
-      if (checkHaveOldData()) {
-        console.log("Co roig");
-         try {
-        
-        updateData(url_DoctorInfo,selectedDoctorId, sendDatadoctorinfo);
-        setcheck("loading");
-      } catch (error) {
-        console.log(error);
-      }
-      }else{
-        console.log("chua co");
-         try {
-        addData(url_DoctorInfo, sendDatadoctorinfo);
-        setcheck("loading");
 
-      } catch (error) {
-        console.log(error);
-      }
-      }
+
+      
+      return Alert.alert("Thông báo", `Xác nhận lưu thông tin ?`, [
+        {
+          text: "Có",
+          onPress: () => {
+            if (checkHaveOldData()) {
+              console.log("Co roig");
+               try {
+              
+              updateData(url_DoctorInfo,selectedDoctorId, sendDatadoctorinfo);
+              setcheck("loading");
+            } catch (error) {
+              console.log(error);
+            }
+            }else{
+              console.log("chua co");
+               try {
+              addData(url_DoctorInfo, sendDatadoctorinfo);
+              setcheck("loading");
+      
+            } catch (error) {
+              console.log(error);
+            }
+            }
+          },
+        },
+
+        {
+          text: "Không",
+        },
+      ]);
+
+     
      
     }
   };
@@ -781,8 +823,8 @@ const MarkdownScreen = () => {
             6. Chọn đơn vị công tác
           </Text>
           <RNPickerSelect
-            onValueChange={handleChangeProvince}
-            value={doctorInfo && doctorInfo.clinic && selectedClinic ? selectedClinic : ""}
+            onValueChange={handleChangeClinic}
+            value={ selectedClinic ? selectedClinic : ""}
             placeholder={{
               label: "Chọn cơ sở... ",
               value: null,
@@ -800,10 +842,10 @@ const MarkdownScreen = () => {
               color: error["address"] ? "red" : "black",
             }}
           >
-            7. Nhập địa chỉ phòng khám
+            7. Địa chỉ phòng khám
           </Text>
           <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <TextInput
+            {/* <TextInput
               style={{
                 height: 40,
                 textAlignVertical: "top",
@@ -813,11 +855,32 @@ const MarkdownScreen = () => {
                 borderColor: "gray",
                 marginTop: 15,
                 width: "90%",
+                
               }}
-              placeholder="Nhập địa chỉ phòng khám"
+              editable={false}
+              selectTextOnFocus={false}
+                placeholder="Nhập địa chỉ phòng khám"
               onChangeText={setaddressClinic}
               value={addressClinic}
-            />
+            /> */}
+
+         <ScrollView horizontal = {true}
+          style={{
+            height: 40,
+            textAlignVertical: "top",
+            borderWidth: 0.3,
+            borderRadius: 10,
+            // paddingTop:10,
+            padding:10,
+            borderColor: "gray",
+            marginTop: 15,
+            width: "90%",
+          }}
+         >
+         <Text>
+              {addressClinic}
+            </Text>
+         </ScrollView>
           </View>
         </View>
         <View>
