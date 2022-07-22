@@ -6,8 +6,7 @@ import TableTwo from "../../components/TableTwo/TableTwo";
 import { useSelector } from "react-redux";
 import TableOne from "../../components/TableTwo/TableOne";
 import AppLoader from "../AppLoader/AppLoader";
-// import { Container } from "native-base";
-// import { useSelector } from "react-redux";
+
 const url = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo";
 const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties"
 const url_Clinic = "https://api-truongcongtoan.herokuapp.com/api/Clinic";

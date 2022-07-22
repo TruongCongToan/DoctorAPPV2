@@ -98,9 +98,7 @@ const ScheduleManage = () => {
   }, [listUsersData]);
   
   const onDateChange = (date) => {
-    // console.log("Date la ",parseInt(date.toISOString().slice(8, 10)));
-    // console.log("Home nay  la ",parseInt(new Date().toISOString().slice(8,10)));
-    // console.log("gia tri thoi gian ",new Data().getHours());
+  
     console.log("gia tri check ",parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)));
 
     if ((parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)) )<0) {

@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 import HeaderLogo from "../HeaderScreen/HeaderLogo";
 import { useSelector } from "react-redux";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
@@ -21,7 +21,7 @@ import Toast from "react-native-toast-message";
 import RNPickerSelect from "react-native-picker-select";
 import AppLoader from "../AppLoader/AppLoader";
 
-const BookingScheduleScreen = () => {
+const BookingScheduleScreen = ({ navigation }) => {
   var bookingInfoGet = useSelector((state) => state.user.bookingInfo);
 
   var signInPerson = useSelector((state) => state.user.signInPerson);
@@ -29,7 +29,9 @@ const BookingScheduleScreen = () => {
   const [dataOneUser, setdataOneUser] = useState({});
   const [doctorInfo, setdoctorInfo] = useState({});
   const [markdown, setmarkdown] = useState({});
-
+  const [idSiginPerson, setidSiginPerson] = useState(0);
+  const [dataErrorBooking, setdataErrorBooking] = useState({});
+  
   const url_MarkDown = "http://api-truongcongtoan.herokuapp.com/api/markdowns/";
   const url_DoctorInfo =
     "http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
@@ -45,6 +47,7 @@ const BookingScheduleScreen = () => {
       check = true;
     };
   }, [dataOneUser_id]);
+ 
 
   useEffect(() => {
     let check = false;
@@ -90,8 +93,13 @@ const BookingScheduleScreen = () => {
   const [reason, setreason] = useState(null);
 
   const [error, seterror] = useState({});
-  const url_Email = "https://api-truongcongtoan.herokuapp.com/api/sendEmail";
   const url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings";
+  const url_sendEmail =
+    "https://api-truongcongtoan.herokuapp.com/api/sendEmail";
+  const url_Email_Data =
+    "https://api-truongcongtoan.herokuapp.com/api/emaildata/";
+  const url_Email_Data_Mail =
+    "https://api-truongcongtoan.herokuapp.com/api/mail/";
 
   useEffect(() => {
     let check = false;
@@ -147,9 +155,20 @@ const BookingScheduleScreen = () => {
     email: "",
     ngaykham: "",
   });
+  const [dataToEmailDATA, setdataToEmailDATA] = useState({
+    ...bookingInfoGet,
+    full_name: "",
+    doctor_name: "",
+    price: "",
+    reason,
+    address,
+    birth_year: "",
+    gender: "",
+    phone_number: "",
+    email: "",
+    ngaykham: "",
+  });
 
-  const [dataErrorBooking, setdataErrorBooking] = useState({});
-  const [dataErrorEmail, setdataErrorEmail] = useState({});
   const addNewBooking = (url, data, setData) => {
     console.log(data);
     var myHeaders = new Headers();
@@ -163,30 +182,50 @@ const BookingScheduleScreen = () => {
       body: raw,
       redirect: "follow",
     };
-
     fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (!JSON.parse(result).errorCode) {
-          addDataEmail(dataToEmail);
-          Toast.show({
-            type: "success",
-            text1: "Thông báo",
-            text2: "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
-          });
+          try {
+            console.log("gia tri gui di ", dataToEmail);
+            addDataEmail(url_sendEmail, dataToEmail);
+            addDataEmail(url_Email_Data, dataToEmail);
+            setfull_name("");
+            setgender("");
+            setbirth_year("");
+            setemail("");
+            setphone_number("");
+            setaddress("");
+            setreason("");
+            navigation.goBack();
+
+            Toast.show({
+              type: "success",
+              text1: "Thông báo",
+              text2:
+                "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
+            });
+          } catch (error) {
+            Toast.show({
+              type: "error",
+              text1: "Thông báo",
+              text2:
+                "Bạn đã đặt lịch khám trước đó rồi nhe. Vui lòng kiểm tra lại email !",
+            });
+          }
         } else {
           Toast.show({
             type: "error",
             text1: "Thông báo",
             text2:
-              "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email !",
+              "Bạn đã đặt lịch khám trước đó rồi nha. Vui lòng kiểm tra lại email !",
           });
         }
         console.log("gia tri th duoc ", result);
       })
       .catch((error) => console.log("error", error));
   };
-  const addDataEmail = (data) => {
+  const addDataEmail = (urlin, data) => {
     console.log("start");
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -200,10 +239,7 @@ const BookingScheduleScreen = () => {
       redirect: "follow",
     };
 
-    fetch(
-      "https://api-truongcongtoan.herokuapp.com/api/sendEmail",
-      requestOptions
-    )
+    fetch(urlin, requestOptions)
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.log("error", error));
@@ -229,6 +265,8 @@ const BookingScheduleScreen = () => {
     } else {
       try {
         addNewBooking(url_Booking, dataADD, setdataErrorBooking);
+        // console.log("data to email ",dataToEmail);
+
         // addNewBooking(url_Email,dataToEmail,setdataErrorEmail)
         //  setdataErrorBooking({});
       } catch (error) {
@@ -529,14 +567,16 @@ const BookingScheduleScreen = () => {
           >
             Giới tính
           </Text>
-          <View style={{ 
-             width: "auto",
+          <View
+            style={{
+              width: "auto",
               height: 40,
               borderWidth: 0.3,
               borderColor: "gray",
               margin: 20,
-              flexDirection:'row'
-              }}>
+              flexDirection: "row",
+            }}
+          >
             <FontAwesome5
               style={{ marginLeft: 10, marginTop: 10 }}
               name="transgender-alt"
@@ -550,13 +590,13 @@ const BookingScheduleScreen = () => {
                 marginLeft: 12,
                 width: "88%",
                 borderColor: "gray",
-                borderTopColor:'transparent',
-                borderRightColor:'transparent',
-                borderBottomColor:'transparent',
+                borderTopColor: "transparent",
+                borderRightColor: "transparent",
+                borderBottomColor: "transparent",
                 borderWidth: 0.3,
                 paddingLeft: 10,
                 paddingHorizontal: 0,
-                borderRightColor:'transparent',
+                borderRightColor: "transparent",
                 // marginVertical: 10,
               }}
             >
@@ -938,9 +978,7 @@ const BookingScheduleScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-{
-  console.log("giua tri gender ",gender)
-}
+        {console.log("giua tri gender ", gender)}
       </ScrollView>
     </View>
   );
