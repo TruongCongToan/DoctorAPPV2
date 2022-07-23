@@ -29,9 +29,9 @@ const BookingScheduleScreen = ({ navigation }) => {
   const [dataOneUser, setdataOneUser] = useState({});
   const [doctorInfo, setdoctorInfo] = useState({});
   const [markdown, setmarkdown] = useState({});
-  const [idSiginPerson, setidSiginPerson] = useState(0);
   const [dataErrorBooking, setdataErrorBooking] = useState({});
-  
+  const [booking_id, setbooking_id] = useState(0)
+
   const url_MarkDown = "http://api-truongcongtoan.herokuapp.com/api/markdowns/";
   const url_DoctorInfo =
     "http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
@@ -142,6 +142,7 @@ const BookingScheduleScreen = ({ navigation }) => {
   let dataADD = {
     ...bookingInfoGet,
   };
+  const [check, setcheck] = useState("")
   const [dataToEmail, setdataToEmail] = useState({
     ...bookingInfoGet,
     full_name: "",
@@ -155,19 +156,21 @@ const BookingScheduleScreen = ({ navigation }) => {
     email: "",
     ngaykham: "",
   });
-  const [dataToEmailDATA, setdataToEmailDATA] = useState({
-    ...bookingInfoGet,
-    full_name: "",
-    doctor_name: "",
-    price: "",
-    reason,
-    address,
-    birth_year: "",
-    gender: "",
-    phone_number: "",
-    email: "",
-    ngaykham: "",
-  });
+  const [dataToEmailDATA, setdataToEmailDATA] = useState({});
+
+  useEffect(() => {
+  let check = false    
+  if (!check) {
+    setdataToEmailDATA({
+      ...dataToEmail,
+      booking_id:booking_id
+    })
+  }
+    return () => {
+      check =true
+    }
+  }, [dataToEmail])
+  
 
   const addNewBooking = (url, data, setData) => {
     console.log(data);
@@ -187,30 +190,15 @@ const BookingScheduleScreen = ({ navigation }) => {
       .then((result) => {
         if (!JSON.parse(result).errorCode) {
           try {
-            console.log("gia tri gui di ", dataToEmail);
-            addDataEmail(url_sendEmail, dataToEmail);
-            addDataEmail(url_Email_Data, dataToEmail);
-            setfull_name("");
-            setgender("");
-            setbirth_year("");
-            setemail("");
-            setphone_number("");
-            setaddress("");
-            setreason("");
-            navigation.goBack();
-
-            Toast.show({
-              type: "success",
-              text1: "Thông báo",
-              text2:
-                "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
-            });
+            // console.log("gia tri gui di ", dataToEmail);
+            addDataEmail(url_sendEmail, dataToEmail,{...dataToEmail,booking_id:JSON.parse(result).id});
+           
           } catch (error) {
             Toast.show({
               type: "error",
               text1: "Thông báo",
               text2:
-                "Bạn đã đặt lịch khám trước đó rồi nhe. Vui lòng kiểm tra lại email !",
+                "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email !",
             });
           }
         } else {
@@ -218,20 +206,20 @@ const BookingScheduleScreen = ({ navigation }) => {
             type: "error",
             text1: "Thông báo",
             text2:
-              "Bạn đã đặt lịch khám trước đó rồi nha. Vui lòng kiểm tra lại email !",
+              "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email !",
           });
         }
-        console.log("gia tri th duoc ", result);
+
+        setbooking_id(JSON.parse(result).id)
       })
       .catch((error) => console.log("error", error));
   };
-  const addDataEmail = (urlin, data) => {
-    console.log("start");
+  const addDataEmail = (urlin, data,data2) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify(data);
-
+    console.log("gia tri data guiw di la ",data2);
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -241,10 +229,63 @@ const BookingScheduleScreen = ({ navigation }) => {
 
     fetch(urlin, requestOptions)
       .then((response) => response.text())
-      .then((result) => console.log(result))
+      .then((result) => 
+      {
+       try {
+        addDataEmailBooking(url_Email_Data,data2)
+        setdataToEmailDATA()
+            setfull_name("");
+            setgender("");
+            setbirth_year("");
+            setemail("");
+            setphone_number("");
+            setaddress("");
+            setreason("");
+            setcheck("done")
+            navigation.goBack();
+
+            Toast.show({
+              type: "success",
+              text1: "Thông báo",
+              text2:
+                "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
+            });
+       } catch (error) {
+        Toast.show({
+          type: "success",
+          text1: "Thông báo",
+          text2:
+            "Đã xảy ra lỗi. vui lòn kiểm tra lại !",
+        });
+       }
+    }
+      )
       .catch((error) => console.log("error", error));
   };
 
+  const addDataEmailBooking = (urlin, data) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify(data);
+    // console.log("gia tri data guiw di la ",data2);
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(urlin, requestOptions)
+      .then((response) => response.text())
+      .then((result) => 
+      {
+        console.log("ket qua thu duoc booking ",JSON.parse(result).id)
+        
+    }
+      )
+      .catch((error) => console.log("error", error));
+  };
   const handleSave = () => {
     if (!validateBlank()) {
       if (error["full_name"]) {
@@ -265,46 +306,12 @@ const BookingScheduleScreen = ({ navigation }) => {
     } else {
       try {
         addNewBooking(url_Booking, dataADD, setdataErrorBooking);
-        // console.log("data to email ",dataToEmail);
-
-        // addNewBooking(url_Email,dataToEmail,setdataErrorEmail)
-        //  setdataErrorBooking({});
+  
       } catch (error) {
         console.log(error);
       }
     }
   };
-
-  //  useEffect(() => {
-  //    let check = false;
-  //   if (!check) {
-  //     if (dataErrorBooking.errorCode === 400) {
-  //        Toast.show({
-  //           type: "error",
-  //           text1: "Thông báo",
-  //           text2: "Bạn đã đặt lịch khám trước đó rồi. Vui lòng kiểm tra lại email!",
-  //         });
-  //     }
-  //     else if(dataErrorBooking.id){
-  //       addDataEmail(dataToEmail)
-  //       Toast.show({
-  //          type: "success",
-  //          text1: "Thông báo",
-  //          text2: "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
-  //        });
-  //     }else{
-  //    showMessage({
-  //         message: "Thông báo !",
-  //         description: "Xin mời bạn điền các thông tin đặt khám !",
-  //         type: "success",
-  //       });
-  //     }
-  //   }
-  //    return () => {
-  //      check = true
-  //    }
-  //  }, [dataErrorBooking])
-
   const pushError = (input) => {
     Toast.show({
       type: "error",
@@ -435,11 +442,7 @@ const BookingScheduleScreen = ({ navigation }) => {
           text: "Có",
           onPress: () => {
             handleSave();
-            // Toast.show({
-            //   type: "success",
-            //   text1: "Thông báo",
-            //   text2: "Cập nhật thông tin tài khoản thành công!",
-            // });
+            setcheck("loading")
           },
         },
 
@@ -452,6 +455,7 @@ const BookingScheduleScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       {dataOneUser ? null : <AppLoader />}
+      {/* {check === "loading" ? <AppLoader /> : null} */}
       <HeaderLogo />
       <ScrollView>
         <View style={{ flexDirection: "row" }}>

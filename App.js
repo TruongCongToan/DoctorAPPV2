@@ -26,6 +26,8 @@ import ListClinicScreen from "./screens/SearchScreen/ListClinicScreen";
 import ChiTietCSYT from "./screens/CoSoYTeScreen/ChiTietCSYT";
 import MultipleSelect from "./components/MultipleSelect/MultipleSelect";
 import SpecialtiesClinicList from "./screens/CoSoYTeScreen/SpecialtiesClinicList";
+import VideoCallAPP from "./components/VideoCallAPP/VideoCallAPP";
+
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -43,7 +45,7 @@ export default function App() {
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaView style={styles.root}>
             <NavigationContainer>
-              <Stack.Navigator
+              {/* <Stack.Navigator
                 initialRouteName="Drawer"
                 screenOptions={{ headerShown: false }}
               >
@@ -62,8 +64,8 @@ export default function App() {
                 <Stack.Screen name="ChitietCSYT" component={ChiTietCSYT} />
                 <Stack.Screen name="ChuyenkhoaCSYT" component={SpecialtiesClinicList} />
                 
-              </Stack.Navigator>
-            {/* <MultipleSelect /> */}
+              </Stack.Navigator> */}
+            <VideoCallAPP />
             </NavigationContainer>
           </SafeAreaView>
           <Toast />
