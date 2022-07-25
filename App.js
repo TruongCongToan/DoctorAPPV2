@@ -14,7 +14,6 @@ import SignInScreen from "./screens/SignInScreen/SignInScreen";
 import DrawerNavigator from "./components/Drawer/Drawer";
 import SignUpcreen from "./screens/SignUpScreen/SignUpScreen";
 import ForgotPassWord from "./screens/ForgotPassWord/ForgotPassWord";
-import NewPassWord from "./screens/NewPassWord/NewPassWord";
 import SearchScreen from "./screens/SearchScreen/SearchScreen";
 import {LogBox} from "react-native";
 import Chitietbacsi from "./components/Chitietbacsi/Chitietbacsi";
@@ -24,10 +23,9 @@ import ListSpecialtiesScreen from "./screens/SearchScreen/ListSpecialtiesScreen"
 import Chitietchuyenkhoa from "./screens/ChuyenKhoaScreen/Chitietchuyenkhoa";
 import ListClinicScreen from "./screens/SearchScreen/ListClinicScreen";
 import ChiTietCSYT from "./screens/CoSoYTeScreen/ChiTietCSYT";
-import MultipleSelect from "./components/MultipleSelect/MultipleSelect";
 import SpecialtiesClinicList from "./screens/CoSoYTeScreen/SpecialtiesClinicList";
-import VideoCallAPP from "./components/VideoCallAPP/VideoCallAPP";
-
+import InputNewPass from "./screens/NewPassWord/InputNewPass";
+import NewOTP from "./screens/NewPassWord/NewOTP"
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -45,15 +43,15 @@ export default function App() {
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaView style={styles.root}>
             <NavigationContainer>
-              {/* <Stack.Navigator
-                initialRouteName="Drawer"
+              <Stack.Navigator
+                initialRouteName="SignIn"
                 screenOptions={{ headerShown: false }}
               >
                 <Stack.Screen name="SignIn" component={SignInScreen} />
                 <Stack.Screen name="Drawer" component={DrawerNavigator} />
                 <Stack.Screen name="SignUp" component={SignUpcreen} />
                 <Stack.Screen name="ForgotPassWord" component={ForgotPassWord} />
-                <Stack.Screen name="NewPassWord" component={NewPassWord} />
+                <Stack.Screen name="NewOTP" component={NewOTP} />
                 <Stack.Screen name="Search" component={SearchScreen} />
                 <Stack.Screen name="SeeMore" component={ListAllDoctorScreen} />
                 <Stack.Screen name="SeeMoreSpecialties" component={ListSpecialtiesScreen} />
@@ -63,9 +61,9 @@ export default function App() {
                 <Stack.Screen name="Clinic" component={ListClinicScreen} />
                 <Stack.Screen name="ChitietCSYT" component={ChiTietCSYT} />
                 <Stack.Screen name="ChuyenkhoaCSYT" component={SpecialtiesClinicList} />
-                
-              </Stack.Navigator> */}
-            <VideoCallAPP />
+                <Stack.Screen name="NewPass" component={InputNewPass} />
+              </Stack.Navigator>
+            {/* <InputNewPass /> */}
             </NavigationContainer>
           </SafeAreaView>
           <Toast />

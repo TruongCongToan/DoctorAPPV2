@@ -78,6 +78,7 @@ const ScheduleScreen = ({ navigation }) => {
       }
     }
   };
+  
 
   const ItemView = ({ item }) => {
     return (

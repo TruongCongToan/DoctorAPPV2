@@ -1,1 +1,1 @@
-export {default} from './NewPassWord'
+export {default} from './NewOTP'
