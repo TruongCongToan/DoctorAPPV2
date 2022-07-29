@@ -366,6 +366,7 @@ const BookingScheduleScreen = ({ navigation }) => {
     }
     return check;
   }
+  console.log(parseInt(birth_year) < 1900);
   const validateBlank = () => {
     var pattern = /^[\d\s]+$/;
     let errors = {};
@@ -388,8 +389,12 @@ const BookingScheduleScreen = ({ navigation }) => {
           } else {
             if (!pattern.test(birth_year)) {
               formIsValid = false;
-              errors["birth_year"] = "Ô ngày sinh cần phải là số!";
+              errors["birth_year"] = "Ô năm sinh cần phải là số!";
             } else {
+             if (parseInt(birth_year) < 1900 || parseInt(birth_year) >2022) {
+              formIsValid = false
+              errors["birth_year"] = "Ô năm sinh cần phải trong khoảng 1900 - 2022 !";
+             }else{
               if (!email) {
                 formIsValid = false;
                 errors["email"] = "Bạn không được bỏ  trống ô: Email!";
@@ -423,6 +428,7 @@ const BookingScheduleScreen = ({ navigation }) => {
                   }
                 }
               }
+             }
             }
           }
         }

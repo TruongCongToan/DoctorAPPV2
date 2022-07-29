@@ -185,7 +185,7 @@ const ModalPopup = ({ visible, setvisible, dataUser }) => {
                 } else {
                   if (!address) {
                     formIsValid = false;
-                    errors["address"] = "Không được bỏ  trống ô: địa chỉ!";
+                    errors["address"] = "Không được bỏ trống ô: địa chỉ!";
                   }
                 }
               }

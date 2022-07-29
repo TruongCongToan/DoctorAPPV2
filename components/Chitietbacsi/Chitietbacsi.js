@@ -6,6 +6,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   StyleSheet,
+  Alert
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import HeaderLogo from "../../screens/HeaderScreen/HeaderLogo";
@@ -20,10 +21,11 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 const Chitietbacsi = () => {
-  var url_DoctorInfo ="http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
+  var url_DoctorInfo =
+    "http://api-truongcongtoan.herokuapp.com/api/doctorinfo/";
   var url_MarkDown = "http://api-truongcongtoan.herokuapp.com/api/markdowns/";
-  var url_User ="http://api-truongcongtoan.herokuapp.com/api/users/";
-
+  var url_User = "http://api-truongcongtoan.herokuapp.com/api/users/";
+  var url_Booking = "https://api-truongcongtoan.herokuapp.com/api/bookings/";
 
   const signInPerson = useSelector((state) => state.user.signInPerson);
 
@@ -33,7 +35,7 @@ const Chitietbacsi = () => {
   const [selectedDate, setselectedDate] = useState("");
   const [checkOpenPrice, setcheckOpenPrice] = useState(false);
 
-  const [User, setUser] = useState({})
+  const [User, setUser] = useState({});
   const [bookingInfo, setbookingInfo] = useState({
     statusId: "S1",
     doctorid: "",
@@ -81,7 +83,7 @@ const Chitietbacsi = () => {
 
   const dataOneUser_id = useSelector((state) => state.user.getoneuser);
 
-  console.log("dataOneUser_id ",dataOneUser_id);
+  console.log("dataOneUser_id ", dataOneUser_id);
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -133,6 +135,30 @@ const Chitietbacsi = () => {
       .catch((error) => console.log("error", error));
   };
 
+  const fetchDataBooking = (url, timetype, date, doctorid, value) => {
+    console.log("get data ...", `${url}${timetype}/${date}/${doctorid}`);
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${url}${timetype}/${date}/${doctorid}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        if (result) {
+          return Alert.alert(
+            "Thông báo",
+            `Bác sĩ đã có lịch khám vào khung giờ ${value.allCode.valuevi} .Vui lòng chọn khung giờ khác !`
+          );  
+        } else {
+          
+          setselectedTimeType(value.allCode);
+          navigation.navigate("Datlich");
+        }
+      })
+      .catch((error) => console.log("error", error));
+  };
+
   const fetchDataSchedule = (url, user_id, date, setData) => {
     console.log(`${url}${user_id}/${date}`);
     var requestOptions = {
@@ -162,11 +188,18 @@ const Chitietbacsi = () => {
 
   const handleOnchangeDate = (date) => {
     setselectedDate(date);
+    // console.log(`${doctoIDGet} va date : ${date}`);
     fetchDataSchedule(url_Schedule, doctoIDGet, date, setallAvaiableTime);
   };
+
   const timeBookingPress = (value) => {
-    setselectedTimeType(value.allCode);
-    navigation.navigate("Datlich");
+    fetchDataBooking(
+      url_Booking,
+      value.allCode.key,
+      selectedDate,
+      doctoIDGet,
+      value
+    );
   };
   useEffect(() => {
     let check = false;
@@ -249,9 +282,12 @@ const Chitietbacsi = () => {
               )}
               <View style={{ flexDirection: "column", margin: 20 }}>
                 <Text style={{ fontSize: 15, fontWeight: "600" }}>
-                  Bác sĩ {dataOneUser.full_name ? dataOneUser.full_name : User.full_name}
+                  Bác sĩ{" "}
+                  {dataOneUser.full_name
+                    ? dataOneUser.full_name
+                    : User.full_name}
                 </Text>
-                
+
                 {!markdown ? (
                   <ScrollView horizontal>
                     <Text
@@ -313,7 +349,6 @@ const Chitietbacsi = () => {
                 label: "Chọn ngày khám bệnh ",
                 value: null,
               }}
-              // value={alldays ? :b}
               items={alldays}
             />
             <Text style={{ height: 1, borderTopWidth: 0.3 }}></Text>
@@ -345,6 +380,8 @@ const Chitietbacsi = () => {
                   justifyContent: "center",
                 }}
               >
+                {console.log("allAvaiableTime ", allAvaiableTime)}
+
                 {allAvaiableTime.length > 0 ? (
                   <>
                     {allAvaiableTime &&
@@ -430,12 +467,16 @@ const Chitietbacsi = () => {
             {/* {console.log("gia tri check ", doctorInfo.addressclinicid)} */}
             {doctorInfo.addressclinicid ? (
               <View style={{ flexDirection: "column" }}>
-                <Text style={{ padding: 10 }}>{doctorInfo && doctorInfo.clinic && doctorInfo.clinic.name?doctorInfo.clinic.name : 'Không có dữ liệu về tên đơn vị công tác'}</Text>
-               <View style={{flexDirection:'row',marginLeft:5}}>
-               <Ionicons name="location" size={20} color="orange" />
-               <Text style={{  paddingLeft: 5 }}>
-                  {doctorInfo.addressclinicid}
+                <Text style={{ padding: 10 }}>
+                  {doctorInfo && doctorInfo.clinic && doctorInfo.clinic.name
+                    ? doctorInfo.clinic.name
+                    : "Không có dữ liệu về tên đơn vị công tác"}
                 </Text>
+                <View style={{ flexDirection: "row", marginLeft: 5 }}>
+                  <Ionicons name="location" size={20} color="orange" />
+                  <Text style={{ paddingLeft: 5 }}>
+                    {doctorInfo.addressclinicid}
+                  </Text>
                 </View>
               </View>
             ) : (

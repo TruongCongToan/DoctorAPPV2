@@ -192,6 +192,7 @@ const SearchScreen = () => {
       fetchData(`${url_User}${item.user_id}`, setdataUser);
     }else{
       dispatch(allAction.specialtiesAction.addOneSpecialties(item.id))
+      dispatch(allAction.clinicAction.addClinicSpecialtiesCheck("specialties"))
       navigation.navigate("Chitietchuyenkhoa")
     }
   };

@@ -32,7 +32,7 @@ const ScheduleScreen = ({ navigation }) => {
   };
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    fetchData(url_Email_Data_Mail, idSiginPerson, setlistBookings);
+    fetchData(url_Email_Data_Mail, signInPerson.user_id, setlistBookings);
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
@@ -280,7 +280,7 @@ const ScheduleScreen = ({ navigation }) => {
   // console.log("Gia tri listbooking length" ,listBookings.length);
   return (
     <View style={{ flex: 1 }}>
-      {listBookings.length === 0 ? <AppLoader /> : null}
+      {/* {listBookings.length === 0 ? <AppLoader /> : null} */}
 
       <HeaderScreen navigation={navigation} />
       <View style={{ flexDirection: "column" }}>
@@ -296,7 +296,9 @@ const ScheduleScreen = ({ navigation }) => {
           Danh sách lịch hẹn{" "}
         </Text>
       </View>
-      <FlatList
+      {
+        listBookings && listBookings.length > 0 ? 
+        <FlatList
         data={listBookings && listBookings.length > 0 ? listBookings : null}
         keyExtractor={(item, index) => index.toString()}
         ItemSeparatorComponent={ItemSeparatorView}
@@ -304,6 +306,10 @@ const ScheduleScreen = ({ navigation }) => {
         onRefresh={() => onRefresh()}
         refreshing={refreshing}
       />
+        :
+        <Text style ={{paddingLeft:20,fontWeight:'300'}}>Bạn không có lịch hẹn khám nào </Text>
+      }
+     
     </View>
   );
 };

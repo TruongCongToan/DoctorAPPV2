@@ -28,10 +28,13 @@ import InputNewPass from "./screens/NewPassWord/InputNewPass";
 import NewOTP from "./screens/NewPassWord/NewOTP"
 import QRCodeGenerator from "./components/QRCodeGenerator/QRCodeGenerator";
 import QRCodeScanner from "./components/QRCodeGenerator/QRScanner";
+import VideoCall from "./components/VideoCall/VideoCall";
+import UserInfo from "./screens/AcountInfo/UserInfo";
 
 LogBox.ignoreLogs([
-"ViewPropTypes will be removed",
-"ColorPropType will be removed",
+  'ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from \'deprecated-react-native-prop-types\'.',
+  'NativeBase: The contrast ratio of',
+  "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
 ])
 
 
@@ -46,7 +49,7 @@ export default function App() {
           <SafeAreaView style={styles.root}>
             <NavigationContainer>
               <Stack.Navigator
-                initialRouteName="SignIn"
+                initialRouteName="Drawer"
                 screenOptions={{ headerShown: false }}
               >
                 <Stack.Screen name="SignIn" component={SignInScreen} />
@@ -66,8 +69,9 @@ export default function App() {
                 <Stack.Screen name="NewPass" component={InputNewPass} />
                 <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
                 <Stack.Screen name="QRCodeGenerator" component={QRCodeGenerator} />
+                <Stack.Screen name="UserInfo" component={UserInfo} />
               </Stack.Navigator>
-            {/* <QRCodeScanner /> */}
+            {/* <VideoCall /> */}
             </NavigationContainer>
           </SafeAreaView>
           <Toast />

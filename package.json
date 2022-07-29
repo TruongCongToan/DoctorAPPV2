@@ -70,7 +70,8 @@
     "react-navigation-stack": "^2.10.4",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "stringee-react-native": "^1.4.31"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

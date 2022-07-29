@@ -72,7 +72,7 @@ const dispatch = useDispatch();
             Toast.show({
               type: "error",
               text1: "Thông báo",
-              text2: "Có lỗi xảy ra khi đăng ký tài khoản!",
+              text2: "Mã QR không hợp lệ !",
             });
           }
       })

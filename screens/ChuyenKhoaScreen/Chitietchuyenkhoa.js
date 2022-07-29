@@ -28,6 +28,8 @@ const Chitietchuyenkhoa = () => {
   const specialty_id = useSelector((state) => state.specialties.oneSpecialties);
   const clinic_id = useSelector((state) => state.clinic.oneClinic);
   const ClinicSpecialtiesCheck = useSelector((state) => state.clinic.ClinicSpecialtiesCheck)
+
+  
   const [alldays, setalldays] = useState([]);
   const [markdownByCK, setmarkdownByCK] = useState([]);
 

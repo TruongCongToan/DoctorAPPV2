@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Toast from "react-native-toast-message";
 import moment from "moment";
 import "moment/locale/vi";
+import AppLoader from '../AppLoader/AppLoader';
 
 const ScheduleManage = () => {
   const [selectedStartDate, setselectedStartDate] = useState(null)
@@ -22,6 +23,7 @@ const ScheduleManage = () => {
   const MAX_NUMBER = 10;
   let result = [];
 
+  const [checkLoad, setcheckLoad] = useState('')
   var url_Time = "https://api-truongcongtoan.herokuapp.com/api/allcode/TIME"
   var url_Schedule = "https://api-truongcongtoan.herokuapp.com/api/schedules/"
   var url_User = "https://api-truongcongtoan.herokuapp.com/api/users/doctors"
@@ -76,7 +78,20 @@ const ScheduleManage = () => {
     return fetch(url, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        console.log("gia tri result ",result);
+       if (JSON.parse(result)) {
+        setcheckLoad("done")
         setaddDataResponse(JSON.parse(result))
+        return Alert.alert(
+          "Thông báo",
+          "Đã đăng ký lịch trình khám bệnh thành công!"
+        );
+       }else{
+        return Alert.alert(
+          "Thông báo",
+          "Đã đăng ký lịch trình khám bệnh thất bại!"
+        );
+       }
       })
       .catch((error) => console.log("error", error));
   };
@@ -99,7 +114,7 @@ const ScheduleManage = () => {
   
   const onDateChange = (date) => {
   
-    console.log("gia tri check ",parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)));
+    // console.log("gia tri check ",parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)));
 
     if ((parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)) )<0) {
       return Alert.alert(
@@ -178,6 +193,8 @@ const ScheduleManage = () => {
     })
     setselectTimeDataCheck(selectedTimeArr)
   }
+
+  
   const handleSave = () => {
 
     if (!validateBlank()) {
@@ -227,14 +244,9 @@ const ScheduleManage = () => {
           let payload = {
             "bulkSchedules": myDifferences
           }
-     
+          
           handleLogin(url_Schedule, payload)
-          Toast.show({
-            type: "success",
-            text1: "Thông báo",
-            text2: "Đã cập nhật lịch khám thành công!",
-          });
-          // alert("Đã cập nhật lịch khám thành công!")
+          setcheckLoad("loading")
         }
       }
     }
@@ -317,13 +329,33 @@ const ScheduleManage = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}
-              onPress={handleSave}
+              onPress={() =>{
+                return Alert.alert(
+                  "Thông báo",
+                  `Xác nhận cập nhật thông tin lịch khám ?`,
+                  [
+                    {
+                      text: "Có",
+                      onPress: () => {
+                       handleSave()
+                      },
+                    },
+            
+                    {
+                      text: "Không",
+                    },
+                  ]
+                );
+              }}
             >
               <Text style={{ color: "white" }}>Lưu thông tin</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      {
+        checkLoad ==="loading" ? <AppLoader /> :null
+      }
     </View>
   )
 }

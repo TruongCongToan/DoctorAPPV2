@@ -27,7 +27,9 @@ export default function BannerScreen() {
                         CHĂM SÓC SỨC KHỎE TOÀN DIỆN</Text>
                     <View style={{ marginTop: '65%' }}>
                         <View style={styles.HeaderBound}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={ () =>{
+                                 navigation.navigate("Search");
+                            }}>
                                 <View style={styles.btnBound}>
                                     <View style={styles.btnHeader}>
                                         <FontAwesome5

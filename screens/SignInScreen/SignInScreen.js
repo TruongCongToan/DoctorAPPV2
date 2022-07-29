@@ -199,7 +199,8 @@ const onQRScanner = () =>{
     return formIsValid;
   };
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{width:'100%',height:'100%'}}>
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.root}>
         {/* <Image
           source={Logo}
@@ -250,8 +251,10 @@ const onQRScanner = () =>{
         />
       </View>
       {/* <FlashMessage position="top" /> */}
-      {loginPending ? <AppLoader /> : null}
+     
     </ScrollView>
+     {loginPending ? <AppLoader /> : null}
+    </View>
   );
 };
 const styles = StyleSheet.create({

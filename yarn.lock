@@ -8158,6 +8158,13 @@ string_decoder@^1.1.1, string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
+stringee-react-native@^1.4.31:
+  version "1.4.31"
+  resolved "https://registry.yarnpkg.com/stringee-react-native/-/stringee-react-native-1.4.31.tgz#237e5790c0be3587be17d7a16d09bb2c092657a7"
+  integrity sha512-bxMZZiuQOMvnSOU2IaFh9cQPnT3cWCPeDwSZUQKbaDFE935Ta0npV02X+cZaw5TysTcaeC6RY2OShq99tv5GvQ==
+  dependencies:
+    underscore "^1.8.3"
+
 strip-ansi@^5.0.0, strip-ansi@^5.2.0:
   version "5.2.0"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-5.2.0.tgz"
@@ -8517,6 +8524,11 @@ uglify-es@^3.1.9:
   dependencies:
     commander "~2.13.0"
     source-map "~0.6.1"
+
+underscore@^1.8.3:
+  version "1.13.4"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.4.tgz#7886b46bbdf07f768e0052f1828e1dcab40c0dee"
+  integrity sha512-BQFnUDuAQ4Yf/cYY5LNrK9NCJFKriaRbD9uR1fTeXnBeoa97W0i41qkZfGO9pSo8I5KzjAcSY2XYtdf0oKd7KQ==
 
 unicode-canonical-property-names-ecmascript@^2.0.0:
   version "2.0.0"
