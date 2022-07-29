@@ -6,16 +6,15 @@ import {
   StyleSheet,
   useWindowDimensions,
   ScrollView,
+  Alert
 } from "react-native";
 
 // import FlashMessage from "react-native-flash-message";
 // import { showMessage, hideMessage } from "react-native-flash-message";
 
-
-import Logo from "../../assets/image/healthcare.jpg";
+import Logo from "../../assets/image/bkhcare1.png";
 import CustomButton from "../../components/CustomButton";
 import CustomInput from "../../components/CustomInput";
-import SocialSignInButton from "../../components/SocialSignInButton";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
@@ -27,9 +26,8 @@ const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
-  const [loginPending, setloginPending] = useState(false)
+  const [loginPending, setloginPending] = useState(false);
 
-  
   var url = "https://api-truongcongtoan.herokuapp.com/api/user/login";
   var url_email = "https://api-truongcongtoan.herokuapp.com/api/users/";
 
@@ -39,7 +37,6 @@ const SignInScreen = () => {
   });
   const [error, seterror] = useState({});
 
-  
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -51,12 +48,7 @@ const SignInScreen = () => {
       seterror(errorsCheck);
       try {
         handleLogin(url, loginData);
-        setloginPending(true)
-        // showMessage({
-        //   message: "Health care xin chào !",
-        //   description: "Chúc bạn một ngày tốt lành !",
-        //   type: "success",
-        // });
+        setloginPending(true);
       } catch (error) {
         Toast.show({
           type: "error",
@@ -65,12 +57,10 @@ const SignInScreen = () => {
         });
       }
     }
-
-    // console.log(validateBlank());
   };
-
-  //add new data
-
+const onQRScanner = () =>{
+    navigation.navigate("QRCodeScanner")
+}
   useEffect(() => {
     setloginData({
       email: email,
@@ -97,7 +87,7 @@ const SignInScreen = () => {
       .then((result) => {
         // console.log("result la ",result);
         if (result === "Tài khoản hoặc mật khẩu không chính xác") {
-          setloginPending(false)
+          setloginPending(false);
           Toast.show({
             type: "error",
             text1: "Thông báo",
@@ -108,11 +98,9 @@ const SignInScreen = () => {
           Toast.show({
             type: "success",
             text1: "Thông báo",
-            text2: "Health Care Xin chúc bạn một ngày an lành !",
+            text2: "BKH CARE Xin chúc bạn một ngày an lành !",
           });
-          setloginPending(false)
-
-          
+          setloginPending(false);
         }
       })
       .catch((error) => console.log("error", error));
@@ -133,20 +121,43 @@ const SignInScreen = () => {
       .then((response) => response.text())
       .then((result) => {
         // console.log("email",`${url_email}${id}`);
-          // console.log("GEt by email",result);
+        // console.log("GEt by email",result);
 
-        dispatch(allAction.userAction.addSignIn(JSON.parse(result)));        
+        dispatch(allAction.userAction.addSignIn(JSON.parse(result)));
       })
       .catch((error) => console.log("error", error));
   };
- 
+
   const onForgotPassPressed = () => {
     navigation.navigate("ForgotPassWord");
   };
 
   //onSignUpPress
   const onSignUpPress = () => {
-    navigation.navigate("SignUp");
+    // navigation.navigate("SignUp");
+
+    return Alert.alert(
+      "ĐĂNG KÝ TÀI KHOẢN",
+      `Lựa chọn phương thức đăng ký :`,
+
+      [
+        {
+          text: "Thoát",
+        },
+        {
+          text: "Đăng ký tạo mã QR",
+          onPress: () => {
+           navigation.navigate("QRCodeGenerator")
+          },
+        },
+        {
+          text: "Đăng ký truyền thống",
+          onPress: () => {
+            navigation.navigate("SignUp")
+           },
+        },
+      ]
+    );
   };
 
   //validate email
@@ -190,12 +201,17 @@ const SignInScreen = () => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.root}>
-        <Image
+        {/* <Image
           source={Logo}
           style={[styles.logo, { height: height * 0.2 }]}
           resizeMode="contain"
+        /> */}
+        <Image
+          style={[styles.logo, { height: height * 0.2 }]}
+          source={Logo}
+          resizeMode="contain"
         />
-
+        <View style={{ height: 25 }} />
         <CustomInput placeholder="Email" value={email} setValue={setemail} />
 
         <Text style={styles.error}> {error["email"]}</Text>
@@ -212,7 +228,15 @@ const SignInScreen = () => {
           text="Đăng nhập"
           type="PRIMARY"
         />
-        <SocialSignInButton />
+          
+        <CustomButton
+          onPress={onQRScanner}
+          text="Quét mã"
+          type="PRIMARY"
+          bgColor="white"
+          fgColor="#3B71F3"
+        />
+        {/* <SocialSignInButton /> */}
         <CustomButton
           onPress={onForgotPassPressed}
           text="Quên mật khẩu?"
@@ -226,7 +250,7 @@ const SignInScreen = () => {
         />
       </View>
       {/* <FlashMessage position="top" /> */}
-    {loginPending ?  <AppLoader /> : null}
+      {loginPending ? <AppLoader /> : null}
     </ScrollView>
   );
 };
@@ -241,7 +265,7 @@ const styles = StyleSheet.create({
     maxHeight: 200,
     borderRadius: 10,
     borderWidth: 0,
-    marginTop:20
+    marginTop: 20,
   },
   error: {
     fontSize: 12,

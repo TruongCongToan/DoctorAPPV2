@@ -26,6 +26,8 @@ import ChiTietCSYT from "./screens/CoSoYTeScreen/ChiTietCSYT";
 import SpecialtiesClinicList from "./screens/CoSoYTeScreen/SpecialtiesClinicList";
 import InputNewPass from "./screens/NewPassWord/InputNewPass";
 import NewOTP from "./screens/NewPassWord/NewOTP"
+import QRCodeGenerator from "./components/QRCodeGenerator/QRCodeGenerator";
+import QRCodeScanner from "./components/QRCodeGenerator/QRScanner";
 
 LogBox.ignoreLogs([
 "ViewPropTypes will be removed",
@@ -62,8 +64,10 @@ export default function App() {
                 <Stack.Screen name="ChitietCSYT" component={ChiTietCSYT} />
                 <Stack.Screen name="ChuyenkhoaCSYT" component={SpecialtiesClinicList} />
                 <Stack.Screen name="NewPass" component={InputNewPass} />
+                <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
+                <Stack.Screen name="QRCodeGenerator" component={QRCodeGenerator} />
               </Stack.Navigator>
-            {/* <InputNewPass /> */}
+            {/* <QRCodeScanner /> */}
             </NavigationContainer>
           </SafeAreaView>
           <Toast />

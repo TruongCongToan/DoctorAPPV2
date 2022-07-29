@@ -1,7 +1,9 @@
-import { View, Text,TouchableOpacity } from 'react-native'
+import { View, Text,TouchableOpacity ,Image} from 'react-native'
 import React from 'react'
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from '@react-navigation/native';
+
+import Logo from '../../assets/image/bkhcare1.png'
 const HeaderScreen = () => {
     const navigation = useNavigation();
 
@@ -10,7 +12,7 @@ const HeaderScreen = () => {
         style={{
           backgroundColor: "#ffffff",
           flexDirection: "row",
-          justifyContent: "space-between",
+          // justifyContent: "space-between",
           borderBottomWidth:0.2,
           borderBottomColor:'gray'
         }}
@@ -31,13 +33,12 @@ const HeaderScreen = () => {
             }}
           />
         </TouchableOpacity>
-        <View>
-          {/* <Image
-            style={{width:100,height:40,top:10, borderRadius:10}}
-            source={{
-              uri: "https://images.unsplash.com/photo-1602934445884-da0fa1c9d3b3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-            }}
-          /> */}
+        <View style={{flexDirection:'row',marginLeft:30}}>
+        <Image
+        style={{width:70,height:60}}
+          source={Logo}
+          resizeMode="contain"
+        />
           <Text
             style={{
               marginTop: 16,
@@ -47,7 +48,7 @@ const HeaderScreen = () => {
               textTransform: "uppercase",
             }}
           >
-            Health Care
+            BKH CARE
           </Text>
         </View>
         <Ionicons

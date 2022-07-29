@@ -33,6 +33,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     alignItems: "center",
     borderRadius: 10,
+    borderWidth:0.3,
+    borderColor:'gray'
   },
   container_PRIMARY: {
     backgroundColor: "#3B71F3",
