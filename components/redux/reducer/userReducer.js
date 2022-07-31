@@ -1,4 +1,4 @@
-import {ADD_USER,ADD_LIST_USER,ADD_DOCTORINFO,ADD_SIGN_IN,ADD_LOADING_PAGE,ADD_MARKDOWN,ADD_BOOKING_INFO} from '../constant'
+import {ADD_USER,ADD_LIST_USER,ADD_DOCTORINFO,ADD_SIGN_IN,ADD_LOADING_PAGE,ADD_MARKDOWN,ADD_BOOKING_INFO,ADD_QUESTION_ID} from '../constant'
 
 const initialState = {
    listUser:[],
@@ -7,7 +7,8 @@ const initialState = {
     getoneuser:{},
     checkLoadingPage:{},
     markdown:{},
-    bookingInfo:{}
+    bookingInfo:{},
+    questionID:{}
 }
 const userReducer =(state= initialState,action)=>{
     switch(action.type){
@@ -48,6 +49,11 @@ const userReducer =(state= initialState,action)=>{
              ...state,
              bookingInfo:action.payload
          }
+    case ADD_QUESTION_ID:
+            return{
+                ...state,
+                questionID:action.payload
+            }
     default: return state
     }
     

@@ -542,7 +542,7 @@ const onchangeSelectedItem = (item) =>{
               style={{
                 width: "80%",
                 height: 40,
-                backgroundColor: "blue",
+                backgroundColor: "#189AB4",
                 borderRadius: 5,
                 justifyContent: "center",
                 alignItems: "center",

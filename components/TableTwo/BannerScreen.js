@@ -3,9 +3,11 @@ import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Fontisto from "@expo/vector-icons/Fontisto";
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function BannerScreen() {
+    const navigation = useNavigation()
     return (
         <View style={styles.container}>
 

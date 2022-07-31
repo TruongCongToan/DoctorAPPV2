@@ -1,4 +1,4 @@
-import {ADD_USER,ADD_SIGN_IN,ADD_LIST_USER,ADD_LOADING_PAGE,ADD_MARKDOWN,ADD_DOCTORINFO,ADD_BOOKING_INFO} from '../constant'
+import {ADD_USER,ADD_SIGN_IN,ADD_LIST_USER,ADD_LOADING_PAGE,ADD_MARKDOWN,ADD_DOCTORINFO,ADD_BOOKING_INFO,ADD_QUESTION_ID} from '../constant'
 
 const addUser = ( obj) =>{
     return{
@@ -42,4 +42,10 @@ const addBookingInfo = (obj) =>{
         payload:obj
     }
 }
- export default{addDoctorInfo,addSignIn,addUser,addListUser,addCheckLoadingPage,addMarkDown,addBookingInfo}
+const addQuestionID = ( obj) =>{
+    return{
+        type:ADD_QUESTION_ID,
+        payload:obj
+    }
+}
+ export default{addDoctorInfo,addSignIn,addUser,addListUser,addCheckLoadingPage,addMarkDown,addBookingInfo,addQuestionID}
