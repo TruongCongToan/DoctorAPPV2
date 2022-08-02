@@ -278,7 +278,7 @@ const SignUpcreen = () => {
           của chúng tôi.
         </Text>
 
-        <SocialSignInButton />
+        {/* <SocialSignInButton /> */}
         <CustomButton
           onPress={onSignInPress}
           text="Bạn đã có tài khoản? Đăng nhập"

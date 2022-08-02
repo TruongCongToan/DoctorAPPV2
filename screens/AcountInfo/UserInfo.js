@@ -336,6 +336,7 @@ const UserInfo = () => {
                 >
                   Ảnh đại diện
                 </Text>
+                {/* <Text>asd</Text> */}
               </View>
             )}
           </TouchableOpacity>

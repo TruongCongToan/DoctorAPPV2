@@ -8,18 +8,6 @@ import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    backgroundColor: "transparent",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
 const CutomDrawer = (props) => {
   var dataLogin = useSelector(state => state.user.signInPerson)
   // console.log("gia tri cua nguoi dang login ",dataLogin);

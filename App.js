@@ -32,6 +32,8 @@ import VideoCall from "./components/VideoCall/VideoCall";
 import UserInfo from "./screens/AcountInfo/UserInfo";
 import Question from "./screens/Question/Question";
 import QuestionDetail from "./screens/CommunityScreen/QuestionDetail";
+import PrintScreen from "./screens/PrintScreen/PrintScreen";
+import RateDoctor from "./screens/RateDoctor/RateDoctor";
 
 LogBox.ignoreLogs([
   'ViewPropTypes will be removed from React Native. Migrate to ViewPropTypes exported from \'deprecated-react-native-prop-types\'.',
@@ -75,7 +77,9 @@ export default function App() {
                 <Stack.Screen name="UserInfo" component={UserInfo} />
                 <Stack.Screen name="Question" component={Question} />
                 <Stack.Screen name="QuestionDetail" component={QuestionDetail} />
-
+                <Stack.Screen name="PrintScreen" component={PrintScreen} />
+                <Stack.Screen name="RateDoctor" component={RateDoctor} />
+                
               </Stack.Navigator>
              
             </NavigationContainer>

@@ -50,45 +50,56 @@ const DrawerNavigator = () => {
       {
         signInPerson && signInPerson.role && (signInPerson.role === "R3")
           ?
-        <>
-        {
-          personDataLogin ?
-        <>
-        <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
-        <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
-        <Drawer.Screen name="Liên hệ" component={ContactUs} />
-        <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
-        <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
-        <Drawer.Screen name="Đăng xuất" component={Logout} />
-        </>
-        : 
-        <>
-        <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
-        <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
-        <Drawer.Screen name="Liên hệ" component={ContactUs} />
-        <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
-        <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
-        </>
-}
-        </>
+          <>
+            {
+              personDataLogin ?
+                <>
+                  <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
+                  <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
+                  <Drawer.Screen name="Liên hệ" component={ContactUs} />
+                  <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
+                  <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
+                  <Drawer.Screen name="Đăng xuất" component={Logout} />
+                </>
+                :
+                <>
+                  <Drawer.Screen name="Giành cho bệnh nhân" component={ForVictim} />
+                  <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
+                  <Drawer.Screen name="Liên hệ" component={ContactUs} />
+                  <Drawer.Screen name="Câu hỏi thường gặp" component={CommonQuestion} />
+                  <Drawer.Screen name="Điều khoản" component={PrivacyScreen} />
+                </>
+            }
+          </>
           :
-         <>
-         {
-          signInPerson && signInPerson.role && (signInPerson.role === "R1")
-          ?
-        <>
-          <Drawer.Screen name="Quản lý lịch khám bệnh" component={ScheduleManage} />
-          <Drawer.Screen name="Quản lý thông tin của bác sĩ" component={MarkdownScreen} />
-          <Drawer.Screen name="Quản lý chuyên khoa" component={ChuyenKhoaScreen} />
-          <Drawer.Screen name="Quản lý cơ sở y tế" component={CoSoYTeAdminScreen} />
-          <Drawer.Screen name="Đăng xuất" component={Logout} />
-        </>
-          :
-          null
-         }
-         </>
-         
-         
+          <>
+            {
+              signInPerson && signInPerson.role && (signInPerson.role === "R1")
+                ?
+                <>
+                  <Drawer.Screen name="Quản lý lịch khám bệnh" component={ScheduleManage} />
+                  <Drawer.Screen name="Quản lý thông tin của bác sĩ" component={MarkdownScreen} />
+                  <Drawer.Screen name="Quản lý chuyên khoa" component={ChuyenKhoaScreen} />
+                  <Drawer.Screen name="Quản lý cơ sở y tế" component={CoSoYTeAdminScreen} />
+                  <Drawer.Screen name="Đăng xuất" component={Logout} />
+                </>
+                :
+                <>
+                  {
+                    signInPerson && signInPerson.role && (signInPerson.role === "R2")
+                      ?
+                      <>
+                        <Drawer.Screen name="Về chúng tôi" component={AboutUs} />
+                        <Drawer.Screen name="Liên hệ" component={ContactUs} />
+                        <Drawer.Screen name="Đăng xuất" component={Logout} />
+                      </>
+                      : null
+                  }
+                </>
+            }
+          </>
+
+
       }
 
 
@@ -97,9 +108,4 @@ const DrawerNavigator = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  root: {
-    textAlign: 'center'
-  }
-})
 export default DrawerNavigator

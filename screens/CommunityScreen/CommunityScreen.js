@@ -13,16 +13,17 @@ import EvilIcons from "@expo/vector-icons/EvilIcons";
 
 import HeaderScreen from "../HeaderScreen/HeaderScreen";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import allAction from "../../components/redux/action/allAction";
 
-const CommunityScreen = () => {
-  const [image, setimage] = useState("");
+const CommunityScreen = ({ navigation }) => {
   const url_question = "https://api-truongcongtoan.herokuapp.com/api/question/";
   const [listQuestion, setlistQuestion] = useState([]);
 
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const signInPerson = useSelector((state) => state.user.signInPerson);  const dispatch = useDispatch();
+
+
+  // const navigation = useNavigation();
   const fetchData = async (url, setData) => {
     var requestOptions = {
       method: "GET",
@@ -56,7 +57,7 @@ const CommunityScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <HeaderScreen />
+     <HeaderScreen navigation = {navigation}/>
       <ScrollView stickyHeaderIndices={[0]}>
         <View style={{ flexDirection: "column" ,backgroundColor: 'white',}}>
           <ScrollView
@@ -81,23 +82,29 @@ const CommunityScreen = () => {
               justifyContent: "center",
               alignItems: "center",
               marginTop: 10,
-              height: 50,
+              height:'auto',
             }}
           >
-            <TouchableOpacity
-              style={{
-                width: 350,
-                height: 40,
-                backgroundColor: "#189AB4",
-                borderRadius: 5,
-                justifyContent: "center",
-                alignItems: "center",
-                // marginBottom: 20,
-              }}
-              onPress={() => navigation.navigate("Question")}
-            >
-              <Text style={{ color: "white", fontSize: 16 }}>Đặt câu hỏi</Text>
-            </TouchableOpacity>
+           { 
+          signInPerson && signInPerson.role && (signInPerson.role === "R2") 
+          ?
+          null
+            :
+             <TouchableOpacity
+             style={{
+               width: 350,
+               height: 40,
+               backgroundColor: "#189AB4",
+               borderRadius: 5,
+               justifyContent: "center",
+               alignItems: "center",
+               // marginBottom: 20,
+             }}
+             onPress={() => navigation.navigate("Question")}
+           >
+             <Text style={{ color: "white", fontSize: 16 }}>Đặt câu hỏi</Text>
+           </TouchableOpacity>
+           }
           </View>
         </View>
         {listQuestion &&
