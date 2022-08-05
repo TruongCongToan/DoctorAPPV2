@@ -6,6 +6,7 @@ import TableTwo from "../../components/TableTwo/TableTwo";
 import { useSelector } from "react-redux";
 import TableOne from "../../components/TableTwo/TableOne";
 import AppLoader from "../AppLoader/AppLoader";
+import TableThree from "../../components/TableTwo/TableThree"
 
 const url = "https://api-truongcongtoan.herokuapp.com/api/doctorinfo";
 const url_Specialties = "https://api-truongcongtoan.herokuapp.com/api/specialties"
@@ -17,6 +18,7 @@ const HomeScreen = ({ navigation }) => {
   const [listUsers, setlistUsers] = useState([])
   const [listSpecialties, setlistSpecialties] = useState([])
   const [listClinic, setlistClinic] = useState([])
+
   const fetchData = async (url, setData) => {
     var requestOptions = {
       method: "GET",
@@ -40,7 +42,13 @@ const HomeScreen = ({ navigation }) => {
       {listClinic.length === 0 ? <AppLoader /> : null}
     <HeaderScreen navigation = {navigation}/>
    
-    {SignInPerson && SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} listSpecialties ={listSpecialties} listClinic = {listClinic} /> : <TableTwo/>}
+    {SignInPerson && SignInPerson.role === "R3" ?<TableOne listUsers= {listUsers} listSpecialties ={listSpecialties} listClinic = {listClinic} /> : 
+    <>
+    {
+      SignInPerson && SignInPerson.role === "R2" ? <TableThree /> :<TableTwo />
+    }
+    </>
+    }
     </SafeAreaView>
   );
 };

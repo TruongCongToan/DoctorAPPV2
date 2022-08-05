@@ -13,7 +13,7 @@ const HEIGHT = Dimensions.get('window').height
 const BacSiNoiBat = (props) => {
 
   let listUsers = props.listUsers
-  console.log("listuser ",listUsers);
+  // console.log("listuser ",listUsers);
   const navigation = useNavigation();
 
   const dispatch = useDispatch();

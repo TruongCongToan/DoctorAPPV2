@@ -34,6 +34,7 @@ const SignUpcreen = () => {
   //onSignUpPress
   const onSignUpPress = () => {
     // console.log("resgister data ",registerData);
+    // console.log("check is ",validateBlank());
     if (!validateBlank()) {
         if (error["fullname"]) {
           pushError(error["fullname"])
@@ -57,6 +58,7 @@ const SignUpcreen = () => {
         
     
       }else{
+        // console.log("oke");
         setloginPending(true);
         handleRegister(url, registerData);
       }
@@ -148,6 +150,16 @@ const SignUpcreen = () => {
     }
     return check;
   };
+  useEffect(() => {
+    let check = false
+    if (!check) {
+      validateBlank()
+    }
+    return () => {
+      check = true
+    }
+  }, [fullname,email,password,passwordRepeate,role])
+  
 
   //check not input
   const validateBlank = () => {
@@ -163,26 +175,28 @@ const SignUpcreen = () => {
       if (!validateEmail(email)) {
         errors["email"] = " Email không đúng định dạng! VD: xxx@yyy.com";
         seterror(errors);
-      } else if (!password) {
-        formIsValid = false;
-        errors["password"] = "Không được bỏ trống mật khẩu !";
       } else {
-        if (!validPassword(password)) {
-          errors["password"] =
-            "Mật khẩu phải trên 8 ký tự,1 ký tự số,1 chữ cái viêt hoa,1 ký tự đặc biệt!";
-          seterror(errors);
-        } else if (!passwordRepeate) {
+        if (!password) {
           formIsValid = false;
-          errors["passwordRepeate"] = "Không được bỏ trống !";
-        } else if (password != passwordRepeate) {
-          formIsValid = false;
-          errors["passwordRepeate"] =
-            "Mật khẩu nhập không khớp, vui lòng kiểm tra lại !";
-        }else{
-          if (!role) {
+          errors["password"] = "Không được bỏ trống mật khẩu !";
+        } else {
+          if (!validPassword(password)) {
+            errors["password"] =
+              "Mật khẩu phải trên 8 ký tự,1 ký tự số,1 chữ cái viêt hoa,1 ký tự đặc biệt!";
+            seterror(errors);
+          } else if (!passwordRepeate) {
             formIsValid = false;
-          errors["role"] =
-            "Vui lòng chọn loại tài khoản !";
+            errors["passwordRepeate"] = "Không được bỏ trống !";
+          } else if (password != passwordRepeate) {
+            formIsValid = false;
+            errors["passwordRepeate"] =
+              "Mật khẩu nhập không khớp, vui lòng kiểm tra lại !";
+          }else{
+            if (!role) {
+              formIsValid = false;
+            errors["role"] =
+              "Vui lòng chọn loại tài khoản !";
+            }
           }
         }
       }
@@ -253,7 +267,7 @@ const SignUpcreen = () => {
             value: null,
           }}
           items={[
-            { label: 'Bác sĩ', value: 'R2' },
+            // { label: 'Bác sĩ', value: 'R2' },
             { label: 'Bệnh nhân', value: 'R3' },
         ]}
         />

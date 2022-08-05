@@ -47,7 +47,15 @@ const dispatch = useDispatch();
     fetch(`${url}${uuid}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
-          if (JSON.parse(result) && JSON.parse(result).user_id) {
+        // alert(!result);
+          if(!result){
+            setcheckLoad("done");
+            Toast.show({
+              type: "error",
+              text1: "Thông báo",
+              text2: "Mã QR không hợp lệ !",
+            });
+          }else{if(JSON.parse(result) && JSON.parse(result).user_id) {
             Alert.alert(
               `Xin chào ${JSON.parse(result).full_name} !`,
               `Bạn có muốn đăng nhập vào hệ thống ?`,
@@ -67,14 +75,8 @@ const dispatch = useDispatch();
               ]
             );
             setcheckLoad("done");
-          }else{
-            setcheckLoad("done");
-            Toast.show({
-              type: "error",
-              text1: "Thông báo",
-              text2: "Mã QR không hợp lệ !",
-            });
           }
+        }
       })
       .catch((error) => console.log("error", error));
   };
@@ -84,7 +86,7 @@ const dispatch = useDispatch();
 
       <View style={styles.container}>
         {
-          checkLoad === "loading" ? <AppLoader />: null
+          // checkLoad === "loading" ? <AppLoader />: null
         }
      <HeaderLogo />
         <BarCodeScanner

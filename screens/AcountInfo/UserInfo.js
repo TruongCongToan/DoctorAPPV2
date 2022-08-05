@@ -258,16 +258,24 @@ const UserInfo = () => {
     if (!validateBlank()) {
       if (error["full_name"]) {
         pushError(error["full_name"]);
-      } else if (error["gender"]) {
-        pushError(error["gender"]);
-      } else if (error["email"]) {
-        pushError(error["email"]);
-      } else if (error["phone_number"]) {
-        pushError(error["phone_number"]);
-      } else if (error["address"]) {
-        pushError(error["address"]);
-      } else if (error["image"]) {
-        pushError(error["image"]);
+      } else {
+        if (error["gender"]) {
+          pushError(error["gender"]);
+        } else {
+          if (error["email"]) {
+            pushError(error["email"]);
+          } else {
+            if (error["phone_number"]) {
+              pushError(error["phone_number"]);
+            } else {
+              if (error["address"]) {
+                pushError(error["address"]);
+              } else if (error["image"]) {
+                pushError(error["image"]);
+              }
+            }
+          }
+        }
       }
     } else {
       updateUser(signInPerson.user_id, dataUpdate);
@@ -282,7 +290,7 @@ const UserInfo = () => {
         text: "Có",
         onPress: () => {
           handleSave();
-          setcheckLoading("loading");
+          // setcheckLoading("loading");
         },
       },
 

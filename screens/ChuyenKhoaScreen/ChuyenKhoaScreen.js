@@ -403,7 +403,25 @@ const ChuyenKhoaScreen = () => {
               alignItems: "center",
               marginBottom: 20,
             }}
-            onPress={handleSave}
+            onPress={() =>{
+              return Alert.alert(
+                "Thông báo",
+                `Bạn có chắc chắn lưu thông tin ? `,
+                [
+                  {
+                    text: "Có",
+                    onPress: () => {
+                      handleSave()
+                    },
+                  },
+          
+                  {
+                    text: "Không",
+                  },
+                ]
+              );
+              }
+            }
           >
             <Text style={{ color: "white" }}>Lưu thông tin</Text>
           </TouchableOpacity>

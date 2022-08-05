@@ -25,6 +25,7 @@ const CommunityScreen = ({ navigation }) => {
 
   // const navigation = useNavigation();
   const fetchData = async (url, setData) => {
+    console.log("fetching");
     var requestOptions = {
       method: "GET",
       transparentirect: "follow",
@@ -45,38 +46,55 @@ const CommunityScreen = ({ navigation }) => {
       check = true;
     };
   }, []);
-  const [refreshing, setRefreshing] = React.useState(false);
+  // const [refreshing, setRefreshing] = React.useState(false);
+  // const wait = (timeout) => {
+  //   return new Promise((resolve) => setTimeout(resolve, timeout));
+  // };
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   fetchData(url_question, setlistQuestion);
+  //   wait(2000).then(() => setRefreshing(false));
+  // }, []);
+
   const wait = (timeout) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
-  };
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  const [refreshing, setRefreshing] = React.useState(false);
+
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
     fetchData(url_question, setlistQuestion);
+    setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
+  
+
 
   return (
     <View style={{ flex: 1 }}>
-     <HeaderScreen navigation = {navigation}/>
-      <ScrollView stickyHeaderIndices={[0]}>
-        <View style={{ flexDirection: "column" ,backgroundColor: 'white',}}>
-          <ScrollView
+       <ScrollView
             contentContainerStyle={styles.scrollView}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
+     <HeaderScreen navigation = {navigation}/>
+     </ScrollView>
+      <ScrollView stickyHeaderIndices={[0]}>
+        <View style={{ flexDirection: "column" ,backgroundColor: 'white',}}>
+       
+
             <Text
               style={{
                 fontWeight: "600",
                 fontSize: 20,
                 paddingLeft: 15,
                 paddingTop: 20,
+                textAlign:'center'
               }}
             >
               Hỏi bác sĩ miễn phí
             </Text>
-          </ScrollView>
+          
           <View
             style={{
               justifyContent: "center",
@@ -86,7 +104,7 @@ const CommunityScreen = ({ navigation }) => {
             }}
           >
            { 
-          signInPerson && signInPerson.role && (signInPerson.role === "R2") 
+          signInPerson && signInPerson.role && (signInPerson.role === "R2" || signInPerson.role === "R1") 
           ?
           null
             :
@@ -106,6 +124,7 @@ const CommunityScreen = ({ navigation }) => {
            </TouchableOpacity>
            }
           </View>
+        
         </View>
         {listQuestion &&
           listQuestion.length > 0 &&

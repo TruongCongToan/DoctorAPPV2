@@ -72,7 +72,6 @@ const BookingScheduleScreen = ({ navigation }) => {
   }, [markdown]);
 
   const fetchData = (url, user_id, setData) => {
-    console.log("get data ...", `${url}${user_id}`);
     var requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -138,7 +137,7 @@ const BookingScheduleScreen = ({ navigation }) => {
     };
   }, [full_name, gender, birth_year, email, phone_number, address, reason]);
 
-  console.log(dataToEmail);
+  // console.log(dataToEmail);
   let dataADD = {
     ...bookingInfoGet,
   };
@@ -173,7 +172,7 @@ const BookingScheduleScreen = ({ navigation }) => {
   
 
   const addNewBooking = (url, data, setData) => {
-    console.log(data);
+    // console.log(data);
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -190,7 +189,7 @@ const BookingScheduleScreen = ({ navigation }) => {
       .then((result) => {
         if (!JSON.parse(result).errorCode) {
           try {
-            // console.log("gia tri gui di ", dataToEmail);
+           
             addDataEmail(url_sendEmail, dataToEmail,{...dataToEmail,booking_id:JSON.parse(result).id});
            
           } catch (error) {
@@ -219,7 +218,7 @@ const BookingScheduleScreen = ({ navigation }) => {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify(data);
-    console.log("gia tri data guiw di la ",data2);
+    // console.log("gia tri data gui di la ",data);
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -227,37 +226,48 @@ const BookingScheduleScreen = ({ navigation }) => {
       redirect: "follow",
     };
 
+
     fetch(urlin, requestOptions)
       .then((response) => response.text())
       .then((result) => 
       {
-       try {
-        addDataEmailBooking(url_Email_Data,data2)
-        setdataToEmailDATA()
-            setfull_name("");
-            setgender("");
-            setbirth_year("");
-            setemail("");
-            setphone_number("");
-            setaddress("");
-            setreason("");
-            setcheck("done")
-            navigation.goBack();
-
-            Toast.show({
-              type: "success",
-              text1: "Thông báo",
-              text2:
-                "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
-            });
-       } catch (error) {
+      if (result === "send") {
+        try {
+          
+          addDataEmailBooking(url_Email_Data,data2)
+          setdataToEmailDATA()
+              // setfull_name("");
+              // setgender("");
+              // setbirth_year("");
+              // setemail("");
+              // setphone_number("");
+              // setaddress("");
+              // setreason("");
+              setcheck("done")
+              // navigation.goBack();
+  
+              Toast.show({
+                type: "success",
+                text1: "Thông báo",
+                text2:
+                  "Đặt lịch khám thành công. Vui lòng kiểm tra hộp thư đến !",
+              });
+         } catch (error) {
+          Toast.show({
+            type: "success",
+            text1: "Thông báo",
+            text2:
+              "Đã xảy ra lỗi. vui lòng kiểm tra lại !",
+          });
+         }
+      }else{
         Toast.show({
           type: "success",
           text1: "Thông báo",
           text2:
-            "Đã xảy ra lỗi. vui lòn kiểm tra lại !",
+            "Đã xảy ra lỗi. vui lòng kiểm tra lại !",
         });
-       }
+      }
     }
       )
       .catch((error) => console.log("error", error));
@@ -268,7 +278,7 @@ const BookingScheduleScreen = ({ navigation }) => {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify(data);
-    // console.log("gia tri data guiw di la ",data2);
+    console.log("gia tri data guiw di la ",data);
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -280,7 +290,7 @@ const BookingScheduleScreen = ({ navigation }) => {
       .then((response) => response.text())
       .then((result) => 
       {
-        console.log("ket qua thu duoc booking ",JSON.parse(result).id)
+        console.log("ket qua thu duoc booking ",JSON.parse(result))
         
     }
       )
@@ -301,7 +311,8 @@ const BookingScheduleScreen = ({ navigation }) => {
       } else if (error["reason"]) {
         pushError(error["reason"]);
       } else {
-        alert("OK");
+        // addNewBooking(url_Booking, dataADD, setdataErrorBooking);
+        alert("ok")
       }
     } else {
       try {
@@ -988,7 +999,7 @@ const BookingScheduleScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-        {console.log("giua tri gender ", gender)}
+        {/* {console.log("giua tri gender ", gender)} */}
       </ScrollView>
     </View>
   );

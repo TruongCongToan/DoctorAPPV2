@@ -80,7 +80,6 @@ const Question = () => {
     };
   }, [name, image, question, subject,signInPerson.full_name,signInPerson.user_id]);
 
-  console.log("gia tri gui di",dataQuestion);
   const handleRegister = async (url, data = {}) => {
     console.log("calling data ...");
     var myHeaders = new Headers();

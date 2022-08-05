@@ -111,12 +111,12 @@ const ScheduleManage = () => {
     }
     setlistDoctors(listdoctor)
   }, [listUsersData]);
-  
+  console.log("gia tri nguay chon la "+new Date(selectedStartDate).getTime());
   const onDateChange = (date) => {
   
-    // console.log("gia tri check ",parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)));
+    console.log("gia tri check ",parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)));
 
-    if ((parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)) )<0) {
+    if ((parseInt(date.toISOString().slice(8, 10))-parseInt(new Date().toISOString().slice(8,10)) )< 0) {
       return Alert.alert(
         "Thông báo",
         "Ngày đăng ký lịch khám phải bắt đầu từ ngày hôm nay!"
@@ -294,6 +294,7 @@ const ScheduleManage = () => {
           }}
           items={listDoctors}
         />
+        
         <View>
           <Text style={{ fontSize: 17, fontWeight: 'bold', marginLeft: 10, marginTop: 10,color:eror["date"] ? "red":"black" }}>2. Chọn ngày đăng ký khám</Text>
           <CalendarPicker

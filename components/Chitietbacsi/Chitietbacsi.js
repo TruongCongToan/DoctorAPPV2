@@ -6,7 +6,8 @@ import {
   RefreshControl,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
+  TextInput
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import HeaderLogo from "../../screens/HeaderScreen/HeaderLogo";
@@ -19,6 +20,12 @@ import RNPickerSelect from "react-native-picker-select";
 import allAction from "../redux/action/allAction";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+
+import AppLoader from '../../screens/AppLoader/AppLoader'
+
+
 
 const Chitietbacsi = () => {
   var url_DoctorInfo =
@@ -32,8 +39,14 @@ const Chitietbacsi = () => {
   const [alldays, setalldays] = useState([]);
   const [allAvaiableTime, setallAvaiableTime] = useState([]);
 
+  const [checkEdit, setcheckEdit] = useState(false);
   const [selectedDate, setselectedDate] = useState("");
   const [checkOpenPrice, setcheckOpenPrice] = useState(false);
+  const [checkload, setcheckload] = useState('')
+
+
+  const [answerID, setanswerID] = useState(0)
+  const [itemGet, setitemGet] = useState(0)
 
   const [User, setUser] = useState({});
   const [bookingInfo, setbookingInfo] = useState({
@@ -43,13 +56,22 @@ const Chitietbacsi = () => {
     date: "",
     timetype: "",
   });
-  const [selectedTimeType, setselectedTimeType] = useState("");
-  const navigation = useNavigation();
+  const [dataAnswer, setdataAnswer] = useState({
+    "rating": "",
+    "doctor_id": 0,
+    "user_id": 0,
+  })
 
+  const [selectedTimeType, setselectedTimeType] = useState("");
+  const [listComment, setlistComment] = useState([])
+  const [comment, setcomment] = useState('')
+  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   var url_Schedule = "https://api-truongcongtoan.herokuapp.com/api/schedules/";
-
+  var url_Rating = "https://api-truongcongtoan.herokuapp.com/api/rating/user/";
+  var url_Rating_Put = "https://api-truongcongtoan.herokuapp.com/api/rating/";
+  
   const [refreshing, setRefreshing] = React.useState(false);
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -89,12 +111,13 @@ const Chitietbacsi = () => {
     if (!check) {
       fetchData(url_DoctorInfo, dataOneUser_id, setdoctorInfo);
       fetchData(url_User, dataOneUser_id, setUser);
+      fetchData(url_Rating, dataOneUser_id, setlistComment);
     }
     return () => {
       check = true;
     };
   }, [dataOneUser_id]);
-
+  
   useEffect(() => {
     let check = false;
     if (!check) {
@@ -184,6 +207,7 @@ const Chitietbacsi = () => {
       selectedDate,
       setallAvaiableTime
     );
+    fetchData
   }, [dataOneUser.user_id]);
 
   const handleOnchangeDate = (date) => {
@@ -242,6 +266,85 @@ const Chitietbacsi = () => {
     } else {
       return "Không có dữ liệu";
     }
+  };
+
+  const deleteComment = (comment_id) => {
+    var requestOptions = {
+      method: "DELETE",
+      redirect: "follow",
+    };
+
+    fetch(
+      `https://api-truongcongtoan.herokuapp.com/api/rating/${comment_id}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        fetchData(url_Rating, dataOneUser_id, setlistComment);
+        console.log(result)
+        setcheckload("done")
+      })
+      .catch((error) => console.log("error", error));
+  };
+
+useEffect(() => {
+  let check = false
+  if (!check) {
+      setdataAnswer({
+        rating:comment,
+        user_id:signInPerson.user_id,
+        doctor_id:doctoIDGet
+      })
+  }
+  return () => {
+   check = true
+  }
+}, [comment])
+console.log(dataAnswer);
+
+  const onAddComment = () =>{     
+    updateAnswer(answerID,dataAnswer)
+    setcheckload("loading")
+  }
+
+
+  const updateAnswer = (id, data) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify(data);
+
+    var requestOptions = {
+      method: "PUT",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(
+      `${url_Rating_Put}${id}`,
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => {
+        console.log("result : ", result);
+        if (JSON.parse(result).id) {
+          setcheckload("done");
+          setcomment("")
+          fetchData(url_Rating, dataOneUser_id, setlistComment);
+          return Alert.alert(
+            "Thông báo",
+            "Cập nhật thành công !"
+          );
+        } else {
+          setcheckload("done");
+          return Alert.alert(
+            "Thông báo",
+            "Cập nhật thất bại !"
+          );
+        }
+      })
+      .catch((error) => console.log("error", error));
   };
   return (
     <View style={{ flex: 1 }}>
@@ -612,8 +715,160 @@ const Chitietbacsi = () => {
           <View style={{ marginLeft: 15 }}>
             {markdown ? <Text> {markdown.contentMarkDown}</Text> : null}
           </View>
+          <Text
+            style={{
+              height: 1,
+              borderTopWidth: 0.2,
+              marginTop: 20,
+              borderTopColor: "gray",
+            }}
+          />
+
+          <View>
+            <Text style ={{fontSize:15,padding:20,fontWeight:'500',textTransform:'uppercase'}}>Phản hồi của bệnh nhân sau khi khám</Text>
+           {
+          listComment &&  listComment.length > 0 ?
+           <> 
+
+            {listComment && listComment.length > 0 && listComment.map((item,key) =>(
+               <>
+             <Text
+                style={{
+                  height: 1,
+                  borderTopWidth: 0.2,
+                  marginTop: 20,
+                  borderTopColor: "gray",
+                  marginLeft:15,
+                  marginRight:15
+                }}
+              />
+          
+          <View key = {key} style={{margin:15,borderRadius:10,}}>
+              
+               <View style = {{flexDirection:'column'}}>
+               <Text style = {{paddingLeft:15,fontWeight:'500'}}>{item.users.full_name}</Text>
+                <Text style ={{ paddingLeft:15,color:"#0E86D4",fontSize:11}}>Ngày khám: {item.emailData.ngaykham}</Text>
+               </View>
+               <Text style = {{ paddingLeft:20,paddingTop:15}}>{item.rating}</Text>
+            <View style={{flexDirection:'row'}}>
+               {
+                 signInPerson.user_id === item.users.user_id ? 
+                <>
+                <TouchableOpacity 
+               onPress={() => {
+              setcomment(item.rating);
+              setanswerID(item.id);
+              setitemGet(item.users.user_id);
+              setcheckEdit(true);
+            }}
+            >
+              
+           <View
+              style={{
+                color: "#21B6A8",
+                // paddingBottom: 20,
+                marginTop: 5,
+                marginLeft:30,
+                flexDirection: "row",
+              }}
+            >
+              <FontAwesome5 name="edit" size={12} color="black" />
+              <Text style={{ fontWeight: "500", fontSize: 11 }}>
+                Chỉnh sửa
+              </Text>
+             </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() =>{
+               return Alert.alert(
+                "Thông báo",
+                `Bạn có chắc chắn muốn xóa bình luận `,
+                [
+                  {
+                    text: "Có",
+                    onPress: () => {
+                     deleteComment(item.id)
+                     setcheckload("loading")
+                    },
+                  },
+          
+                  {
+                    text: "Không",
+                  },
+                ]
+              );
+            }}>
+           <View
+              style={{
+                color: "#21B6A8",
+                // paddingBottom: 20,
+                marginTop: 5,
+                marginLeft:15,
+                flexDirection: "row",
+              }}
+            >
+              <AntDesign name="delete" size={12} color="black" />
+              <Text style={{ fontWeight: "500", paddingLeft:5,fontSize: 11 }}>
+                Xoá
+              </Text>
+            </View>
+            </TouchableOpacity>
+
+               </>
+               :null
+                }
+          </View>    
+       </View>
+               </>
+            ))}
+
+            </>
+            : 
+            <Text style ={{margin:15}}>Không có đánh giá nào</Text>
+          }
+          </View>
         </View>
       </ScrollView>
+
+        {
+          signInPerson.user_id === itemGet ?
+          <View style={{ width: '85%', marginLeft: 20, marginTop: 15 }}>
+          <View style ={{flexDirection:'row',marginBottom:20}}>
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <TextInput
+                placeholder="Nhập câu trả lời"
+                multiline={true}
+                numberOfLines={4}
+                style={{
+                  height: 50,
+                  textAlignVertical: "top",
+                  borderWidth: 0.3,
+                  borderRadius: 10,
+                  padding: 10,
+                  borderColor: "gray",
+                  //   marginTop: 15,
+                  // marginBottom:20,
+                  width: 250,
+                }}
+                onChangeText={setcomment}
+                value={comment}
+              />
+            </View>
+                <TouchableOpacity 
+                onPress={onAddComment}
+                >
+                <View style ={{marginLeft:10,backgroundColor:'#189AB4',flexDirection:'row',marginTop:5,borderRadius:10,justifyContent:'center',alignItems:'center'}}> 
+                <Feather name="send" size={20} color="white" style ={{padding:10}} />
+                <Text style = {{color:'white', padding:10,paddingLeft:0}}>gửi</Text>
+                </View>
+                 </TouchableOpacity> 
+          </View>
+        </View>
+        :null
+        }
+
+      {
+        checkload === "loading" ? <AppLoader />:null
+      }
     </View>
   );
 };

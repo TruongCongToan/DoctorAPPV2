@@ -17,6 +17,7 @@ const [checkLoading, setcheckLoading] = useState('');
   const url_OTP = "https://api-truongcongtoan.herokuapp.com/api/users/getOTP/";
   const user_id = useSelector((state) => state.user.signInPerson);
 
+  console.log("user_id ",user_id);
   const onConfirmPresses = () => {
     console.log(validateBlank());
     if (!validateBlank()) {
@@ -24,7 +25,7 @@ const [checkLoading, setcheckLoading] = useState('');
         pushError(error["otp"]);
       } 
     }else {
-      fetchData(url_OTP, user_id);
+      fetchData(url_OTP, user_id,otp);
       setcheckLoading("loading")
     }
   };
@@ -43,7 +44,7 @@ const [checkLoading, setcheckLoading] = useState('');
 useEffect(() => {
   let check = false
   if (!check) {
-    validateBlank()
+    validateBlank();
   }
   return () => {
     check = true
@@ -69,19 +70,26 @@ useEffect(() => {
     seterror(errors);
     return formIsValid;
   };
-  const fetchData = (url, user_id) => {
-    console.log("get data ...", `${url}${user_id}`);
+  const fetchData = (url, user_id,otp) => {
+    console.log("get data ...", `${url}${user_id}/${otp}`);
     var requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    fetch(`${url}${user_id}`, requestOptions)
+    fetch(`${url}${user_id}/${otp}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (result) {
           setcheckLoading("done");
-          if (JSON.parse(result)) {
+          if (JSON.parse(result).status === "NOT_FOUND") {
+           
+            Toast.show({
+              type: "error",
+              text1: "Thông báo",
+              text2: "Xác thực OTP thất bại !",
+            });
+          } else {
             console.log("result la ",result);
             Toast.show({
               type: "success",
@@ -89,12 +97,6 @@ useEffect(() => {
               text2: "Xác thực OTP thành công !",
             });
             navigation.navigate("NewPass");
-          } else {
-            Toast.show({
-              type: "error",
-              text1: "Thông báo",
-              text2: "Xác thực OTP thất bại !",
-            });
           }
         }
       })

@@ -39,7 +39,8 @@ const ForgotPassWord = () => {
               text2:
                 "Yêu cầu reset mật khẩu thành công .Bạn vui lòng kiểm tra Email!",
             });
-            navigation.navigate("NewOTP")
+            fetchDataUser(url_user,email)
+            // navigation.navigate("NewOTP")
           } else {
             Toast.show({
               type: "error",
@@ -51,22 +52,23 @@ const ForgotPassWord = () => {
       })
       .catch((error) => console.log("error", error));
   };
-  const fetchDataUser = (url, user_id, setData) => {
-    console.log("get data ...", `${url}${user_id}`);
+  const fetchDataUser = (url, email) => {
+    console.log("get data ...", `${url}${email}`);
     var requestOptions = {
       method: "GET",
       redirect: "follow",
     };
 
-    fetch(`${url}${user_id}`, requestOptions)
+    fetch(`${url}${email}`, requestOptions)
       .then((response) => response.text())
       .then((result) => {
+
         if (result) {
-          console.log("result", JSON.parse(result).statusId);
-          if (JSON.parse(result).statusId === "V1") {
+          console.log("result", JSON.parse(result).user_id);
+          // if (JSON.parse(result).statusId === "V1") {
             navigation.navigate("NewOTP");
             dispatch(allAction.userAction.addSignIn(JSON.parse(result).user_id));  
-          }
+          // }
         }
       })
       .catch((error) => console.log("error", error));
@@ -128,6 +130,7 @@ const ForgotPassWord = () => {
       }
     } else {
       fetchData(url_forget, email);
+      // fetchData(url)
       setcheckloading("loading");
     }
   };

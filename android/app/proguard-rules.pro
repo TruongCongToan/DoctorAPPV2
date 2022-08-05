@@ -11,9 +11,4 @@
 -keep class com.swmansion.reanimated.** { *; }
 -keep class com.facebook.react.turbomodule.** { *; }
 
--dontwarn org.webrtc.**
--keep class org.webrtc.** { *; }
--keep class com.stringee.** { *; }
-
 # Add any project specific keep options here:
-

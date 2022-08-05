@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Linking, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, Linking, TouchableOpacity,ScrollView,RefreshControl, Alert } from "react-native";
 import React, { useState, useEffect } from "react";
 import HeaderScreen from "../HeaderScreen/HeaderScreen";
 import Feather from "@expo/vector-icons/Feather";
@@ -12,11 +12,15 @@ import _ from "lodash";
 import { useSelector } from "react-redux";
 import AppLoader from "../AppLoader/AppLoader";
 import RNPickerSelect from "react-native-picker-select";
-
+import { useDispatch } from 'react-redux'
+import allAction from '../../components/redux/action/allAction'
 const ScheduleScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
 
   const url_Email_Data_Mail =
     "https://api-truongcongtoan.herokuapp.com/api/mail/";
+    const url_Email_Data_Mail_All =
+    "https://api-truongcongtoan.herokuapp.com/api/mail/all";
   const url_Email_Data_Mail_Doctord =
     "https://api-truongcongtoan.herokuapp.com/api/mail/doctorID/";
 
@@ -30,21 +34,25 @@ const ScheduleScreen = ({ navigation }) => {
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-
-    // if (signInPerson && signInPerson.role && signInPerson.role === "R3") {
-    //   fetchData(url_Email_Data_Mail, idSiginPerson, setlistBookings);
-    // } else if (signInPerson && signInPerson.role && signInPerson.role === "R2") {
-    //   fetchData(url_Email_Data_Mail_Doctord, idSiginPerson, setlistBookings);
-    // }
+    console.log(signInPerson.user_id);
+    if (signInPerson && signInPerson.role && signInPerson.role === "R3") {
+      fetchData(url_Email_Data_Mail, signInPerson.user_id, setlistBookings);
+    } else if (signInPerson && signInPerson.role && signInPerson.role === "R2") {
+      fetchData(url_Email_Data_Mail_Doctord, signInPerson.user_id, setlistBookings);
+    }
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
   useEffect(() => {
     let check = false;
     if (!check) {
-      setidSiginPerson(signInPerson.user_id ? signInPerson.user_id : null);
+      if (signInPerson && signInPerson.user_id ) {
+        setidSiginPerson(signInPerson.user_id ? signInPerson.user_id : null);
+      }
+     
     }
     return () => {
       check = true;
@@ -58,12 +66,16 @@ const ScheduleScreen = ({ navigation }) => {
         fetchData(url_Email_Data_Mail, idSiginPerson, setlistBookings);
       } else if (signInPerson && signInPerson.role && signInPerson.role === "R2") {
         fetchData(url_Email_Data_Mail_Doctord, idSiginPerson, setlistBookings);
+      }else{
+        console.log("admin");
+        fetchDataAll(url_Email_Data_Mail_All,setlistBookings)
       }
     }
     return () => {
       check = true;
     };
   }, [idSiginPerson]);
+  console.log("id sigin in ",idSiginPerson);
   const ItemSeparatorView = () => {
     return (
       <View
@@ -93,7 +105,7 @@ const ScheduleScreen = ({ navigation }) => {
   const updateUser = (patient_id, date, doctorid, timetype,statusID) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    console.log("url la", `http://api-truongcongtoan.herokuapp.com/api/emaildata/${patient_id}/${date}/${doctorid}/${statusID}`);
+    console.log("url la", `http://api-truongcongtoan.herokuapp.com/api/emaildata/${patient_id}/${date}/${doctorid}/${timetype}/${statusID}`);
     // var raw = JSON.stringify(data);
 
     var requestOptions = {
@@ -110,25 +122,26 @@ const ScheduleScreen = ({ navigation }) => {
       .then((response) => response.text())
       .then((result) => {       
          
-          if (JSON.parse(result).id) {
+          if (JSON.parse(result).errorCode === 400) {
             // dispatch(allAction.userAction.addSignIn(JSON.parse(result)));
-            if (signInPerson && signInPerson.role && signInPerson.role === "R3") {
-              fetchData(url_Email_Data_Mail, idSiginPerson, setlistBookings);
-            } else if (signInPerson && signInPerson.role && signInPerson.role === "R2") {
-              fetchData(url_Email_Data_Mail_Doctord, idSiginPerson, setlistBookings);
-            }
-            setloading("done");
-            console.log("result la ", result);
-          return Alert.alert(
-            "Thông báo",
-            "Cập nhật thông tin tài khoản thành công !"
-          );          
-        } else {
+               
           setloading("done");
           return Alert.alert(
             "Thông báo",
-            "Cập nhật thông tin tài khoản thất bại !"
-          );
+            "Cập nhật trạng thái lịch khám thất bại !"
+          );       
+        } else {
+          if (signInPerson && signInPerson.role && signInPerson.role === "R3") {
+            fetchData(url_Email_Data_Mail, idSiginPerson, setlistBookings);
+          } else if (signInPerson && signInPerson.role && signInPerson.role === "R2") {
+            fetchData(url_Email_Data_Mail_Doctord, idSiginPerson, setlistBookings);
+          }
+          setloading("done");
+          console.log("result la ", result);
+        return Alert.alert(
+          "Thông báo",
+          "Cập nhật trạng thái lịch khám thành công !"
+        );
         }
       })
       .catch((error) => console.log("error", error));
@@ -282,7 +295,12 @@ const ScheduleScreen = ({ navigation }) => {
                         </View>
                       </TouchableOpacity>
                       :
-                      <TouchableOpacity onPress={() => { navigation.navigate("RateDoctor") }}>
+                      <TouchableOpacity onPress={() => { 
+                        
+                        navigation.navigate("RateDoctor")
+                        dispatch(allAction.userAction.addDoctorInfo(item.booking.doctorid))
+                        }}>
+                          
                       <View
                         style={{
                           height: 35,
@@ -488,7 +506,7 @@ const ScheduleScreen = ({ navigation }) => {
                         <>
                         {
                           item && item.booking && item.booking.statusId === "S3" ?
-                           <TouchableOpacity onPress={() => { Linking.openURL('https://truongcongtoan.000webhostapp.com/#7b7622') }}>
+                           <TouchableOpacity onPress={() => { Linking.openURL('https://truongcongtoan.000webhostapp.com') }}>
                            <View
                              style={{
                                height: 35,
@@ -773,12 +791,38 @@ const ScheduleScreen = ({ navigation }) => {
       })
       .catch((error) => console.log("error", error));
   };
+
+  const fetchDataAll = (url, setData) => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`${url}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        if (JSON.parse(result)) {
+          setData(JSON.parse(result));
+        } else {
+          setData(null);
+        }
+        setloading("done");
+      })
+      .catch((error) => console.log("error", error));
+  };
   // console.log("Gia tri listbooking length" ,listBookings.length);
   return (
     <View style={{ flex: 1 }}>
       {/* {listBookings.length === 0 ? <AppLoader /> : null} */}
 
       <HeaderScreen navigation={navigation} />
+      {/* <ScrollView
+            // contentContainerStyle={styles.scrollView}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+     >
+      </ScrollView> */}
       <View style={{ flexDirection: "column" }}>
         <Text
           style={{

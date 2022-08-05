@@ -28,7 +28,7 @@ import InputNewPass from "./screens/NewPassWord/InputNewPass";
 import NewOTP from "./screens/NewPassWord/NewOTP"
 import QRCodeGenerator from "./components/QRCodeGenerator/QRCodeGenerator";
 import QRCodeScanner from "./components/QRCodeGenerator/QRScanner";
-import VideoCall from "./components/VideoCall/VideoCall";
+// import VideoCall from "./components/VideoCall/VideoCall";
 import UserInfo from "./screens/AcountInfo/UserInfo";
 import Question from "./screens/Question/Question";
 import QuestionDetail from "./screens/CommunityScreen/QuestionDetail";
@@ -81,7 +81,7 @@ export default function App() {
                 <Stack.Screen name="RateDoctor" component={RateDoctor} />
                 
               </Stack.Navigator>
-             
+             {/* <VideoCall /> */}
             </NavigationContainer>
           </SafeAreaView>
           <Toast />
